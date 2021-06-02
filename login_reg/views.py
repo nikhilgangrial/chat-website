@@ -14,4 +14,5 @@ def login(req):
         global k
         k += 1
         return JsonResponse({"instance": k}, status=200)
-    return render(req, 'login.html')
+    else:
+        return render(req, 'login.html')
