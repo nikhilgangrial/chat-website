@@ -10,5 +10,6 @@ db = client['thewebsite']
 col = db['users']
 
 x = col.find()
-print(x)
+for i in x:
+    print(i)
 print("sucess")
