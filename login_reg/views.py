@@ -50,19 +50,12 @@ def registration_view(request):
     if request.POST:
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            f = open("debug.txt", "w")
-            f.write(str(form)+"\n")
             user = form.save()
-            f.write(str(user) + "\n")
             email = form.cleaned_data.get('email')
             raw_pass = form.cleaned_data.get('password1')
-            f.write(str(email) + " " + str(raw_pass) + "\n")
             account = authenticate(email=str(email), password=str(raw_pass))
-            f.write(str(account) + "\n")
             login(request, user)
             messages.success(request, "You have been Registered as {}".format(request.user.username))
-            f.write(str(user) + " " + str(user.is_authenticated)+"\n")
-            f.close()
             return HttpResponseRedirect('/account/home/')
         else:
             messages.error(request, "Please Correct Below Errors")
@@ -84,23 +77,13 @@ def login_view(request):
       Renders Login Form
     """
     context = {}
-    user = request.user
-    try:
-        f = open("debug.txt", "a")
-        f.write(str(user)+str(user.is_authenticated))
-        f.close()
-    except:
-        pass
-    if user.is_authenticated:
+    if request.user.is_authenticated:
         return HttpResponseRedirect("/account/home/")
     if request.POST:
         form = AccountAuthenticationForm(request.POST)
         email = request.POST.get('email')
         password = request.POST.get('password')
         user = authenticate(email=email, password=password)
-        f = open("debug.txt", "w")
-        f.write(str(user)+str(user.is_authenticated))
-        f.close()
         if user:
             login(request, user)
             messages.success(request, "Logged In")
@@ -117,10 +100,6 @@ def account_view(request):
     """
       Renders userprofile page "
     """
-    user = request.user
-    f = open("debug.txt", "a")
-    f.write(str(user) + str(user.is_authenticated))
-    f.close()
     if not request.user.is_authenticated:
         return HttpResponseRedirect("/account/login")
     context = {}
