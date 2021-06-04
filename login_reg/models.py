@@ -31,18 +31,23 @@ class Users(AbstractBaseUser):
     """
       Custom user class inheriting AbstractBaseUser class
     """
+    userid = models.CharField(max_length=45, unique=True)
     email = models.EmailField(verbose_name='email', max_length=60, unique=True)
-    username = models.CharField(max_length=30, unique=True)
-    rollno = models.IntegerField(unique=True)
+    username = models.CharField(max_length=65)
+    phoneno = models.CharField(max_length=13)
+    type = models.CharField(max_length=10)
+    rollno = models.IntegerField()
+    stu_class = models.CharField(max_length=15)  # class is python keyword
+    year = models.CharField(max_length=2)
+    regno = models.IntegerField()
     date_joined = models.DateTimeField(verbose_name='date joined', auto_now_add=True)
-    last_login = models.DateTimeField(verbose_name="last login", auto_now=True)
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    REQUIRED_FIELDS = ['username', 'userid']
 
     objects = MyAccountManager()
 

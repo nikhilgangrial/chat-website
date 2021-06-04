@@ -1,7 +1,10 @@
 import yaml
 import time
 from requests_oauthlib import OAuth2Session
-
+import pymongo
+from random import randint, choice
+import datetime
+from threading import Thread
 
 stream = open('oauth_settings.yml', 'r')
 settings = yaml.load(stream, yaml.SafeLoader)
@@ -51,24 +54,101 @@ def get_token():
             return token
 
 
-def get_user(post):
+def _get_user(post):
     email = post['email']
     token = get_token()
     graph_client = OAuth2Session(token=token)
     user = graph_client.get(f"https://graph.microsoft.com/v1.0/users?$filter=userPrincipalName eq '{email}'")
     if user.status_code == 200:
-        f = open("debug.txt", 'a')
-        f.write(str(user.json()) + "\n")
-        f.close()
-        return user.json()
+        user = user.json()
+        res = {'email': email, 'userid': user[id], 'password1': post['password1'], 'password2': post['password2'],
+               'username': post['username'], 'phoneno': user['mobilePhone']}
+        temp = user['displayName'].split()[0]
+        if temp.isdigit():
+            res['type'] = 'Student'
+            res['rollno'] = int(temp)
+            res['regno'] = int(email.split('_')[1].split('@')[0])
+            classes = {'1': 'ETC A', '2': 'MECHANICAL', '3': 'COMP A', '4': 'IT',
+                       '5': 'ETC B', '6': 'MECHANICAL PG', '7': 'COMP B'}
+            res['stu_class'] = classes[temp[0]]
+            year = {'1': 'FE', '2': 'SE', '3': 'TE', '4': 'BE'}
+            res['year'] = year[temp[1]]
+
+        elif temp[:6] == "Alumni":
+            res['type'] = "Alumni"
+            res['regno'] = int(email.split('_')[1].split('@')[0])
+        else:
+            res['type'] = "Staff"
+        return res
     return None
 
 
+link = "mongodb://admin:4gWGjt4TLkdlZg1B@cluster0-shard-00-00.xrq2g.mongodb.net:27017,cluster0-shard-00-01.xrq2g.\
+mongodb.net:27017,cluster0-shard-00-02.xrq2g.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-1fpp0j-shard\
+-0&authSource=admin&retryWrites=true&w=majority"
+
+dbclient = pymongo.MongoClient(link)
+db = dbclient['thewebsite']
+
+
+def sendmail(email, message):
+    import smtplib, ssl
+
+    port = 465  # For SSL
+    smtp_server = "smtp.gmail.com"
+    sender_email = "mushkilotp@gmail.com"  # Enter your address
+    receiver_email = email  # Enter receiver address
+    password = "69@vahi sochna mushkil hai69"
+
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
+        server.login(sender_email, password)
+        server.sendmail(sender_email, receiver_email, message)
+
+
+def _sendotp(email, otp):
+    message = f"""
+    Subject: Hi there
+
+    Your OTP is {otp}. It is valid for 2 minutes.
+    """
+    sendmail(email, message)
+
+
 def sendotp(email):
-    pass
-    # smtp mess
+    otp = randint(100000, 999999)
+    db['otp'].insert({'email': email, 'otp': otp, 'created_at': datetime.datetime.utcnow()})
+    Thread(target=_sendotp, args=(email, otp)).start()
 
 
 def checkotp(email, otp):
-    pass
-    # check for otp in database
+    res = db['otp'].update({'email': email, 'otp': otp})
+    if res:
+        db['otp'].delete_one({'email': email, 'otp': otp})
+        return True
+    else:
+        return False
+
+
+def _send_reset_token(email, token, host):
+    message = f"""
+    Subject: Hi there
+
+    Your password reset link is {host}/account/user/resetpassword/{token} It is valid for 1 hour.
+    """
+    sendmail(email, message)
+
+
+def send_reset_token(email, host):
+    token = ''.join([choice('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890') for _ in range(75)])
+    db['resettoken'].insert({'token': token, 'email': email, 'createdat': datetime.datetime.utcnow()})
+    Thread(target=_send_reset_token, args=(email, token, host)).start()
+
+
+def check_reset_token(token, change=False):
+    res = db['resettoken'].find_one({'token': token})
+    if res:
+        if change:
+            db['resettoken'].delete_one({'token': token})
+        return res['email']
+    return None

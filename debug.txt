@@ -1,1 +1,18 @@
-<class 'dict'>{'@odata.context': 'https://graph.microsoft.com/v1.0/$metadata#users', 'value': [{'businessPhones': [], 'displayName': '7137 NIKHIL SINGH', 'givenName': 'NIKHIL', 'jobTitle': 'Student', 'mail': 'nikhilsingh_20229@aitpune.edu.in', 'mobilePhone': None, 'officeLocation': None, 'preferredLanguage': None, 'surname': 'SINGH', 'userPrincipalName': 'nikhilsingh_20229@aitpune.edu.in', 'id': '28175e08-1748-45d3-9e3e-e8f6de92a21c'}]}
+<class 'dict'>
+{
+    '@odata.context': 'https://graph.microsoft.com/v1.0/$metadata#users',
+    'value':
+        [{
+            'businessPhones': [],
+            'displayName': '7137 NIKHIL SINGH',
+            'givenName': 'NIKHIL',
+            'jobTitle': 'Student',
+            'mail': 'nikhilsingh_20229@aitpune.edu.in',
+            'mobilePhone': None,
+            'officeLocation': None,
+            'preferredLanguage': None,
+            'surname': 'SINGH',
+            'userPrincipalName': 'nikhilsingh_20229@aitpune.edu.in',
+            'id': '28175e08-1748-45d3-9e3e-e8f6de92a21c'
+        }]
+}

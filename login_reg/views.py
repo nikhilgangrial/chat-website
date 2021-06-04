@@ -30,10 +30,10 @@ def register_view(request):
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, logout, login
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from .forms import RegistrationForm, AccountAuthenticationForm, AccountUpdateform
 from django.http import HttpResponseRedirect, HttpResponse
-from .topsecret import get_user, sendotp, checkotp
+from .topsecret import _get_user, sendotp, checkotp, send_reset_token
 
 
 def home(request):
@@ -50,7 +50,8 @@ def registration_view(request):
     context = {}
     if request.POST:
         if request.POST['otp'] and checkotp(request.POST['email'], request.POST['otp']):
-            form = RegistrationForm(get_user(request.POST))
+            user = _get_user(request.POST)
+            form = RegistrationForm(user)
             if form.is_valid():
                 form.save()
                 email = form.cleaned_data.get('email')
@@ -102,7 +103,6 @@ def login_view(request):
                 request.session.set_expiry(86400 * 30)
             except:
                 request.session.set_expiry(0)
-            k = get_user(email.lower())
             messages.success(request, "Logged In")
             return HttpResponseRedirect("/account/home")
         else:
@@ -137,3 +137,21 @@ def account_view(request):
     context['account_form'] = form
 
     return render(request, "accounts/userprofile.html", context)
+
+
+def reset_token(request):
+    if request.user.is_authenticated:
+        redirect("/account/home/")
+    if request.method == "POST":
+        if request.POST['email']:   # check if email exists in database
+            if request.is_secure():
+                scheme = 'https://'
+            else:
+                scheme = 'http://'
+
+            host = scheme + request.get_host()
+            send_reset_token(request.POST['email'], host)
+
+
+def reset_password(request):
+    request += 1

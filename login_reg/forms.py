@@ -13,15 +13,15 @@ class RegistrationForm(UserCreationForm):
 
     class Meta:
         model = Account
-        fields = ('email', 'username', 'password1', 'password2', 'rollno')
+        fields = ('email', 'username', 'password1', 'password2')
 
     def __init__(self, *args, **kwargs):
         """
           specifying styles to fields
         """
         super(RegistrationForm, self).__init__(*args, **kwargs)
-        for field in (self.fields['email'], self.fields['username'], self.fields['password1'], self.fields['password2'],
-                      self.fields['rollno']):
+        for field in (self.fields['email'], self.fields['username'],
+                      self.fields['password1'], self.fields['password2'],):
             field.widget.attrs.update({'class': 'form-control '})
 
 
