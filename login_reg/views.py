@@ -32,7 +32,8 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, logout, login
 from django.shortcuts import render
 from .forms import RegistrationForm, AccountAuthenticationForm, AccountUpdateform
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
+from .topsecret import get_user, sendotp, checkotp
 
 
 def home(request):
@@ -48,28 +49,36 @@ def registration_view(request):
     """
     context = {}
     if request.POST:
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            email = form.cleaned_data.get('email')
-            raw_pass = form.cleaned_data.get('password1')
-            account = authenticate(email=str(email), password=str(raw_pass))
-            login(request, user)
-            messages.success(request, "You have been Registered as {}".format(request.user.username))
-            return HttpResponseRedirect('/account/home/')
+        if request.POST['otp'] and checkotp(request.POST['email'], request.POST['otp']):
+            form = RegistrationForm(get_user(request.POST))
+            if form.is_valid():
+                form.save()
+                email = form.cleaned_data.get('email')
+                raw_pass = form.cleaned_data.get('password1')
+                user = authenticate(email=str(email), password=str(raw_pass))
+                login(request, user)
+                messages.success(request, "You have been Registered as {}".format(request.user.username))
+                return HttpResponseRedirect('/account/home/')
+            else:
+                messages.error(request, "Please Correct Below Errors")
+                context['registration_form'] = form
         else:
-            messages.error(request, "Please Correct Below Errors")
-            context['registration_form'] = form
+            if request.POST['email'][-15:] == "@aitpune.edu.in":
+                form = RegistrationForm(request.POST)
+                if form.is_valid():
+                    sendotp(request.POST['email'])
+                    return HttpResponse(f"OTP Sent on {request.POST['email']}")
+            return HttpResponse("Enter a Valid collage ID")
     else:
         form = RegistrationForm()
         context['registration_form'] = form
-        return render(request, "accounts/register.html", context)
+    return render(request, "accounts/register.html", context)
 
 
 def logout_view(request):
     logout(request)
     messages.success(request, "Logged Out")
-    return HttpResponseRedirect("/account/home/")
+    return HttpResponseRedirect("/account/login/")
 
 
 def login_view(request):
@@ -86,6 +95,14 @@ def login_view(request):
         user = authenticate(email=email, password=password)
         if user:
             login(request, user)
+            # If check box is not checked no response is received in POST request
+            try:
+                # noinspection PyStatementEffect
+                request.POST['remember me']
+                request.session.set_expiry(86400 * 30)
+            except:
+                request.session.set_expiry(0)
+            k = get_user(email.lower())
             messages.success(request, "Logged In")
             return HttpResponseRedirect("/account/home")
         else:

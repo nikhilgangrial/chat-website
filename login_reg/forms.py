@@ -1,7 +1,6 @@
 
 from django import forms
 from .models import Users as Account
-from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm
 
@@ -14,14 +13,15 @@ class RegistrationForm(UserCreationForm):
 
     class Meta:
         model = Account
-        fields = ('email', 'username', 'password1', 'password2')
+        fields = ('email', 'username', 'password1', 'password2', 'rollno')
 
     def __init__(self, *args, **kwargs):
         """
           specifying styles to fields
         """
         super(RegistrationForm, self).__init__(*args, **kwargs)
-        for field in (self.fields['email'], self.fields['username'], self.fields['password1'], self.fields['password2']):
+        for field in (self.fields['email'], self.fields['username'], self.fields['password1'], self.fields['password2'],
+                      self.fields['rollno']):
             field.widget.attrs.update({'class': 'form-control '})
 
 
