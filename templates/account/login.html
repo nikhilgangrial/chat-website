@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <--link rel="stylesheet" href="text"-->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>login page</title>
+    <style>
+        * {
+            margin: 0;
+        }
+
+        .container {
+
+            position: absolute;
+            z-index: 1;
+            margin-top: 27vh;
+            margin-left: 60vw;
+            width: 33vw;
+            height: 500px ;
+            border-radius: 40px;
+            background-color: rgb(41, 42, 42);
+            box-shadow: -10px -10px 20px rgba(0, 0, 0, 0.3);
+
+            
+        }
+     
+        body{
+            background-color: rgb(61, 60, 60)
+        }
+
+        h2 {
+            font-size: 2.5em;  /*40px*/
+            text-align: center;
+            padding: 1em;  /*20px*/ 
+            margin: 10px;   /*10px*/
+            color: white;
+        }
+
+        form div {
+
+            margin: 15px;
+            color: white;
+
+        }
+
+        .login_details {
+            display: flex;
+        }
+
+        .login_details div {
+            flex-direction: column;
+            width: 75%;
+            margin: 15px auto;
+
+
+        }
+
+        .login_details div input {
+           
+           height: 20px;
+            width: 100%;
+            padding: 5px;
+            text-align: left;
+            border-radius: 3px;
+            border: none;
+            font-size: 20px;
+
+        }
+
+        .abc {
+            
+            display: flex;
+            justify-content: space-evenly;
+
+        }
+
+      
+        hr{
+           
+            border-top: 2px solid;
+            width: 75%;
+           margin: auto;
+        }
+        .sub{
+            display: flex;
+            justify-content: center;
+            
+            margin: 50px auto;
+            padding: 3px;
+            width: 65%;
+            height: 36px;
+        border-radius: 8px;
+        
+        cursor: pointer;
+        background-color: rgb(151, 0, 160);
+        color: white;
+        font-family: cursive;
+        font-size: 20px;
+        border:none ;
+       
+        
+        
+        }
+        .sub:hover{
+          background-color: rgb(151, 0, 160);
+        box-shadow: rgb(218, 216, 216);
+        color: black;
+        }
+        .img1 img{
+            position: absolute;
+            z-index: -1;
+            height: 550px ;   /*500pc*/
+            width: 40vw;   /*700px*/
+            margin: 30vh 10vw;   /*270px 300px*/
+        }
+        .img2 img{
+            position: absolute;
+            z-index: 2;
+            height: 28vh;
+            width: 68.5vw;
+            margin: 9vh 1vw;   /*120px 15px*/
+        }
+        .abc a{
+            color: rgb(0, 153, 255);
+        }
+
+        .abc input:hover{
+            cursor: pointer;
+        }
+        
+    </style>
+</head>
+
+<body>
+   
+    <div class="img2">
+        <img src="fly.png" alt=".">
+    </div>
+    <div class="img1">
+        <img src="ppl.png" alt=".">
+    </div>
+    
+    <div class="container">
+        <h2>SIGN IN</h2>
+        <hr>
+        <form method="post" action="#" id="login form">
+            {% csrf_token %}
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+            <div class="login_details">
+                <div class="abc"> <input type="email" id="email" name="email" placeholder="Email"> </div>
+            </div>
+            <div class="login_details">
+                <div class="abc"><input type="password" id="password" name="password" placeholder="Password"></div>
+            </div>
+            <div class="abc">
+                <div >
+                    <input type="checkbox" id="remember me" name="remember me">
+                    <label for="remember me">Remember me</label>
+                </div>
+                <div>
+                    <a href="{% url 'reset' %}">Forgot Password</a>
+                </div>
+            </div>
+            <input type="submit" class="sub" onclick="document.getElementById('login form').submit()"><br>
+            <a href="{% url 'register' %}">Sign up</a>
+        </form>
+  
+    </div>
+</body>
+
+</html>

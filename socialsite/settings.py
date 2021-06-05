@@ -28,6 +28,17 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 # Application definition
+ASGI_APPLICATION = "socialsite.asgi.application"
+
+CHANNEL_LAYERS = {
+  'default': {
+      'BACKEND': 'channels_redis.core.RedisChannelLayer',
+      'CONFIG': {
+          "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],
+          "symmetric_encryption_keys": [SECRET_KEY],
+      },
+  },
+}
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -36,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',   # helps makin real time chatting system nansense to be resolved
     'login_reg',  # the on which validates login and creates new accounts
 ]
 

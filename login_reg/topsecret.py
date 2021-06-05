@@ -3,8 +3,11 @@ import time
 from requests_oauthlib import OAuth2Session
 import pymongo
 from random import randint, choice
-import datetime
+from datetime import datetime
+from smtplib import SMTP_SSL
+from ssl import create_default_context
 from threading import Thread
+from login_reg.models import Users
 
 stream = open('oauth_settings.yml', 'r')
 settings = yaml.load(stream, yaml.SafeLoader)
@@ -12,7 +15,30 @@ authorize_url = '{0}{1}'.format(settings['authority'], settings['authorize_endpo
 token_url = '{0}{1}'.format(settings['authority'], settings['token_endpoint'])
 
 token = {
-    'access_token': 'eyJ0eXAiOiJKV1QiLCJub25jZSI6ImZlY0VBUklxTnN1V3U3ZF9nNHpSUF9sc2FLcmVtN0VHT1B1NndGRzFrSU0iLCJhbGciOiJSUzI1NiIsIng1dCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyJ9.eyJhdWQiOiIwMDAwMDAwMy0wMDAwLTAwMDAtYzAwMC0wMDAwMDAwMDAwMDAiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC82ZDI4ZTRmYi05MDc0LTRhMGItYTViOC05YTg5ZjYzMmNjNjAvIiwiaWF0IjoxNjIyNzM5NTY4LCJuYmYiOjE2MjI3Mzk1NjgsImV4cCI6MTYyMjc0MzQ2OCwiYWNjdCI6MCwiYWNyIjoiMSIsImFjcnMiOlsidXJuOnVzZXI6cmVnaXN0ZXJzZWN1cml0eWluZm8iLCJ1cm46bWljcm9zb2Z0OnJlcTEiLCJ1cm46bWljcm9zb2Z0OnJlcTIiLCJ1cm46bWljcm9zb2Z0OnJlcTMiLCJjMSIsImMyIiwiYzMiLCJjNCIsImM1IiwiYzYiLCJjNyIsImM4IiwiYzkiLCJjMTAiLCJjMTEiLCJjMTIiLCJjMTMiLCJjMTQiLCJjMTUiLCJjMTYiLCJjMTciLCJjMTgiLCJjMTkiLCJjMjAiLCJjMjEiLCJjMjIiLCJjMjMiLCJjMjQiLCJjMjUiXSwiYWlvIjoiRTJaZ1lIaFh5dnYwMzZ5SXRJY3JQNll0S0Q3ZDRpLysrM1hhdG9PaVRSbjVEOXRrT3RvQiIsImFtciI6WyJwd2QiXSwiYXBwX2Rpc3BsYXluYW1lIjoiR3JhcGggZXhwbG9yZXIgKG9mZmljaWFsIHNpdGUpIiwiYXBwaWQiOiJkZThiYzhiNS1kOWY5LTQ4YjEtYThhZC1iNzQ4ZGE3MjUwNjQiLCJhcHBpZGFjciI6IjAiLCJmYW1pbHlfbmFtZSI6IlNJTkdIIiwiZ2l2ZW5fbmFtZSI6Ik5JS0hJTCIsImlkdHlwIjoidXNlciIsImlwYWRkciI6IjIwNS4yNTMuMTMwLjIxMiIsIm5hbWUiOiI3MTM3IE5JS0hJTCBTSU5HSCIsIm9pZCI6IjI4MTc1ZTA4LTE3NDgtNDVkMy05ZTNlLWU4ZjZkZTkyYTIxYyIsInBsYXRmIjoiMyIsInB1aWQiOiIxMDAzMjAwMEYxRTUwNjAwIiwicmgiOiIwLkFUNEEtLVFvYlhTUUMwcWx1SnFKOWpMTVlMWElpOTc1MmJGSXFLMjNTTnB5VUdRLUFLMC4iLCJzY3AiOiJvcGVuaWQgcHJvZmlsZSBVc2VyLlJlYWQgVXNlci5SZWFkQmFzaWMuQWxsIGVtYWlsIiwic2lnbmluX3N0YXRlIjpbImttc2kiXSwic3ViIjoiZUM4NTlBeG8yTVoxTk5BMjY3UjJLeUpmTURmU0QwWEFiQkxnQ1hCQllrOCIsInRlbmFudF9yZWdpb25fc2NvcGUiOiJBUyIsInRpZCI6IjZkMjhlNGZiLTkwNzQtNGEwYi1hNWI4LTlhODlmNjMyY2M2MCIsInVuaXF1ZV9uYW1lIjoibmlraGlsc2luZ2hfMjAyMjlAYWl0cHVuZS5lZHUuaW4iLCJ1cG4iOiJuaWtoaWxzaW5naF8yMDIyOUBhaXRwdW5lLmVkdS5pbiIsInV0aSI6Im9wUERRbzFFelUtamZ5ZTIwWTl1QWciLCJ2ZXIiOiIxLjAiLCJ3aWRzIjpbImI3OWZiZjRkLTNlZjktNDY4OS04MTQzLTc2YjE5NGU4NTUwOSJdLCJ4bXNfc3QiOnsic3ViIjoiMmQxdm1XSXdmc1NzUVVuX0lFZGxxa0JNV1RVNzJBeVhkZWhHYnFya25VYyJ9LCJ4bXNfdGNkdCI6MTM2NjA1MzgxMH0.mgNkCQ-qviJxsn3InGEHQgwuTukFkg9MaPP2dxtBRz01d2EDuN5yT7jQU_tn9s0lCbayl_2r7E1zRPwFbMtAFKgnOhS7RO87gluo85LtgRxPIIZ_Mz5VZGHq7hG6t0T7qqEm4MNFWJdfva-QBMveZQ9bNNK-OAgTnqj5nRXljpM41pW2aIdITKvJshWh-Zyd53naIqIzQQW7P0NOFgEPPz3nhAB6pPjvMUSu0b0wgo0emNrYZjElXRac3Oon759Jg4bk3Hot4zMmMUcNawwt-iNx9eN0d1Q9y6jT9mMqPGPOs61k3aMY5h6PvTAEmr2VLOALRY3jStXIWWOfsdPSZQ',
+    'access_token': 'eyJ0eXAiOiJKV1QiLCJub25jZSI6ImZlY0VBUklxTnN1V3U3ZF9nNHpSUF9sc2FLcmVtN0VHT1B1NndGRzFrSU0iLCJhbGciOi'
+                    'JSUzI1NiIsIng1dCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJf'
+                    'S1hFZyJ9.eyJhdWQiOiIwMDAwMDAwMy0wMDAwLTAwMDAtYzAwMC0wMDAwMDAwMDAwMDAiLCJpc3MiOiJodHRwczovL3N0cy53a'
+                    'W5kb3dzLm5ldC82ZDI4ZTRmYi05MDc0LTRhMGItYTViOC05YTg5ZjYzMmNjNjAvIiwiaWF0IjoxNjIyNzM5NTY4LCJuYmYiOjE'
+                    '2MjI3Mzk1NjgsImV4cCI6MTYyMjc0MzQ2OCwiYWNjdCI6MCwiYWNyIjoiMSIsImFjcnMiOlsidXJuOnVzZXI6cmVnaXN0ZXJzZ'
+                    'WN1cml0eWluZm8iLCJ1cm46bWljcm9zb2Z0OnJlcTEiLCJ1cm46bWljcm9zb2Z0OnJlcTIiLCJ1cm46bWljcm9zb2Z0OnJlcTM'
+                    'iLCJjMSIsImMyIiwiYzMiLCJjNCIsImM1IiwiYzYiLCJjNyIsImM4IiwiYzkiLCJjMTAiLCJjMTEiLCJjMTIiLCJjMTMiLCJjM'
+                    'TQiLCJjMTUiLCJjMTYiLCJjMTciLCJjMTgiLCJjMTkiLCJjMjAiLCJjMjEiLCJjMjIiLCJjMjMiLCJjMjQiLCJjMjUiXSwiYWl'
+                    'vIjoiRTJaZ1lIaFh5dnYwMzZ5SXRJY3JQNll0S0Q3ZDRpLysrM1hhdG9PaVRSbjVEOXRrT3RvQiIsImFtciI6WyJwd2QiXSwiY'
+                    'XBwX2Rpc3BsYXluYW1lIjoiR3JhcGggZXhwbG9yZXIgKG9mZmljaWFsIHNpdGUpIiwiYXBwaWQiOiJkZThiYzhiNS1kOWY5LTQ'
+                    '4YjEtYThhZC1iNzQ4ZGE3MjUwNjQiLCJhcHBpZGFjciI6IjAiLCJmYW1pbHlfbmFtZSI6IlNJTkdIIiwiZ2l2ZW5fbmFtZSI6I'
+                    'k5JS0hJTCIsImlkdHlwIjoidXNlciIsImlwYWRkciI6IjIwNS4yNTMuMTMwLjIxMiIsIm5hbWUiOiI3MTM3IE5JS0hJTCBTSU5'
+                    'HSCIsIm9pZCI6IjI4MTc1ZTA4LTE3NDgtNDVkMy05ZTNlLWU4ZjZkZTkyYTIxYyIsInBsYXRmIjoiMyIsInB1aWQiOiIxMDAzM'
+                    'jAwMEYxRTUwNjAwIiwicmgiOiIwLkFUNEEtLVFvYlhTUUMwcWx1SnFKOWpMTVlMWElpOTc1MmJGSXFLMjNTTnB5VUdRLUFLMC4'
+                    'iLCJzY3AiOiJvcGVuaWQgcHJvZmlsZSBVc2VyLlJlYWQgVXNlci5SZWFkQmFzaWMuQWxsIGVtYWlsIiwic2lnbmluX3N0YXRlI'
+                    'jpbImttc2kiXSwic3ViIjoiZUM4NTlBeG8yTVoxTk5BMjY3UjJLeUpmTURmU0QwWEFiQkxnQ1hCQllrOCIsInRlbmFudF9yZWd'
+                    'pb25fc2NvcGUiOiJBUyIsInRpZCI6IjZkMjhlNGZiLTkwNzQtNGEwYi1hNWI4LTlhODlmNjMyY2M2MCIsInVuaXF1ZV9uYW1lI'
+                    'joibmlraGlsc2luZ2hfMjAyMjlAYWl0cHVuZS5lZHUuaW4iLCJ1cG4iOiJuaWtoaWxzaW5naF8yMDIyOUBhaXRwdW5lLmVkdS5'
+                    'pbiIsInV0aSI6Im9wUERRbzFFelUtamZ5ZTIwWTl1QWciLCJ2ZXIiOiIxLjAiLCJ3aWRzIjpbImI3OWZiZjRkLTNlZjktNDY4O'
+                    'S04MTQzLTc2YjE5NGU4NTUwOSJdLCJ4bXNfc3QiOnsic3ViIjoiMmQxdm1XSXdmc1NzUVVuX0lFZGxxa0JNV1RVNzJBeVhkZWh'
+                    'HYnFya25VYyJ9LCJ4bXNfdGNkdCI6MTM2NjA1MzgxMH0.mgNkCQ-qviJxsn3InGEHQgwuTukFkg9MaPP2dxtBRz01d2EDuN5yT'
+                    '7jQU_tn9s0lCbayl_2r7E1zRPwFbMtAFKgnOhS7RO87gluo85LtgRxPIIZ_Mz5VZGHq7hG6t0T7qqEm4MNFWJdfva-QBMveZQ9'
+                    'bNNK-OAgTnqj5nRXljpM41pW2aIdITKvJshWh-Zyd53naIqIzQQW7P0NOFgEPPz3nhAB6pPjvMUSu0b0wgo0emNrYZjElXRac3'
+                    'Oon759Jg4bk3Hot4zMmMUcNawwt-iNx9eN0d1Q9y6jT9mMqPGPOs61k3aMY5h6PvTAEmr2VLOALRY3jStXIWWOfsdPSZQ',
     'expires_at': 1622741654.633137,
     'expires_in': 3600,
     'ext_expires_in': 3600,
@@ -92,7 +118,6 @@ db = dbclient['thewebsite']
 
 
 def sendmail(email, message):
-    import smtplib, ssl
 
     port = 465  # For SSL
     smtp_server = "smtp.gmail.com"
@@ -100,8 +125,8 @@ def sendmail(email, message):
     receiver_email = email  # Enter receiver address
     password = "69@vahi sochna mushkil hai69"
 
-    context = ssl.create_default_context()
-    with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
+    context = create_default_context()  # ssl function
+    with SMTP_SSL(smtp_server, port, context=context) as server:    # smtplib function
         server.login(sender_email, password)
         server.sendmail(sender_email, receiver_email, message)
 
@@ -117,7 +142,7 @@ def _sendotp(email, otp):
 
 def sendotp(email):
     otp = randint(100000, 999999)
-    db['otp'].insert({'email': email, 'otp': otp, 'created_at': datetime.datetime.utcnow()})
+    db['otp'].insert({'email': email, 'otp': otp, 'created_at': datetime.utcnow()})
     Thread(target=_sendotp, args=(email, otp)).start()
 
 
@@ -141,7 +166,7 @@ def _send_reset_token(email, token, host):
 
 def send_reset_token(email, host):
     token = ''.join([choice('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890') for _ in range(75)])
-    db['resettoken'].insert({'token': token, 'email': email, 'createdat': datetime.datetime.utcnow()})
+    db['resettoken'].insert({'token': token, 'email': email, 'createdat': datetime.utcnow()})
     Thread(target=_send_reset_token, args=(email, token, host)).start()
 
 
@@ -152,3 +177,13 @@ def check_reset_token(token, change=False):
             db['resettoken'].delete_one({'token': token})
         return res['email']
     return None
+
+
+def change_password(email, password):
+    user = Users.objects.get(email=email)
+    user.set_password(password)
+    user.save()
+
+
+def check_user(email):
+    return True if Users.objects.get(email=email) else False

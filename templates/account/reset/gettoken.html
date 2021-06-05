@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reset Password</title>
+</head>
+<body>
+    <form method="post" action="#">
+        {% csrf_token %}
+        <label for="email">Email: </label> <input type="email" name="email" id="email"><br><br>
+        <input type="submit">
+    </form>
+</body>
+</html>

@@ -28,25 +28,3 @@ $.ajaxSetup({
         }
     }
 });
-
-
-function dotask(){
-    $.ajax({
-        type:"POST",
-        url: "/login/",
-        data: {'name': "nansense"},
-        success: function( response )
-        {
-            console.log("the data\n");
-            console.log(response);
-            let new_ = document.createElement("input");
-            let br = document.createElement("br");
-
-            new_.type = 'button';
-            new_.value = response['instance'];
-
-            document.body.appendChild(br);
-            document.body.appendChild(new_);
-        }
-    })
-}

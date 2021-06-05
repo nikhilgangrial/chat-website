@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="{% static 'js/preajax.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/signup.js' %}"></script>
+    <meta charset="UTF-8">
+    <title>Singn Up</title>
+</head>
+<body>
+
+<form id="main_form" method="post" action="#">
+    <div>
+        <label for="usename">Name: </label>
+        <input type="text" name="username" id="username"><br><br>
+    </div>
+    <div>
+        <label for="email">Email: </label>
+        <input type="email" name="email" id="email"><br><br>
+    </div>
+    <div>
+        <label for="password1">Passwod: </label>
+        <input type="password" name="password1" id="password1"><br><br>
+    </div>
+    <div>
+        <label for="password2">Confirm Password: </label>
+        <input type="password" name="password2" id="password2"><br><br>
+    </div>
+    <div id="after otp" hidden>
+        <div>
+            <label for="otp">Otp: </label>
+            <input type="text" name="otp" id="otp"><br><br>
+        </div>
+        <div id="timer">Timer</div>
+        <input type="button" value="Resend Otp" id="resend" disabled onclick="firstcall()"><br>
+    </div>
+    <input type="button" id="submit" value="submit" onclick="firstcall()">
+    Already have account <a href="{% url 'login' %}">Sign in</a>
+</form>
+</body>
+</html>
