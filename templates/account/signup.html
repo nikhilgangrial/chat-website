@@ -10,7 +10,8 @@
 </head>
 <body>
 
-<form id="main_form" method="post" action="#">
+<form id="main form" method="post" action="#">
+    {% csrf_token %}
     <div>
         <label for="usename">Name: </label>
         <input type="text" name="username" id="username"><br><br>
@@ -20,12 +21,14 @@
         <input type="email" name="email" id="email"><br><br>
     </div>
     <div>
-        <label for="password1">Passwod: </label>
-        <input type="password" name="password1" id="password1"><br><br>
+        <label for="password1">Password: </label>
+        <input type="password" name="password1" id="password1" onkeyup="checkstrength()"><br>
+        <div id="strength"></div><br>
     </div>
     <div>
         <label for="password2">Confirm Password: </label>
-        <input type="password" name="password2" id="password2"><br><br>
+        <input type="password" name="password2" id="password2" onkeyup="matchpassword()"><br>
+        <div id="match"></div><br>
     </div>
     <div id="after otp" hidden>
         <div>
@@ -35,7 +38,7 @@
         <div id="timer">Timer</div>
         <input type="button" value="Resend Otp" id="resend" disabled onclick="firstcall()"><br>
     </div>
-    <input type="button" id="submit" value="submit" onclick="firstcall()">
+    <input type="button" id="sub" value="submit" onclick="firstcall()">
     Already have account <a href="{% url 'login' %}">Sign in</a>
 </form>
 </body>

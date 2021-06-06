@@ -31,9 +31,22 @@ def register_view(request):
 from django.contrib import messages
 from django.contrib.auth import authenticate, logout, login
 from django.shortcuts import render, redirect
-from .forms import RegistrationForm, AccountUpdateform
+from .forms import AccountUpdateform
 from django.http import HttpResponseRedirect, HttpResponse, Http404
-from .topsecret import _get_user, sendotp, checkotp, send_reset_token, check_reset_token, change_password, check_user
+from .topsecret import (_get_user, sendotp, checkotp, send_reset_token, check_reset_token, change_password, check_user,
+                        get_token_from_code, store_token, _create_user)
+
+
+def callback(request):
+    # Get the state saved in session
+    expected_state = request.session.pop('auth_state', '')
+    # Make the token request
+    token = get_token_from_code(request.get_full_path(), expected_state)
+
+    # Save token and user
+    store_token(token)
+
+    return HttpResponse(status=200)
 
 
 def home(request):
@@ -47,34 +60,27 @@ def registration_view(request):
     """
       Renders Registration Form
     """
-    context = {}
     if request.POST:
-        if request.POST['otp'] and checkotp(request.POST['email'], request.POST['otp']):
+        if request.POST['otp'] and checkotp(request.POST['email'], int(request.POST['otp'])):
             user = _get_user(request.POST)
-            form = RegistrationForm(user)
-            if form.is_valid():
-                form.save()
-                email = form.cleaned_data.get('email')
-                raw_pass = form.cleaned_data.get('password1')
-                user = authenticate(email=str(email), password=str(raw_pass))
-                login(request, user)
-                messages.success(request, "You have been Registered as {}".format(request.user.username))
-                return HttpResponseRedirect('/account/home/')
-            else:
-                messages.error(request, "Please Correct Below Errors")
-                context['registration_form'] = form
-        else:
             f = open("debug.txt", "a")
-            f.write(str(request.POST['email'])+" "+str(request.POST['email'])[-15:] + "\n")
+            f.write(str(user) + "\n")
             f.close()
+            _create_user(user)
+            user = authenticate(email=user['email'], password=user['password'])
+            login(request, user)
+            messages.success(request, "You have been Registered as {}".format(request.user.username))
+            return HttpResponseRedirect('/account/home/')
+        elif request.POST['otp']:
+            return HttpResponse("Invalid Otp", status=400)
+        else:
             if request.POST['email'][-15:] == "@aitpune.edu.in":
-                sendotp(request.POST['email'])
-                return HttpResponse(f"OTP Sent on {request.POST['email']}", status=200)
+                if not check_user(request.POST['email']):
+                    sendotp(request.POST['email'])
+                    return HttpResponse(f"OTP Sent on {request.POST['email']}", status=200)
+                return HttpResponse("An account already exixts with given email", status=400)
             return HttpResponse("Enter a Valid collage ID", status=400)
-    else:
-        form = RegistrationForm()
-        context['registration_form'] = form
-    return render(request, "account/signup.html", context)
+    return render(request, "account/signup.html")
 
 
 def logout_view(request):

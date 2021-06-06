@@ -15,9 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from login_reg.views import callback
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path(r'account/', include('login_reg.urls')),
+    path('callback/', callback),
 ]
