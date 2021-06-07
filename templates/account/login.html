@@ -22,8 +22,8 @@
     </div>
 
     <div class="container">
-        <h2>SIGN IN</h2>
-        <hr>
+        <h2 id="sign_head">SIGN IN</h2>
+        <hr id="hr_line">
         <form action="#" method="POST">
             {% csrf_token %}
             {% if messages %}
@@ -33,16 +33,16 @@
                 {% endfor %}
                 </ul>
             {% endif %}
-            <div class="login_details">
+            <div class="login_detailsname">
                 <div class="abc"> <input type="email" name="email" placeholder="Email"> </div>
             </div>
-            <div class="login_details">
+            <div class="login_detailspass">
                 <div class="abc"><input type="password" name="password" placeholder="Password"></div>
             </div>
             <div class="abc">
                 <div>
-                    <input type="checkbox" id="remember me">
-                    <label for="checkbox">Remember me</label>
+                    <input type="checkbox" id="remember me" name="remember me">
+                    <label for="remember me">Remember me</label>
                 </div>
                 <div>
                     <a href="{% url 'reset' %}">Forgot Password?</a>

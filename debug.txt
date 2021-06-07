@@ -1,2 +1,3 @@
 {'email': 'harsimatsingh_20060@aitpune.edu.in', 'userid': '69a79907-d256-4e45-939e-4aea99afe08b', 'password': '69@vahi sochna mushkil hai69A', 'username': 'Harsimrat', 'phoneno': None, 'type': 'Student', 'rollno': 7125, 'regno': 20060, 'stu_class': 'COMP B', 'year': 'FE'}
 {'email': 'mohitsingh_20062@aitpune.edu.in', 'userid': '3674bdbc-578f-48f4-be13-17257f9cbd44', 'password': 'jkl123456@A', 'username': 'Mohit Singh', 'phoneno': None, 'type': 'Student', 'rollno': 7135, 'regno': 20062, 'stu_class': 'COMP B', 'year': 'FE'}
+{'email': 'mohitsingh_20062@aitpune.edu.in', 'userid': '3674bdbc-578f-48f4-be13-17257f9cbd44', 'password': 'jkl123456@A', 'username': 'Mohit Singh', 'phoneno': None, 'type': 'Student', 'rollno': 7135, 'regno': 20062, 'stu_class': 'COMP B', 'year': 'FE'}
