@@ -33,7 +33,7 @@ class Users(AbstractBaseUser):
     """
     userid = models.CharField(max_length=45, unique=True)
     email = models.EmailField(verbose_name='email', max_length=60, unique=True)
-    username = models.CharField(max_length=65)
+    username = models.CharField(max_length=65, unique=True)
     phoneno = models.CharField(max_length=13)
     type = models.CharField(max_length=10)
     rollno = models.IntegerField()

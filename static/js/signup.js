@@ -4,7 +4,7 @@ function startTimer() {
   let timeArray = presentTime.split(/[:]+/);
   let m = timeArray[0];
   let s = checkSecond((timeArray[1] - 1));
-  if (s==59) {
+  if (s===59) {
       m=m-1;
   }
   if(m<0){
@@ -21,17 +21,13 @@ function startTimer() {
 function verfiyemail(){
     let mailformat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@aitpune\.edu\.in$/;
     let email = document.getElementById('email');
-    if(email.value.match(mailformat)){
-        return true;
-    }else{
-        return false;
-    }
+    return !!email.value.match(mailformat);
 }
 
 
 function checkSecond(sec) {
-  if (sec < 10 && sec >= 0) {sec = "0" + sec}; // add zero in front of numbers < 10
-  if (sec < 0) {sec = "59"};
+  if (sec < 10 && sec >= 0) {sec = "0" + sec} // add zero in front of numbers < 10
+  if (sec < 0) {sec = "59"}
   return sec;
 }
 
@@ -39,7 +35,7 @@ function matchpassword(){
     let match = document.getElementById("match");
     let pwd1 = document.getElementById("password1");
     let pwd2 = document.getElementById("password2");
-    if (pwd1.value == pwd2.value){
+    if (pwd1.value === pwd2.value){
         match.innerHTML = '<span style="color:green">Matched!</span>'
     }else{
         match.innerHTML = '<span style="color:red">Do not Match!</span>';
@@ -51,7 +47,7 @@ function checkstrength() {
         let mediumRegex = new RegExp("^(?=.{8,})(((?=.*[A-Z])(?=.*[a-z]))|((?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[0-9]))).*$", "g");
         let enoughRegex = new RegExp("(?=.{8,}).*", "g");
         let pwd = document.getElementById("password1");
-        if (false == enoughRegex.test(pwd.value)) {
+        if (false === enoughRegex.test(pwd.value)) {
             strength.innerHTML = 'Too Short';
         } else if (strongRegex.test(pwd.value)) {
             strength.innerHTML = '<span style="color:green">Strong!</span>';
@@ -63,15 +59,15 @@ function checkstrength() {
     }
 
 function firstcall(){
-    if (verfiyemail() == false){
+    if (verfiyemail() === false){
         alert("Enter a Valid Collage email");
         return ;
     }
-    if (document.getElementById("strength").innerHTML != '<span style="color:green">Strong!</span>'){
+    if (document.getElementById("strength").innerHTML !== '<span style="color:green">Strong!</span>'){
         alert("Set a Strong Password");
         return ;
     }
-    if (document.getElementById('password1').value != document.getElementById('password2').value){
+    if (document.getElementById('password1').value !== document.getElementById('password2').value){
         alert("Both Passwords do not Match");
         return ;
     }
@@ -83,6 +79,7 @@ function firstcall(){
         },
         success: function(response)
         {
+            console.log(response)
             // diable all uper elements
             document.getElementById('username').disabled = true;
             document.getElementById('email').disabled = true;

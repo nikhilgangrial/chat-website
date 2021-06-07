@@ -29,16 +29,13 @@ def get_token_from_code(callback_url, expected_state):
                              redirect_uri=settings['redirect'])
 
     token = aad_auth.fetch_token(token_url, client_secret=settings['app_secret'], authorization_response=callback_url)
+    print(token)
     return token
 
 
 def store_token(token_):
     global token
     token = token_
-    user = _get_user({'email': 'nikhilsingh_20229@aitpune.edu.in', 'password1': 'jkl123', 'password2': 'jkl123',
-                     'username': 'nikhilgang'})
-    print(user)
-    _create_user(user)
 
 
 def get_sign_in_url():
@@ -64,7 +61,9 @@ def get_token():
 
             refresh_params = {'client_id': settings['app_id'], 'client_secret': settings['app_secret']}
             new_token = aad_auth.refresh_token(token_url, **refresh_params)
+            print(token)
             token = new_token
+            print(token)
         return token
 
 
