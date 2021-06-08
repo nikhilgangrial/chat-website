@@ -20,6 +20,16 @@ body{
     margin: -8.5vw 5vw;
 }
 
+footer{
+    child-align: middle;
+}
+#ppl\ down{
+    position: relative;
+    width: 0;
+    height: 0;
+    margin: auto;
+}
+
 .container {
     position: relative;
     margin: 12% 5em 0 65%;
@@ -119,15 +129,15 @@ body{
 
 @media screen and (max-device-aspect-ratio: 10/7){
     .img1 img {
-        position: fixed;
-        height: 40vw;
-        width: 40vw;
-        margin-top: 50vh;
-        max-width: 50vh;
-        max-height: 50vh;
-        margin-left: 30vw;
+        width: 0;
+        height: 0;
     }
-
+    #ppl\ down {
+        position: relative;
+        width: 50vw;
+        height: 37.5vw;
+        margin: -15vh 25vw;
+    }
     .img2 img {
         height: 19.708vw;
         width: 90vw;
@@ -140,15 +150,18 @@ body{
 }
 
 @media screen and (max-device-aspect-ratio: 7/10){
+    #ppl\ down{
+        top: -20vh;
+    }
     .img2 img {
         height: 19.708vw;
         width: 90vw;
         margin: -18vh 5vw;
     }
     .img1 img {
-        height: 70vw;
-        width: 70vw;
-        margin: 70vh 15vw;
+        height: 0;
+        width: 0;
+        margin: 0;
     }
     .container{
         width: 90%;
@@ -162,6 +175,11 @@ body{
     body{
         zoom: 70%;
     }
+    .img1 img {
+        height: 0;
+        width: 0;
+        margin: 0;
+    }
     .img2 img {
         height: 28.154285vw;
         width: 128.57vw;
@@ -171,6 +189,11 @@ body{
 @media screen and (max-device-width: 350px){
     body{
         zoom: 50%;
+    }
+    .img1 img {
+        height: 0;
+        width: 0;
+        margin: 0;
     }
     .img2 img {
         height: 39.4vw;
@@ -185,6 +208,11 @@ body{
     }
     body{
         zoom: 40%;
+    }
+    .img1 img {
+        height: 0;
+        width: 0;
+        margin: 0;
     }
     .img2 img {
         height: 49.25vw;
