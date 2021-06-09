@@ -4,7 +4,7 @@ function startTimer() {
   let timeArray = presentTime.split(/[:]+/);
   let m = timeArray[0];
   let s = checkSecond((timeArray[1] - 1));
-  if (s===59) {
+  if (s==59) {
       m=m-1;
   }
   if(m<0){
@@ -87,10 +87,12 @@ function firstcall(){
             document.getElementById('password2').disabled = true;
             //unhide otp section
             document.getElementById("after otp").hidden = false;
+            document.getElementById("timer").hidden = false;
+            document.getElementById("resend").disabled = true;
             // change submit function
             document.getElementById('sub').setAttribute('onclick','secondcall()');
             //start timer
-            document.getElementById('timer').innerText = "00:20";
+            document.getElementById('timer').innerText = "0:20";
             startTimer();
         },
         error: function (response){

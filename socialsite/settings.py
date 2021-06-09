@@ -25,18 +25,20 @@ SECRET_KEY = 'django-insecure-x23)&&9z8!j3%u(iag7j&=dljtnb_8%=4s(iw1xrqxjkdd7y%u
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 ASGI_APPLICATION = "socialsite.asgi.application"
 
+"""
+'CONFIG': {
+    "symmetric_encryption_keys": [SECRET_KEY],
+},
+"""
 
 CHANNEL_LAYERS = {
   'default': {
       "BACKEND": "channels.layers.InMemoryChannelLayer",
-      'CONFIG': {
-          "symmetric_encryption_keys": [SECRET_KEY],
-      },
   },
 }
 
