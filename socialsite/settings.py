@@ -25,16 +25,16 @@ SECRET_KEY = 'django-insecure-x23)&&9z8!j3%u(iag7j&=dljtnb_8%=4s(iw1xrqxjkdd7y%u
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
 # Application definition
 ASGI_APPLICATION = "socialsite.asgi.application"
 
+
 CHANNEL_LAYERS = {
   'default': {
-      'BACKEND': 'channels_redis.core.RedisChannelLayer',
+      "BACKEND": "channels.layers.InMemoryChannelLayer",
       'CONFIG': {
-          "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],
           "symmetric_encryption_keys": [SECRET_KEY],
       },
   },
@@ -47,8 +47,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'channels',   # helps makin real time chatting system nansense to be resolved
-    'login_reg',  # the on which validates login and creates new accounts
+    'channels',   # helps making real time chatting system nansense to be resolved
+    'login_reg',  # the one which validates login and creates new accounts
+    'chat',       # app that handles chatting system
 ]
 
 MIDDLEWARE = [
@@ -100,6 +101,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'djongo',
         'NAME': 'thewebsite',
+    }
+}
+
+"""
         'CLIENT': {
                 'host': link,   # use python ver 3.4 or later 3.6 later dosen't work
                 'username': 'admin',
@@ -107,6 +112,7 @@ DATABASES = {
         },
     }
 }
+"""
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators

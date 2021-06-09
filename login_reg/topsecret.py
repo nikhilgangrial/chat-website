@@ -96,11 +96,12 @@ def _get_user(post):
     raise ValueError
 
 
+"""
 link = "mongodb://admin:4gWGjt4TLkdlZg1B@cluster0-shard-00-00.xrq2g.mongodb.net:27017,cluster0-shard-00-01.xrq2g.\
 mongodb.net:27017,cluster0-shard-00-02.xrq2g.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-1fpp0j-shard\
 -0&authSource=admin&retryWrites=true&w=majority"
-
-dbclient = pymongo.MongoClient(link)
+"""
+dbclient = pymongo.MongoClient('localhost', 27017)
 db = dbclient['thewebsite']
 
 
