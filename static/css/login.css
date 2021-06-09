@@ -1,6 +1,7 @@
 body{
     background: #323232;
     margin: 0;
+    zoom: 80%;
 }
 
 /* Normal Pc Site */
@@ -32,41 +33,51 @@ footer{
 
 .container {
     position: relative;
-    margin: 12% 5em 0 65%;
+    margin: 10% 5em 0 62%;
     width: 29em;
     height: 34em;
     background: #252525;
-    border-radius: 3em;
+    border-radius: 2.5em;
     box-shadow: 0 0 3em #000000;
 }
 
+h2 {
+    text-align: center;
+}
+
 .login_detailsname div input{
+    background-color: #3C3D43;
     position: absolute;
     font-size: 1rem;
-    top: 11rem;
+    top: 10rem;
     left: 3rem;
     width: 22rem;
-    height: 1.5rem;
-    border-radius: 0.5rem;
+    height: 1.8rem;
+    border-radius: 0.4rem;
     padding:  0.25rem;
+    color: white;
+    border: none;
 }
 
 .login_detailspass div input{
+    background-color: #3C3D43;
     position: absolute;
     font-size: 1rem;
-    top: 17rem;
+    top: 14rem;
     left: 3rem;
     width: 22rem;
-    height: 1.5rem;
-    border-radius: 0.5rem;
+    height: 1.8rem;
+    border-radius: 0.4rem;
     padding: 0.25rem;
+    color: white;
+    border: none;
 }
 
 #hr_line{
     position: absolute;
     top: 5.5rem;
-    left: 2rem;
-    width: 24.85rem;
+    right: 15%;
+    width: 70%;
 }
 
 #sign_head{
@@ -89,22 +100,40 @@ footer{
     position: absolute;
     font-size: 1.2rem;
     top: 19.5rem;
-    left: 4.5rem;
+    left: 4.8rem;
     color: white;
+}
+.abc a {
+     color: rgb(0, 153, 255);
+}
+
+.abc input:hover {
+     cursor: pointer;
 }
 
 .sub{
+    display: block;
     position: absolute;
-    width: 12rem;
+    width: 58%;
+    left: 21%;
     height: 2rem;
-    top: 25rem;
-    left: 8rem;
+    bottom: 20%;
+    margin-bottom: 1rem;
+    justify-content: center;
     border-radius: 2rem;
     background: #764bb5;
     color: white;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 1.25rem;
     border: none;
+    cursor: pointer;
+    transition: width 200ms, left 200ms;
+}
+
+.sub:active{
+    width: 74%;
+    left: 13%;
+
 }
 
 .abc div a{
@@ -112,18 +141,28 @@ footer{
     font-size: 1.2rem;
     top: 19.5rem;
     left: 17rem;
+    text-decoration: none;
 }
 
 .sub:hover{
     background: #9862ee;
+    color: black;
 }
 
 .signup{
+    display: block;
     position: absolute;
+    width: 100%;
     font-size: 1.2rem;
-    top: 30rem;
-    left: 6rem;
+    text-align: center;
+    bottom: 12%;
     color: white;
+}
+.signup a {
+     color: rgb(0, 153, 255);
+     margin-left: 4px;
+     text-decoration: none;
+
 }
 
 
