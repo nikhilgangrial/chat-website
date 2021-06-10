@@ -22,5 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path(r'account/', include('login_reg.urls')),
     path('callback/', callback),
-    path('chat', include('chat.urls'))
+    path('chat/', include('chat.urls'))
 ]

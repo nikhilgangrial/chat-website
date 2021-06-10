@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'channels',   # helps making real time chatting system nansense to be resolved
-    'login_reg',  # the one which validates login and creates new accounts
+    'login_reg',  # the one which validates login and creates new.sass accounts
     'chat',       # app that handles chatting system
 ]
 

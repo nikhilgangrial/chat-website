@@ -109,7 +109,10 @@ def login_view(request):
             except:
                 request.session.set_expiry(0)
             messages.success(request, "Logged In")
-            return HttpResponseRedirect("/account/home")
+            try:
+                return HttpResponseRedirect(request.GET['next'])
+            except:
+                return HttpResponseRedirect("/account/home")
         else:
             messages.error(request, "please Correct Below Errors")
     return render(request, "account/login.html")
