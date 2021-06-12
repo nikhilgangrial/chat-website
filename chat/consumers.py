@@ -56,7 +56,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def validate_to_chat(self, user):   # check line 45 too
-        return ChatRoom.objects.get_or_create(roomid=int(self.room_name))[0]
+        return ChatRoom.objects.get_or_create(id=int(self.room_name))[0]
         # validate if user is allowed to acess chat
 
     @database_sync_to_async
@@ -80,11 +80,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def write_message(self, message):
-        message_ = Messages.objects.create(message=message, sent_at=datetime.utcnow(), roomid=self.room_id)
+        message_ = Messages.objects.create(message=message, sent_at=datetime.utcnow(), roomid=self.room_id,
+                                           sender=self.scope['user'].userid)
         return message_
 
     # Receive message from WebSocket
-    async def receive(self, text_data):
+    async def receive(self, text_data=None, bytes_data=None):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
 
@@ -107,6 +108,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message.seen_at = datetime.utcnow()
         message.save()
 
+    async def delivery_report(self, event):
+        userid = event['userid']
+
+        if self.scope['user'].userid == userid:
+            seen_at = str(event['seen_at'])
+            await self.send(text_data=json.dumps({
+                'type_': 'delivery_report',
+                'messageid': event['messageid'],
+                'seen_at': seen_at,
+            }))
+
     # Receive message from room group
     async def chat_message(self, event):
         message = event['message']
@@ -116,14 +128,24 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # addline for user profile
 
         if not message_.seen_at and self.scope['user'].userid != userid:
-            self.message_seen(message_)
+            await self.message_seen(message_)
+            # send delivey report to sender
+            await self.channel_layer.group_send(self.room_group_name, {
+                    'type': 'delivery_report',
+                    'message': '',
+                    'userid': userid,
+                    'messageid': message_.id,
+                    'seen_at': message_.seen_at,
+                }
+            )
 
         # Send message to WebSocket
         await self.send(text_data=json.dumps({
+            'type_': 'message',
             'message': message,
             'userid': userid,
             'username': username,
-            'message_id': message_.messageid,
+            'messageid': message_.id,
             'sent_at': str(message_.sent_at),    # TypeError: Object of type datetime is not JSON serializable
             'seen_at': str(message_.seen_at),
             # add code for user profile

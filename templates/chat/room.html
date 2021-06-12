@@ -14,14 +14,20 @@
         const roomName = JSON.parse(document.getElementById('room-name').textContent);
 
         function connect() {
-            const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/' + roomName + '/');
+            if (location.protocol === "https:"){
+                var chatSocket = new WebSocket('wss://' + window.location.host + '/ws/chat/' + roomName + '/');
+            } else {
+                 var chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/' + roomName + '/');
+            }
             //wss on secure network sw on insecure
 
             chatSocket.onmessage = function (e) {
                 const data = JSON.parse(e.data);
-                document.querySelector('#chat-log').value += (data.username + ' ');
-                document.querySelector('#chat-log').value += (data.userid + '\n');
-                document.querySelector('#chat-log').value += (data.message + '\n');
+                if (data.type_ === 'message'){
+                    document.querySelector('#chat-log').value += (data.username + ' ');
+                    document.querySelector('#chat-log').value += (data.userid + '\n');
+                    document.querySelector('#chat-log').value += (data.message + '\n');
+                }
                 console.log(data);
             };
 

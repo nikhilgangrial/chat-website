@@ -9,15 +9,16 @@ class Array(dmodels.Model):
 
 
 class ChatRoom(dmodels.Model):
-    roomid = dmodels.AutoField(primary_key=True)
+    id = dmodels.AutoField(primary_key=True, null=False)
     type = dmodels.CharField(default='dm', max_length=6)
     members = dmodels.ArrayField(model_container=Array, null=True)
     blocked = dmodels.ArrayField(model_container=Array, null=True)
 
 
 class Messages(dmodels.Model):
+    id = dmodels.AutoField(primary_key=True, null=False)
     roomid = dmodels.ForeignKey(ChatRoom, on_delete=dmodels.CASCADE)
-    messageid = dmodels.BigAutoField(primary_key=True)
     message = dmodels.TextField()
+    sender = dmodels.TextField(default='')
     sent_at = dmodels.DateTimeField(auto_now_add=True)
     seen_at = dmodels.DateTimeField(default=None)
