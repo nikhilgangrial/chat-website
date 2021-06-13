@@ -29,7 +29,7 @@
             {% if messages %}
                 {% for message in messages %}
                     {% block javascript %}
-                        <script type="text/javascript">alert("{{ message }}");console.log(123)</script>
+                        <script type="text/javascript">alert("{{ message }}");</script>
                     {% endblock %}
                 {% endfor %}
             {% endif %}

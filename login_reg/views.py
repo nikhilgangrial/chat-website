@@ -145,7 +145,6 @@ def account_view(request):
 
 
 def reset_token(request):
-    context = {}
     if request.user.is_authenticated:
         redirect("/account/home/")
     if request.method == "POST":
