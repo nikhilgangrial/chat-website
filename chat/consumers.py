@@ -146,7 +146,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'userid': userid,
             'username': username,
             'messageid': message_.id,
-            'sent_at': str(message_.sent_at),    # TypeError: Object of type datetime is not JSON serializable
+            'sent_at': str(message_.sent_at),
             'seen_at': str(message_.seen_at),
             # add code for user profile
         }))

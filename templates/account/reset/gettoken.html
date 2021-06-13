@@ -7,6 +7,13 @@
 <body>
     <form method="post" action="#">
         {% csrf_token %}
+        {% if messages %}
+            {% for message in messages %}
+                {% block javascript %}
+                    <script type="text/javascript">alert('{{ message }}');console.log(123);</script>
+                {% endblock %}
+            {% endfor %}
+        {% endif %}
         <label for="email">Email: </label> <input type="email" name="email" id="email"><br><br>
         <input type="submit">
     </form>

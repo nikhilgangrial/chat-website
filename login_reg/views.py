@@ -145,6 +145,7 @@ def account_view(request):
 
 
 def reset_token(request):
+    context = {}
     if request.user.is_authenticated:
         redirect("/account/home/")
     if request.method == "POST":
@@ -156,9 +157,12 @@ def reset_token(request):
 
             host = scheme + request.get_host()
             send_reset_token(request.POST['email'], host)
-            return render(request, "account/reset/emailsent.html")
-        messages.error(request, "No account found associated to given mail")
-    return render(request, "account/reset/gettoken.html")
+            messages.success(request, f"Password Reset Instuction have been sent to {request.POST['email']}.")
+            print("message")
+            return render(request, "account/reset/gettoken.html")
+        print("message")
+        messages.error(request, "No account found associated to given email")
+    return render(request, "account/reset/gettoken.html",)
 
 
 def reset_password(request, token):
