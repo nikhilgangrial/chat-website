@@ -1,12 +1,49 @@
 const roomName = JSON.parse(document.getElementById('room-name').textContent);
 let messages = [];
+let self = ""
 
 
 // checks if messages dows not exist in existing messages and appends it in chat log
-function update_messages(message, i){
+function closest_message(key){
+    const closest = messages.reduce((a, b) => {
+        return Math.abs(b - key) < Math.abs(a - key) ? b : a;
+    })
+    return closest;
+}
+
+function update_messages(message, i=0){
     if (messages.indexOf(message.id) === -1){
-        let log = document.getElementById("chat-log");
-        log.value = message.sender + " " + message.senderid + "\n" + message.message + "\n" + log.value;
+
+        let classes = "message ";
+        if (message.senderid === self){
+            classes += "self ";
+        }else{
+            classes += "other ";
+        }
+        let id_ = "mess_" + message.id;
+
+        if (messages.length === 0){
+            document.getElementById("chat-log").innerHTML += "<div class='" + classes +"' id='" + id_ + "'>" + message.sender + " " + message.senderid + "<br>" + message.message + "</div>";
+        } else {
+            let min = Math.min.apply(null, messages);
+            let max = Math.max.apply(null, messages);
+            if (message.id > max) {
+                let mess = document.getElementById("mess_"+max);
+                mess.insertAdjacentHTML("afterend", "<div class='" + classes +"' id='" + id_ + "'>" + message.sender + " " + message.senderid + "<br>" + message.message + "</div>")
+            } else if (message.id < min) {
+                let mess = document.getElementById("mess_"+min);
+                mess.insertAdjacentHTML("beforebegin", "<div class='" + classes +"' id='" + id_ + "'>" + message.sender + " " + message.senderid + "<br>" + message.message + "</div>")
+            } else{
+                let closest = closest_message(message.id);
+                if (closest > message.id){
+                    let mess = document.getElementById("mess_"+closest);
+                    mess.insertAdjacentHTML("beforebegin", "<div class='" + classes +"' id='" + id_ + "'>" + message.sender + " " + message.senderid + "<br>" + message.message + "</div>")
+                } else{
+                    let mess = document.getElementById("mess_"+closest);
+                    mess.insertAdjacentHTML("afterend", "<div class='" + classes +"' id='" + id_ + "'>" + message.sender + " " + message.senderid + "<br>" + message.message + "</div>")
+                }
+            }
+        }
         messages.push(message.id);
     }
 }
@@ -24,6 +61,7 @@ function get_messages(from=0){
         success: function(response)
         {
             console.log(response);
+            self = response['self'];
             response['messages'].forEach(update_messages);
             }
         }
@@ -51,9 +89,7 @@ function connect() {
     chatSocket.onmessage = function (e) {
         const data = JSON.parse(e.data);
         if (data.type_ === 'message'){
-            document.querySelector('#chat-log').value += (data.username + ' ');
-            document.querySelector('#chat-log').value += (data.userid + '\n');
-            document.querySelector('#chat-log').value += (data.message + '\n');
+            update_messages({'sender': data.username, 'senderid': data.userid, 'message': data.message, 'id': data.messageid});
         }
         console.log(data);
     };

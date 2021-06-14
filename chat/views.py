@@ -20,7 +20,7 @@ def room(request, room_name):
             if status == 400:     # user has no acess to chat
                 return HttpResponse(status=400)
 
-            return JsonResponse({"messages": messages, "status": status})
+            return JsonResponse({"messages": messages, "status": status, "self": request.user.userid})
         except:
             return render(request, 'chat/room.html', {'room_name': room_name})
     return render(request, 'chat/room.html', {'room_name': room_name})
