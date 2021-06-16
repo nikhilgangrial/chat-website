@@ -1,6 +1,8 @@
 from login_reg.models import Users
 from chat.models import ChatRoom, Messages
 from datetime import datetime
+from os import path
+from libs.imgur_python import Imgur
 
 
 def convert_message(q, user):
@@ -46,3 +48,23 @@ def get_messages(user, room, start):
     else:
         q = Messages.objects.filter(roomid=src, id__lt=start).order_by("-id")[:51]
     return convert_message(q, user)
+
+
+file = path.realpath('./img.gif')
+title = 'Untitled'
+album = None
+disable_audio = 0
+imgur_client = Imgur({'client_id': 'c08f2a8d367a13c',
+                      'client_secret': '342c02d21ce4dc76ef1538daaf5099cf80925366',
+                      'access_token': '4b65ba39c8d6db6b5cb5865dd03803529de38e90',
+                      'expires_in': 315360000,
+                      'expires_at': 1907657196.758331,
+                      'token_type': 'bearer',
+                      'refresh_token': 'b2caaaab2d3beff57b63810accc4b12da7f98c46'
+                      })
+
+
+def upload_image(file, f=None):
+    imgur_client.access_token()
+    response = imgur_client.image_upload(file, title, "",  album, disable_audio, f=None)
+    print(response)

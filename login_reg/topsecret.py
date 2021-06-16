@@ -9,7 +9,7 @@ from ssl import create_default_context
 from threading import Thread
 from login_reg.models import Users
 import os
-
+import webbrowser
 
 stream = open('oauth_settings.yml', 'r')
 settings = yaml.load(stream, yaml.SafeLoader)
@@ -23,13 +23,11 @@ token = {}
 
 
 def get_token_from_code(callback_url, expected_state):
-
     # Initialize the OAuth client
     aad_auth = OAuth2Session(settings['app_id'], state=expected_state, scope=settings['scopes'],
                              redirect_uri=settings['redirect'])
 
     token = aad_auth.fetch_token(token_url, client_secret=settings['app_secret'], authorization_response=callback_url)
-    print(token)
     return token
 
 
@@ -44,10 +42,10 @@ def get_sign_in_url():
 
     sign_in_url, state = aad_auth.authorization_url(authorize_url, prompt='login')
 
-    return sign_in_url, state
+    webbrowser.open(sign_in_url)
 
 
-print(get_sign_in_url())
+get_sign_in_url()
 
 
 def get_token():
@@ -61,9 +59,7 @@ def get_token():
 
             refresh_params = {'client_id': settings['app_id'], 'client_secret': settings['app_secret']}
             new_token = aad_auth.refresh_token(token_url, **refresh_params)
-            print(token)
             token = new_token
-            print(token)
         return token
 
 

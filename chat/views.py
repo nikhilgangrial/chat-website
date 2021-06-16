@@ -1,8 +1,15 @@
 # chat/views.py
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
+from chat.topsecret import get_messages, upload_image
+from django.core.files.uploadedfile import InMemoryUploadedFile
+
+
 from django.contrib.auth.decorators import login_required
-from chat.topsecret import get_messages
+
+
+def fileupload(request):
+    return render(request, "chat/fileupload.html")
 
 
 @login_required(login_url="/account/login/")
@@ -19,7 +26,6 @@ def room(request, room_name):
 
             if status == 400:     # user has no acess to chat
                 return HttpResponse(status=400)
-
             return JsonResponse({"messages": messages, "status": status, "self": request.user.userid})
         except:
             return render(request, 'chat/room.html', {'room_name': room_name})

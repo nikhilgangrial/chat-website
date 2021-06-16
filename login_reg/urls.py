@@ -1,6 +1,6 @@
 from django.urls import path
 from django.conf.urls import url
-from .views import home, login_view, logout_view, account_view, registration_view, reset_token, reset_password
+from .views import home, login_view, logout_view, account_view, registration_view, reset_token, reset_password, callback
 
 
 urlpatterns = [

@@ -14,6 +14,7 @@ body{
     opacity:0;
     background: transparent;
 }
+
 ::-webkit-scrollbar:hover{
      opacity: 1;
 }
