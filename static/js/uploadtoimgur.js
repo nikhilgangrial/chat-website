@@ -2,9 +2,16 @@
 document.getElementById("upload_button").setAttribute("onclick", "postToImgur()");
 
 function postToImgur() {
-    var formdata = new FormData();
-    console.log($("input[type=file]"));
-    formdata.append("image", $("input[type=file]").get(0).files[0]);
+    var files = $("input[type=file]").get(0).files;
+    console.log(files);
+    for (var i = 0; i < files.length; i++) {
+        upload(files[i]);
+    }
+}
+
+function upload(file){
+    let formdata = new FormData();
+    formdata.append(file.type.split('/')[0], file);
     $.ajax({
         url: "https://api.imgur.com/3/image",
         type: "POST",

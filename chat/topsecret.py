@@ -66,5 +66,5 @@ imgur_client = Imgur({'client_id': 'c08f2a8d367a13c',
 
 def upload_image(file, f=None):
     imgur_client.access_token()
-    response = imgur_client.image_upload(file, title, "",  album, disable_audio, f=None)
+    response = imgur_client.image_upload(file, title, "",  album, disable_audio, f=f)
     print(response)

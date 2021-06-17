@@ -1,8 +1,7 @@
 # chat/views.py
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
-from chat.topsecret import get_messages, upload_image
-from django.core.files.uploadedfile import InMemoryUploadedFile
+from chat.topsecret import get_messages
 
 
 from django.contrib.auth.decorators import login_required
