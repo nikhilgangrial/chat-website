@@ -21,9 +21,14 @@ function upload(file){
         },
         data: formdata,
         success: function(response) {
-        console.log(response);
-        var photo = response.data.link;
-        var photo_hash = response.data.deletehash;
+            console.log(response);
+            var photo = response.data.link;
+            var photo_hash = response.data.deletehash;
+            if (response.data.type.split('/')[0] == 'image') {
+                document.body.innerHTML = "<img src='" + photo + "'>\n" + document.body.innerHTML;
+            } else{
+                document.body.innerHTML = "<video src='" + photo + "'>\n" + document.body.innerHTML;
+            }
         },
         cache: false,
         contentType: false,
