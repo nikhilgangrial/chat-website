@@ -136,8 +136,8 @@ function upload_to_server(formdata){
         success: function (response){
             let jsonObj = JSON.parse(response)
             console.log(jsonObj);
-            let video = jsonObj.response.data.link
-            document.body.innerHTML = "<video src='" + video + "'></video><br>" + document.body.innerHTML;
+            let video = jsonObj.response.data
+            document.body.innerHTML = "<video loop controls><source src='" + video.link + "' type='" + video.type +"'></video><br>" + document.body.innerHTML;
         },
         error: function (response){
             console.log(response);
