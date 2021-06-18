@@ -26,15 +26,6 @@ class FileCheck:
             }
         return None
 
-    def check_(self, f):
-        info = fleep.get(f.read(128))
-        if info.mime[0] in self.file_types.keys():
-            return {
-                'file_type': self.file_types[info.mime[0]],
-                'type': 'file'
-            }
-        return None
-
     @staticmethod
     def __file_types():
         """Set the file types"""

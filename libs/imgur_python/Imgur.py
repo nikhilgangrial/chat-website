@@ -56,7 +56,7 @@ class Imgur:
         """Get information about an image"""
         return self.image.image(image_id)
 
-    def image_upload(self, filename, title, description, album=None, disable_audio=1, f=None):
+    def image_upload(self, filename, title, description, album=None, disable_audio=1, f=None, _type=None):
         """Upload a new image or video"""
         files = None
         payload = {
@@ -89,20 +89,17 @@ class Imgur:
                 else:
                     raise TypeError("This is not accepted file format")
         elif f:
-            file_check = FileCheck()
-            file_info = file_check.check_(f)
-            if file_info is not None:
-                payload['type'] = 'file'
-                if file_info['file_type'] == 'image':
-                    files = {
-                        'image': f
-                    }
+            payload['type'] = 'file'
+            if _type == 'image':
+                files = {
+                    'image': f
+                }
 
-                elif file_info['file_type'] == 'video':
-                    files = {
-                        'video': f
-                    }
-                    payload['disable_audio'] = disable_audio
+            elif _type == 'video':
+                files = {
+                    'video': f
+                }
+                payload['disable_audio'] = disable_audio
             else:
                 raise TypeError("This is not accepted file format")
         return self.image.upload(payload, files)

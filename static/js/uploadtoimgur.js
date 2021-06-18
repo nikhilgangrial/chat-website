@@ -1,20 +1,20 @@
 window.uploadPhotos = function(url){
     // Read in file
     for (let ii=0; ii<event.target.files.length; ii++) {
-        var file = event.target.files[ii];
+        let file = event.target.files[ii];
 
         // Ensure it's an image
         if (file.type.match(/image.*/) && file.type !== 'image/gif') {
             console.log('An image has been loaded');
 
             // Load the image
-            var reader = new FileReader();
+            let reader = new FileReader();
             reader.onload = function (readerEvent) {
-                var image = new Image();
+                let image = new Image();
                 image.onload = function (imageEvent) {
 
                     // Resize the image
-                    var canvas = document.createElement('canvas'),
+                    let canvas = document.createElement('canvas'),
                         max_size = 1280,// TODO : pull max size from a site config
                         width = image.width,
                         height = image.height;
@@ -32,8 +32,8 @@ window.uploadPhotos = function(url){
                     canvas.width = width;
                     canvas.height = height;
                     canvas.getContext('2d').drawImage(image, 0, 0, width, height);
-                    var dataUrl = canvas.toDataURL(file.type);
-                    var resizedImage = dataURLToBlob(dataUrl);
+                    let dataUrl = canvas.toDataURL(file.type);
+                    let resizedImage = dataURLToBlob(dataUrl);
                     $.event.trigger({
                         type: "imageResized",
                         blob: resizedImage,
@@ -56,23 +56,23 @@ window.uploadPhotos = function(url){
 
 /* Utility function to convert a canvas to a BLOB */
 var dataURLToBlob = function(dataURL) {
-    var BASE64_MARKER = ';base64,';
+    let BASE64_MARKER = ';base64,';
     if (dataURL.indexOf(BASE64_MARKER) == -1) {
-        var parts = dataURL.split(',');
-        var contentType = parts[0].split(':')[1];
-        var raw = parts[1];
+        let parts = dataURL.split(',');
+        let contentType = parts[0].split(':')[1];
+        let raw = parts[1];
 
         return new Blob([raw], {type: contentType});
     }
 
-    var parts = dataURL.split(BASE64_MARKER);
-    var contentType = parts[0].split(':')[1];
-    var raw = window.atob(parts[1]);
-    var rawLength = raw.length;
+    let parts = dataURL.split(BASE64_MARKER);
+    let contentType = parts[0].split(':')[1];
+    let raw = window.atob(parts[1]);
+    let rawLength = raw.length;
 
-    var uInt8Array = new Uint8Array(rawLength);
+    let uInt8Array = new Uint8Array(rawLength);
 
-    for (var i = 0; i < rawLength; ++i) {
+    for (let i = 0; i < rawLength; ++i) {
         uInt8Array[i] = raw.charCodeAt(i);
     }
 
@@ -82,42 +82,65 @@ var dataURLToBlob = function(dataURL) {
 
 /* Handle image resized events */
 $(document).on("imageResized", function (event) {
-    var data = new FormData();
-    data.append('type', 'file');
-    data.append('disable_audio', '0');
-    //data.append('description', "");
-    data.append('title', 'hmmm');
+    let formdata = new FormData();
+    formdata.append('disable_audio', '0');
+    formdata.append('title', "");
+    formdata.append('description', "");
     if (event.blob && event.url) {
-        data.append('image', event.blob);
+        formdata.append('type', 'file');
+        formdata.append('image', event.blob);
     }
     else {
-        data.append(event.file.type.split('/')[0], event.file);
+        console.log(event.file.type.split('/')[0])
+        formdata.append('type', 'file');
+        formdata.append(event.file.type.split('/')[0], event.file);
+
+        if (event.file.type.split('/')[0] === "video"){
+            upload_to_server(formdata);
+            return;
+        }
+
     }
+    console.log("uploading");
     $.ajax({
-        url: event.url,
-        data: data,
-        type: 'POST',
-        cache: false,
-        contentType: false,
-        processData: false,
-        authorization: {
-            "Token": '4b65ba39c8d6db6b5cb5865dd03803529de38e90'
+        url: "https://api.imgur.com/3/image",
+        type: "POST",
+        mimeType: "multipart/form-data",
+        'headers': {
+            "Authorization": "Client-ID c08f2a8d367a13c",
         },
-        headers: {
-            "Authorization": "Client_ID c08f2a8d367a13c",
-            },
+        crossDomain: true,
+        dataType: 'json',
+        data: formdata,
         success: function(response){
             console.log(response);
-            var photo = response.data.link;
-            var photo_hash = response.data.deletehash;
-            if (response.data.type.split('/')[0] === 'image') {
-                document.body.innerHTML = "<img src='" + photo + "'>\n" + document.body.innerHTML;
-            } else{
-                document.body.innerHTML = "<video src='" + photo + "'>\n" + document.body.innerHTML;
-            }
+            let photo = response.data.link;
+            document.body.innerHTML = "<img src='" + photo + "'><br>" + document.body.innerHTML;
         },
         error: function (res){
             console.log(res);
-        }
+        },
+        'contentType': false,
+        'processData': false
     });
 });
+
+
+function upload_to_server(formdata){
+    $.ajax({
+        method: "POST",
+        data: formdata,
+        mimeType: "multipart/form-data",
+        contentType: false,
+        processData: false,
+        success: function (response){
+            let jsonObj = JSON.parse(response)
+            console.log(jsonObj);
+            let video = jsonObj.response.data.link
+            document.body.innerHTML = "<video src='" + video + "'></video><br>" + document.body.innerHTML;
+        },
+        error: function (response){
+            console.log(response);
+        }
+    });
+}

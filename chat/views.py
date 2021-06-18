@@ -1,13 +1,22 @@
 # chat/views.py
+import json
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
-from chat.topsecret import get_messages
+from chat.topsecret import get_messages, upload_image
 
 
 from django.contrib.auth.decorators import login_required
 
 
 def fileupload(request):
+    if request.method == "POST":
+        print(request.FILES.getlist('video'))
+        for i in request.FILES.getlist('video'):
+            temp: dict = upload_image(str(i), i, 'video')
+            print("temp:", temp)
+            print(type(temp))
+            return JsonResponse(temp)
+
     return render(request, "chat/fileupload.html")
 
 
