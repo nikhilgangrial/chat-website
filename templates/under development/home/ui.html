@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="ui.css">
+    <title>ui</title>
+</head>
+<body>
+    <div class="parent_container">
+    <header class="navbar">
+        <div> CHATTERBOX</div>
+    </header>
+    <div id="alignC">
+        <div class="searchbar">
+            <input type="text" placeholder=" Search">
+            <button>
+                <svg focusable="false" viewBox="0 0 24 24">
+                    <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="feed">
+            <div class="post">
+                <div class="post_creator">
+                    <img class="post_creator_av" src="C:\Users\nikhi\Downloads\tenor_2.gif">
+                    <div class="post_creator_name"> nikhilgangrial</div>
+                    <div class="post_creator_department">FE COMP B</div>
+                    <div class="post_created_at">Today 12:00 AM</div>
+                    <hr>
+                </div>
+                <div class="post_container_master">
+                    <img class="post_container_prev hidden" src="arrow.svg">
+                    <img class="post_container_next" src="arrow.svg">
+                    <div class="post_container" cur=0>
+                        <img class="post_container_post visible" src="C:\Users\nikhi\Downloads\img.gif">
+                        <video class="post_container_post hidden" loop>
+                            <source src="C:\Users\nikhi\Downloads\vid.mp4">
+                        </video>
+                        <img class="post_container_post hidden" src="C:\Users\nikhi\Downloads\simmi.png">
+                    </div>
+                </div>
+                <div class="react_buttons">
+                    <button class="react_buttons_button" onclick="like_post(event)">
+                        <img src="like.svg">
+                    </button>
+                    <button class="react_buttons_button">
+                        <img src="comment.svg">
+                    </button>
+                </div>
+                <div class="post_caption">Hello There this is a checking lkajshdkfjsdkfjh slnasdnkfnkhsadf fuck you</div>
+                <div class="post_comments">
+                    <div class="post_comments_comment">
+                        <div class="post_comments_comment_author">
+                            <img src="C:\Users\nikhi\Downloads\simmi.png">
+                            <div>ThisIsn't Me</div>
+                            <span>Today 12:00 AM</span>
+                            <hr>
+                        </div>
+                        <div class="post_comments_comment_text">Nansense</div>
+                    </div>
+                    <div class="post_comments_comment">
+                        <div class="post_comments_comment_author">
+                            <img src="C:\Users\nikhi\Downloads\tenor_2.gif">
+                            <div>nikhilgangrial</div>
+                            <span>Today 12:00 AM</span>
+                            <hr>
+                        </div>
+                        <div class="post_comments_comment_text">Nansense hell onanaskdnkajshd jkasd hakjdh asdh kjsdh ajskldh adh ajshd jahsd klashd a jkhas dkjlha sjkldh asjkdl ghajkdh asjkldh akljsdh aldjkh akljdhas dkasjhd.</div>
+                    </div>
+                </div>
+                <div class="post_user_comment">Your comment here</div>
+            </div>
+            <div class="post">
+                <div class="post_creator">
+                    <img class="post_creator_av" src="C:\Users\nikhi\Downloads\tenor_2.gif"></img>
+                    <div class="post_creator_name"> nikhilgangrial</div>
+                    <div class="post_creator_department">FE COMP B</div>
+                    <div class="post_created_at">Today 12:00 AM</div>
+                    <hr>
+                </div>
+                <div class="post_container_master">
+                    <img class="post_container_prev hidden" src="arrow.svg">
+                    <img class="post_container_next" src="arrow.svg">
+                    <div class="post_container" cur="0">
+                        <img class="post_container_post visible" src="C:\Users\nikhi\Downloads\tenor_2.gif"></img>
+                        <img class="post_container_post hidden" src="C:\Users\nikhi\Downloads\simmi.png">
+                    </div>
+                </div>
+                <div class="react_buttons">
+                    <button class="react_buttons_button" onclick="like_post(event)">
+                        <img src="like.svg">
+                    </button>
+                    <button class="react_buttons_button">
+                        <img src="comment.svg">
+                    </button>
+                </div>
+                <div class="post_caption">CAPTION</div>
+                <div class="post_comments">No Comments</div>
+                <div class="post_user_comment">Your comment here</div>
+            </div>
+            <div class="post">
+                <div class="post_creator">
+                    <img class="post_creator_av" src="C:\Users\nikhi\Downloads\tenor_2.gif">
+                    <div class="post_creator_name"> nikhilgangrial</div>
+                    <div class="post_creator_department">FE COMP B</div>
+                    <div class="post_created_at">Today 12:00 AM</div>
+                    <hr>
+                </div>
+                <div class="post_container_master">
+                    <img class="post_container_prev" src="arrow.svg">
+                    <div class="post_container" cur="0">
+                        <img class="post_container_post" src="C:\Users\nikhi\Downloads\k.png">
+                    </div>
+                </div>
+                <div class="react_buttons">
+                    <button class="react_buttons_button" onclick="like_post(event)">
+                        <img src="like.svg">
+                    </button>
+                    <button class="react_buttons_button">
+                        <img src="comment.svg">
+                    </button>
+                </div>
+                <div class="post_caption">CAPTION</div>
+                <div class="post_comments">No Comments</div>
+                <div class="post_user_comment">Your comment here</div>
+            </div>
+            <div class="post">
+                <div class="post_creator">
+                    <img class="post_creator_av" src="C:\Users\nikhi\Downloads\tenor_2.gif"></img>
+                    <div class="post_creator_name"> nikhilgangrial</div>
+                    <div class="post_creator_department">FE COMP B</div>
+                    <div class="post_created_at">Today 12:00 AM</div>
+                    <hr>
+                </div>
+                <div class="post_container_master">
+                    <div class="post_container" cur="0">
+                        <video class="post_container_post" controls loop src="C:\Users\nikhi\Downloads\Video\Pokemon (2019) Episode 69 English Subbed - Kickassanime [KAA].mp4"></video>
+                    </div>
+                </div>
+                <div class="react_buttons">
+                    <button class="react_buttons_button" onclick="like_post(event)">
+                        <img src="like.svg">
+                    </button>
+                    <button class="react_buttons_button">
+                        <img src="comment.svg">
+                    </button>
+                </div>
+                <div class="post_caption">CAPTION</div>
+                <div class="post_comments">No Comments</div>
+                <div class="post_user_comment">Your comment here</div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <footer>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script type="text/javascript" src="http://code.jquery.com/mobile/1.5.0-rc1/jquery.mobile-1.5.0-rc1.min.js"></script>
+        <script type="text/javascript" src="ui.js"></script>
+    </footer>
+
+</body>
+</html>

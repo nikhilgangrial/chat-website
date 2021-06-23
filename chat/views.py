@@ -1,5 +1,4 @@
 # chat/views.py
-import json
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from chat.topsecret import get_messages, upload_image

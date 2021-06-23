@@ -1,7 +1,6 @@
 from login_reg.models import Users
 from chat.models import ChatRoom, Messages
 from datetime import datetime
-from os import path
 from libs.imgur_python import Imgur
 
 
@@ -50,7 +49,6 @@ def get_messages(user, room, start):
     return convert_message(q, user)
 
 
-file = path.realpath('./img.gif')
 title = 'Untitled'
 album = None
 disable_audio = 0

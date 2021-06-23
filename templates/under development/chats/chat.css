@@ -1,0 +1,111 @@
+*{
+    margin: 0;
+    box-sizing: border-box;
+    color: white;
+    font-size: max(1.15vw, 2.3vh);
+}
+body{
+    background-color: #000000;
+    overflow: hidden;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+::-webkit-scrollbar{
+    width: 0.5vw;
+    opacity:0;
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb{
+    border-radius: 0.7vmin;
+}
+.friends:hover::-webkit-scrollbar-thumb{
+     background: #161616;
+}
+
+
+#alignL{
+    width: 20vw;
+    height:100vh ;
+}
+
+.friends{
+    display: flex;
+    flex-flow: column;
+    block-progression: tb;
+    position: relative;
+    float: right;
+    z-index: 6;
+    overflow-y: scroll;
+    touch-action: manipulation;
+    overflow-x: hidden;
+    width: 85%;
+    background-color: #222225;
+    height: 88.648148148148148148148148148149vh;
+    box-shadow: 0.5vmin 0.5vmin 0.33vmin 0.33vmin rgba(35, 36, 39, 0.4);
+}
+
+.friends::-webkit-scrollbar{
+    width: 0.4vw;
+}
+
+.friends_head{
+    order: 1;
+    float: top;
+    width: 96%;
+    margin: 2% 2% 0 2%;
+    background: #303337;
+    border-radius: 0.25vw;
+    height: 4vh;
+
+}
+
+.friends_chat hr{
+    grid-row: 6;
+    grid-column: 1/5;
+    border: 1px;
+    width: 80%;
+    border-top: 1px #444447 solid;
+    margin: auto;
+    vertical-align: bottom;
+}
+
+.friends_photo{
+    grid-row: 2/3;
+    grid-column: 2;
+    user-select: none;
+    -webkit-user-drag: none;
+    border-radius: 50%;
+    height: 2.9504132231404956vw;
+    width: 2.9504132231404956vw;
+}
+
+.friends_username{
+    font-size: 1.35vw;
+    grid-row: 2;
+    grid-column: 4;
+    color: #cccccc;
+}
+
+.friends_usermessage{
+    font-size: 1vw;
+    font-weight: lighter;
+    grid-row: 4;
+    grid-column: 4;
+    color: #949191;
+}
+
+
+.friends_chat{
+    order: 100000;
+    display: grid;
+    grid-template-columns: 2% 2.9504132231404956vw 5% 1fr 2%;
+    grid-template-rows: 0.5vw 1.6093163035311795vw 0.26821938392186323vw 1.072877535687453vw 0.5vw;
+    grid-gap: 0;
+    background-color: transparent;
+    width: 100%;
+    height: auto;
+}
