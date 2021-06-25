@@ -97,13 +97,11 @@ function firstcall(){
             startTimer();
         },
         error: function (response){
-            console.log(response);
             alert("Enter a valid collage id.");
         }
     })
 }
 
 function secondcall(){
-    console.log("called second");
     document.getElementById("main form").submit();
 }

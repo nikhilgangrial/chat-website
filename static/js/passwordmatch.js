@@ -26,7 +26,8 @@ function checkstrength() {
 }
 
 function submit_form(){
-    if (document.getElementById("strength").innerHTML !== '<span style="color:green">Strong!</span>'){
+    if (!(document.getElementById("strength").innerHTML === '<span style="color:green">Strong!</span>' ||
+        document.getElementById("strength").innerHTML === '<span style="color:orange">Medium!</span>')){
         alert("Set a Strong Password");
         return ;
     }

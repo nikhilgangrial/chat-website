@@ -114,7 +114,7 @@ def login_view(request):
             except:
                 return HttpResponseRedirect("/account/home")
         else:
-            messages.error(request, "please Correct Below Errors")
+            messages.error(request, "Incorrect Password/ Email")
     return render(request, "account/login.html")
 
 
