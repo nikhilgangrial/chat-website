@@ -2,29 +2,16 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>login page</title>
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani&display=swap" rel="stylesheet">
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Untitled</title>
+    <link rel="stylesheet" href="../../static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../static/css/Login-Form-Dark.css">
 </head>
 
 <body>
-
-    <div class="img2" id="fly">
-        <img src="https://lh3.googleusercontent.com/9hzkHoOTCWkCmSlJeFT1vV0zWbK3O28GrtwDQ7L4uPVY3nrwGhd0PCnIRmztoVsjv6sOVi6W_kb9xmmrOgwQkQAjEWBXWkeFFABZq8WZ0S0lF7oQkqnBxepH2W8wY64vuDwsPkY5=w2400?source=screenshot.guru%22%3E" alt=".">
-    </div>
-    <div class="img1" id=ppl">
-        <img src="https://lh3.googleusercontent.com/aDFu3Y3xKS5bpZZReUD5B8lNUBMcMKAsYt3a003W9cK65Jnqbkd4vrTZ_QUjV7ExGWWSpa8xeYvsYg-AEsGV2H1gL8hpX34RT1MKOxE5KpCHj89tX_Dxeow0AkGzZ12Cn_u2HFMV=w2400" alt=".">
-    </div>
-
-    <div class="container">
-        <h2 id="sign_head">SIGN IN</h2>
-        <hr id="hr_line">
-        <form action="#" method="POST">
+    <section class="login-dark">
+        <form method="post" id="main_form" action="#">
             {% csrf_token %}
             {% if messages %}
                 {% for message in messages %}
@@ -33,35 +20,15 @@
                     {% endblock %}
                 {% endfor %}
             {% endif %}
-            <div class="login_detailsname">
-                <div class="abc"> <input type="email" name="email" placeholder="Email"> </div>
-            </div>
-            <div class="login_detailspass">
-                <div class="abc"><input type="password" name="password" placeholder="Password"></div>
-            </div>
-            <div class="abc">
-                <div>
-                    <input type="checkbox" id="remember me" name="remember me">
-                    <label for="remember me">Remember me</label>
-                </div>
-                <div>
-                    <a href="{% url 'reset' %}">Forgot Password?</a>
-                </div>
-            </div>
-            <button class="sub" type="submit">SUBMIT</button>
-            <div class="signup">Don't have an account?<a href="{% url 'register' %}"> Sign up </a></div>
+            <h2 class="sr-only">Login Form</h2>
+            <div class="illustration"><img src="../../static/img/aero.png"></div>
+            <div class="form-group"><input class="form-control" type="email" name="email" placeholder="Email"></div>
+            <div class="form-group"><input class="form-control" type="password" name="password" placeholder="Password"></div>
+            <div class="form-group form-check"><input class="form-check-input" id="remember me" type="checkbox" name="remember me" placeholder="Rember Me"><label class="form-check-label" for="remember me">Remember Me</label></div>
+            <div class="form-group"><button class="btn btn-primary btn-block" type="submit">Log In</button></div><i class="forgot"><a href="{% url 'reset' %}">Forgot your password?</a> or <a href="{% url 'register' %}">Sign up</a></i>
         </form>
-
-
-    </div>
-    <script type="text/javascript">
-        var r = document.querySelector("body");
-        var rs = getComputedStyle(r);
-        console.log(rs.getPropertyValue("width"));
-    </script>
-<footer>
-    <img id="ppl down" src="https://lh3.googleusercontent.com/aDFu3Y3xKS5bpZZReUD5B8lNUBMcMKAsYt3a003W9cK65Jnqbkd4vrTZ_QUjV7ExGWWSpa8xeYvsYg-AEsGV2H1gL8hpX34RT1MKOxE5KpCHj89tX_Dxeow0AkGzZ12Cn_u2HFMV=w2400" alt=".">
-</footer>
+    </section>
+    <script src="../../static/js/jquery.min.js"></script>
+    <script src="../../static/js/bootstrap.min.js"></script>
 </body>
-
 </html>

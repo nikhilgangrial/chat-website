@@ -3,46 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <title>Singn Up</title>
+    <link rel="stylesheet" href="../../static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../static/css/Login-Form-Dark.css">
 </head>
 <body>
-<div class="container">
+<section class="login-dark">
     <form id="main form" method="post" action="#">
         {% csrf_token %}
-        <div>
-            <label for="usename">Name: </label>
-            <input type="text" name="username" id="username"><br><br>
-        </div>
-        <div>
-            <label for="email">Email: </label>
-            <input type="email" name="email" id="email"><br><br>
-        </div>
-        <div>
-            <label for="password1">Password: </label>
-            <input type="password" name="password1" id="password1" onkeyup="checkstrength()"><br>
-            <div id="strength"></div><br>
-        </div>
-        <div>
-            <label for="password2">Confirm Password: </label>
-            <input type="password" name="password2" id="password2" onkeyup="matchpassword()"><br>
-            <div id="match"></div><br>
-        </div>
+        <div class="form-group"> <input class="form-control" type="text" name="username" id="username" placeholder="Username"></div>
+        <div class="form-group"> <input class="form-control" type="email" name="email" id="email" placeholder="Email"></div>
+        <div class="form-group"> <input class="form-control" type="password" name="password1" id="password1" placeholder="Password" onkeyup="checkstrength()"><i class="form-control-sm" id="strength"></i></div>
+        <div class="form-group"><input class="form-control" type="password" name="password2" id="password2" placeholder="Confirm Password" onkeyup="matchpassword()"><i class="form-control-sm" id="match"></i></div>
         <div id="after otp" hidden>
-            <div>
-                <label for="otp">Otp: </label>
-                <input type="text" name="otp" id="otp"><br><br>
-            </div>
-            <div id="timer">Timer</div>
-            <input type="button" value="Resend Otp" id="resend" disabled onclick="firstcall()"><br>
+            <div class="form-group"><input class="form-control" type="text" name="otp" id="otp" placeholder="OTP"></div>
+            <div class="form-group"><input class="btn btn-secondary btn-block" type="button" value="Resend Otp" id="resend" disabled onclick="firstcall()"></div>
         </div>
-        <input type="button" id="sub" value="submit" onclick="firstcall()">
-        Already have account <a href="{% url 'login' %}">Sign in</a>
+        <div class="form-group"><input class="btn btn-primary btn-block" type="button" id="sub" value="Submit" onclick="firstcall()"></div>
+        <i class="forgot">Already have account <a href="{% url 'login' %}">Sign in</a></i>
     </form>
-</div>
+</section>
 <footer>
-    {% load static %}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script type="text/javascript" src="{% static 'js/preajax.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/signup.js' %}"></script>
+    <script src="../../static/js/jquery.min.js"></script>
+    <script src="../../static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../static/js/preajax.js"></script>
+    <script type="text/javascript" src="../../static/js/signup.js"></script>
 </footer>
 </body>
 </html>

@@ -205,17 +205,29 @@ html {
     margin: auto 0 auto auto;
 }
 
+.post_container_play {
+    grid-row: 1;
+    grid-column: 1;
+    z-index: 5;
+    height: 4vw;
+    width: auto;
+    padding: 0.5vw;
+    margin: auto;
+    filter: invert();
+}
+
 .post_container{
     width: 41vw;
-    height: auto;
+    min-height: 41vw;
     grid-row: 1;
     grid-column: 1;
     display: grid;
     grid-template-columns: repeat(auto-fill, 41vw);
+    grid-template-rows: repeat(auto-fit, 41vw);
     overflow-x: hidden;
     touch-action: manipulation;
     user-select: none;
-    }
+}
 
 .post_container::-webkit-scrollbar{
     width: 0;
@@ -223,10 +235,8 @@ html {
 }
 
 .post_container_post{
-    max-height: 85vh;
-    width: 41vw;
-    height: auto;
     grid-row: 1;
+    margin: auto;
     -webkit-user-drag: none;
     user-select: none;
 }
