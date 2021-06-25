@@ -21,9 +21,9 @@
                 {% endfor %}
             {% endif %}
             <h2 class="sr-only">Login Form</h2>
-            <div class="illustration"><img src="../../static/img/aero.png"></div>
-            <div class="form-group"><input class="form-control" type="email" name="email" placeholder="Email"></div>
-            <div class="form-group"><input class="form-control" type="password" name="password" placeholder="Password"></div>
+            <div class="illustration"><img src="../../static/img/aero.png" alt="."></div>
+            <div class="form-group"><input class="form-control" type="email" name="email" autocomplete="email" placeholder="Email"></div>
+            <div class="form-group"><input class="form-control" type="password" name="password" autocomplete="current-password" placeholder="Password"></div>
             <div class="form-group form-check"><input class="form-check-input" id="remember me" type="checkbox" name="remember me" placeholder="Rember Me"><label class="form-check-label" for="remember me">Remember Me</label></div>
             <div class="form-group"><button class="btn btn-primary btn-block" type="submit">Log In</button></div><i class="forgot"><a href="{% url 'reset' %}">Forgot your password?</a> or <a href="{% url 'register' %}">Sign up</a></i>
         </form>

@@ -77,7 +77,7 @@ def registration_view(request):
             if request.POST['email'][-15:] == "@aitpune.edu.in":
                 if not check_user(request.POST['email']):
                     sendotp(request.POST['email'])
-                    return HttpResponse(f"OTP Sent on {request.POST['email']}", status=200)
+                    return HttpResponse(f"{request.POST['email']}", status=200)
                 return HttpResponse("An account already exixts with given email", status=400)
             return HttpResponse("Enter a Valid collage ID", status=400)
     return render(request, "account/signup.html")

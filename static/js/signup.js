@@ -1,6 +1,6 @@
 
 function startTimer() {
-  let presentTime = document.getElementById('timer').innerText;
+  let presentTime = document.getElementById('resend').value;
   let timeArray = presentTime.split(/[:]+/);
   let m = timeArray[0];
   let s = checkSecond((timeArray[1] - 1));
@@ -9,12 +9,12 @@ function startTimer() {
   }
   if(m<0){
       document.getElementById("resend").disabled = false;
-      document.getElementById("timer").hidden = true;
+      document.getElementById("resend").value = 'Resend Otp';
+      document.getElementById("resend").setAttribute('class', "btn btn-primary btn-block")
       return
   }
 
-  document.getElementById('timer').innerText =
-    m + ":" + s;
+  document.getElementById('resend').value = m + ":" + s;
   setTimeout(startTimer, 1000);
 }
 
@@ -63,10 +63,12 @@ function firstcall(){
         alert("Enter a Valid Collage email");
         return ;
     }
-    if (document.getElementById("strength").innerHTML !== '<span style="color:green">Strong!</span>'){
+    //check if password is strong
+    if (!(document.getElementById("strength").innerHTML === '<span style="color:green">Strong!</span>' || document.getElementById("strength").innerHTML === '<span style="color:orange">Medium!</span>')){
         alert("Set a Strong Password");
         return ;
     }
+    //check if passwords match
     if (document.getElementById('password1').value !== document.getElementById('password2').value){
         alert("Both Passwords do not Match");
         return ;
@@ -79,20 +81,19 @@ function firstcall(){
         },
         success: function(response)
         {
-            console.log(response)
-            // diable all uper elements
-            document.getElementById('username').disabled = true;
-            document.getElementById('email').disabled = true;
-            document.getElementById('password1').disabled = true;
-            document.getElementById('password2').disabled = true;
+            let email = response;
+            console.log(email);
+            document.getElementById("afte opt message").innerHTML = "An otp have been sent to <a href='mailto:" + email + "'>"+ email + "</a> which is valid for 2 minutes.<br></a>";
+            // hide all uper elements
+            document.getElementById("before otp").hidden = true;
             //unhide otp section
             document.getElementById("after otp").hidden = false;
-            document.getElementById("timer").hidden = false;
             document.getElementById("resend").disabled = true;
+            document.getElementById("resend").setAttribute('class', "btn btn-secondary btn-block")
+            document.getElementById('resend').value = "0:20";
             // change submit function
             document.getElementById('sub').setAttribute('onclick','secondcall()');
             //start timer
-            document.getElementById('timer').innerText = "0:20";
             startTimer();
         },
         error: function (response){
@@ -104,9 +105,5 @@ function firstcall(){
 
 function secondcall(){
     console.log("called second");
-    document.getElementById('username').disabled = false;
-    document.getElementById('email').disabled = false;
-    document.getElementById('password1').disabled = false;
-    document.getElementById('password2').disabled = false;
     document.getElementById("main form").submit();
 }
