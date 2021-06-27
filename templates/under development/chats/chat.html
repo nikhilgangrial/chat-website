@@ -2,91 +2,220 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Chat</title>
+    <link rel="stylesheet" href="../../../static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../static/css/Login-Form-Dark.css">
     <link rel="stylesheet" href="chat.css">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
 </head>
 <body>
-<div id="alignL">
-             <div class="head">
-                 <div class="head_details"> Conversations</div>
-             </div>
-                 <div class="friends">
-                     <div class="friends_head"><div class="head_details"> Friends</div></div>
-                     <div class="friends_chat" onclick="move(this)">
-                        <img class="friends_photo" src="C:\Users\nikhi\Downloads\simmi.png">
-                        <div class="friends_username">ThisIsn't Me</div>
-                        <div class="friends_usermessage">Yo!</div>
-                        <hr>
-                     </div>
-                     <div class="friends_chat" onclick="move(this)">
-                        <img class="friends_photo" src="C:\Users\nikhi\Downloads\tenor_2.gif">
-                        <div class="friends_username">nikhilgangrial</div>
-                        <div class="friends_usermessage">Hello there!</div>
-                        <hr>
+<section class="login-dark">
+<div style="min-width: min(100vh, 95vw);" class="container">
+
+    <!-- Page header start -->
+    <div class="page-title">
+        <div class="row gutters">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12 col-12">
+                <h5 class="title">Chat App</h5>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12 col-12"> </div>
+        </div>
+    </div>
+    <!-- Page header end -->
+
+    <!-- Content wrapper start -->
+    <div style="min-width: min(90vh, 95vw)" class="content-wrapper">
+
+        <!-- Row start -->
+        <div class="row gutters">
+
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 col-12 min-14">
+
+                <div class="card m-0 min-14">
+
+                    <!-- Row start -->
+                    <div class="row no-gutters min-14">
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-3 col-xs-3 col-3 min-14">
+                            <div class="users-container min-14">
+                                <div class="chat-search-box">
+                                    <div class="input-group">
+                                        <input class="form-control" placeholder="Search">
+                                        <div class="input-group-btn">
+                                            <button style="background: dodgerblue" type="button" class="btn">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <ul class="users">
+                                    <li class="users_person" data-chat="person1">
+                                        <div class="user">
+                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">
+                                            <span class="status busy"></span>
+                                        </div>
+                                        <p class="name-time">
+                                            <span class="name">Steve Bangalter</span>
+                                            <span class="time">15/02/2019</span>
+                                        </p>
+                                    </li>
+                                    <li class="users_person" data-chat="person1">
+                                        <div class="user">
+                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar1.png" alt="Retail Admin">
+                                            <span class="status offline"></span>
+                                        </div>
+                                        <p class="name-time">
+                                            <span class="name">Steve Bangalter</span>
+                                            <span class="time">15/02/2019</span>
+                                        </p>
+                                    </li>
+                                    <li class="users_person active-user" data-chat="person2">
+                                        <div class="user">
+                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar2.png" alt="Retail Admin">
+                                            <span class="status away"></span>
+                                        </div>
+                                        <p class="name-time">
+                                            <span class="name">Peter Gregor</span>
+                                            <span class="time">12/02/2019</span>
+                                        </p>
+                                    </li>
+                                    <li class="users_person" data-chat="person3">
+                                        <div class="user">
+                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">
+                                            <span class="status busy"></span>
+                                        </div>
+                                        <p class="name-time">
+                                            <span class="name">Jessica Larson</span>
+                                            <span class="time">11/02/2019</span>
+                                        </p>
+                                    </li>
+                                    <li class="users_person" data-chat="person4">
+                                        <div class="user">
+                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar4.png" alt="Retail Admin">
+                                            <span class="status offline"></span>
+                                        </div>
+                                        <p class="name-time">
+                                            <span class="name">Lisa Guerrero</span>
+                                            <span class="time">08/02/2019</span>
+                                        </p>
+                                    </li>
+                                    <li class="users_person" data-chat="person5">
+                                        <div class="user">
+                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar5.png" alt="Retail Admin">
+                                            <span class="status away"></span>
+                                        </div>
+                                        <p class="name-time">
+                                            <span class="name">Michael Jordan</span>
+                                            <span class="time">05/02/2019</span>
+                                        </p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-xl-8 col-lg-8 col-md-8 col-sm-9 col-xs-9 col-9 min-14">
+                            <div class="selected-user">
+                                <span>To: <span class="name">Emily Russell</span></span>
+                            </div>
+                            <div class="chat-container">
+                                <ul class="chatContainerScroll">
+                                <div class="chat-box">
+                                    <li class="chat-left">
+                                        <div class="chat-avatar">
+                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">
+                                            <div class="chat-name">Russell</div>
+                                        </div>
+                                        <div class="chat-text">Hello, I'm Russell.</div>
+                                        <div class="chat-hour">08:55 <span class="fa fa-check-circle"></span></div>
+                                    </li>
+                                    <li class="chat-right">
+                                        <div class="chat-hour">08:56 <span class="fa fa-check-circle"></span></div>
+                                        <div class="chat-text">Hi, Russell<br>Noice<br>Talking to you<br>bye no byr kjla sdjklha sdljkh asldjkh aslkdhja slkdjh aslkjdh akljsdh akjlhd lajkshd lkajshd lkajsh djklash djklah sdljahs dlhjas dlashjdh askdhl asd hasjldkh asdh lkjhasjd klahs dl
+                                            <br> I need more information about Developer Plan.</div>
+                                        <div class="chat-avatar">
+                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">
+                                            <div class="chat-name">Sam</div>
+                                        </div>
+                                    </li>
+                                    <li class="chat-left">
+                                        <div class="chat-avatar">
+                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">
+                                            <div class="chat-name">Russell</div>
+                                        </div>
+                                        <div class="chat-text">Are we meeting today?
+                                            <br>Project has been already finished and I have results to show you.</div>
+                                        <div class="chat-hour">08:57 <span class="fa fa-check-circle"></span></div>
+                                    </li>
+                                    <li class="chat-right">
+                                        <div class="chat-hour">08:59 <span class="fa fa-check-circle"></span></div>
+                                        <div class="chat-text">Well I am not sure.
+                                            <br>I have results to show you.</div>
+                                        <div class="chat-avatar">
+                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar5.png" alt="Retail Admin">
+                                            <div class="chat-name">Joyse</div>
+                                        </div>
+                                    </li>
+                                    <li class="chat-left">
+                                        <div class="chat-avatar">
+                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">
+                                            <div class="chat-name">Russell</div>
+                                        </div>
+                                        <div class="chat-text">The rest of the team is not here yet.
+                                            <br>Maybe in an hour or so?</div>
+                                        <div class="chat-hour">08:57 <span class="fa fa-check-circle"></span></div>
+                                    </li>
+                                    <li class="chat-right">
+                                        <div class="chat-hour">08:59 <span class="fa fa-check-circle"></span></div>
+                                        <div class="chat-text">Have you faced any problems at the last phase of the project?</div>
+                                        <div class="chat-avatar">
+                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar4.png" alt="Retail Admin">
+                                            <div class="chat-name">Jin</div>
+                                        </div>
+                                    </li>
+                                    <li class="chat-left">
+                                        <div class="chat-avatar">
+                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">
+                                            <div class="chat-name">Russell</div>
+                                        </div>
+                                        <div class="chat-text">Actually everything was fine.
+                                            <br>I'm very excited to show this to our team.</div>
+                                        <div class="chat-hour">07:00 <span class="fa fa-check-circle"></span></div>
+                                    </li>
+                                </div>
+                                </ul>
+                                <div style="margin-top: 0.5rem" class="form-group mb-0">
+                                    <div class="publisher">
+                                        <a style="transform: scale(1.5)" class="publisher-btn" href="#" data-abc="true">
+                                            <i style="color: black;margin-left: 33%" class="fa fa-smile-o"></i>
+                                        </a>
+                                        <textarea class="publisher-input" placeholder="Write something" rows="1"></textarea>
+                                        <span style="transform: scale(1.2)" class="publisher-btn file-group">
+                                            <i style="color: #1b1e21;" class="fa fa-paperclip file-browser"></i><input type="file">
+                                        </span>
+                                        <a style="transform: scale(1.2)" class="publisher-btn text-info" href="#" data-abc="true">
+                                        <i style="color: dodgerblue" class="fa fa-paper-plane"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                     <div class="friends_chat" onclick="move(this)">
-                        <img class="friends_photo" src="C:\Users\nikhi\Downloads\tenor_2.gif">
-                        <div class="friends_username">nikhilgangrial</div>
-                        <div class="friends_usermessage">Hello there!</div>
-                        <hr>
-                    </div>
-                     <div class="friends_chat" onclick="move(this)">
-                        <img class="friends_photo" src="C:\Users\nikhi\Downloads\tenor_2.gif">
-                        <div class="friends_username">nikhilgangrial</div>
-                        <div class="friends_usermessage">Hello there!</div>
-                        <hr>
-                    </div>
-                     <div class="friends_chat" onclick="move(this)">
-                        <img class="friends_photo" src="C:\Users\nikhi\Downloads\tenor_2.gif">
-                        <div class="friends_username">nikhilgangrial</div>
-                        <div class="friends_usermessage">Hello there!</div>
-                        <hr>
-                    </div>
-                     <div class="friends_chat" onclick="move(this)">
-                        <img class="friends_photo" src="C:\Users\nikhi\Downloads\tenor_2.gif">
-                        <div class="friends_username">nikhilgangrial</div>
-                        <div class="friends_usermessage">Hello there!</div>
-                        <hr>
-                    </div>
-                     <div class="friends_chat" onclick="move(this)">
-                        <img class="friends_photo" src="C:\Users\nikhi\Downloads\tenor_2.gif">
-                        <div class="friends_username">nikhilgangrial</div>
-                        <div class="friends_usermessage">Hello there!</div>
-                        <hr>
-                    </div>
-                     <div class="friends_chat" onclick="move(this)">
-                        <img class="friends_photo" src="C:\Users\nikhi\Downloads\tenor_2.gif">
-                        <div class="friends_username">nikhilgangrial</div>
-                        <div class="friends_usermessage">Hello there!</div>
-                        <hr>
-                    </div>
-                     <div class="friends_chat" onclick="move(this)">
-                        <img class="friends_photo" src="C:\Users\nikhi\Downloads\tenor_2.gif">
-                        <div class="friends_username">nikhilgangrial</div>
-                        <div class="friends_usermessage">Hello there!</div>
-                        <hr>
-                    </div>
-                     <div class="friends_chat" onclick="move(this)">
-                        <img class="friends_photo" src="C:\Users\nikhi\Downloads\tenor_2.gif">
-                        <div class="friends_username">nikhilgangrial</div>
-                        <div class="friends_usermessage">Hello there!</div>
-                        <hr>
-                    </div>
-                     <div class="friends_chat" onclick="move(this)">
-                        <img class="friends_photo" src="C:\Users\nikhi\Downloads\tenor_2.gif">
-                        <div class="friends_username">nikhilgangrial</div>
-                        <div class="friends_usermessage">Hello there!</div>
-                        <hr>
-                    </div>
-                     <div class="friends_chat" onclick="move(this)">
-                        <img class="friends_photo" src="C:\Users\nikhi\Downloads\tenor_2.gif">
-                        <div class="friends_username">nikhilgangrial</div>
-                        <div class="friends_usermessage">Hello there!</div>
-                        <hr>
-                    </div>
-                     <div style="margin: 5vh 0; order: 1000001;"></div>
-                 </div>
+                    <!-- Row end -->
+                </div>
+
             </div>
 
+        </div>
+        <!-- Row end -->
+
+    </div>
+    <!-- Content wrapper end -->
+
+</div>
+
+
+</section>
+<script src="../../../static/js/jquery.min.js"></script>
+<script src="../../../static/js/bootstrap.min.js"></script>
+<script src="chat.js"></script>
 </body>
 </html>
