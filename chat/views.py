@@ -36,4 +36,4 @@ def room(request, room_name):
             return JsonResponse({"messages": messages, "status": status, "self": request.user.userid})
         except:
             return render(request, 'chat/room.html', {'room_name': room_name})
-    return render(request, 'chat/room.html', {'room_name': room_name})
+    return render(request, '../templates/under development/chats/chat.html', {'room_name': room_name})

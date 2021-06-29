@@ -5,6 +5,27 @@
   position: relative;
 }
 
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active  {
+  transition: background-color 500000s;
+  -webkit-text-fill-color: #fff !important;
+  caret-color: white;
+}
+
+.psedotextarea {
+    -moz-appearance: textfield-multiline;
+    -webkit-appearance: textarea;
+    border: 1px solid gray;
+    font: medium -moz-fixed;
+    height: 28px;
+    overflow: auto;
+    padding: 2px;
+    resize: both;
+    width: 400px;
+}
+
 .login-dark form {
   max-width: 320px;
   width: 90%;

@@ -35,6 +35,25 @@ from chat.models import Messages, ChatRoom
 from datetime import datetime
 
 
+async def remove_br(message):
+    while 1:
+        if message[-3:] == '<br>':
+            message = message[:-3]
+        elif message[-15:] == '<div><br></div>':
+            message = message[:-15]
+        else:
+            break
+
+    while 1:
+        if message[:3] == '<br>':
+            message = message[3:]
+        elif message[:15] == '<div><br></div>':
+            message = message[15:]
+        else:
+            break
+    return message.strip()
+
+
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         user = self.scope['user']
@@ -87,21 +106,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
     # Receive message from WebSocket
     async def receive(self, text_data=None, bytes_data=None):
         text_data_json = json.loads(text_data)
-        message = text_data_json['message']
-
-        message_ = await self.write_message(message)
-        # Send message to room group
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                'type': 'chat_message',
-                'message': message,
-                'message_': message_,
-                'userid': self.scope['user'].userid,
-                'username': self.scope['user'].username,
-                # add line for user profile pic
-            }
-        )
+        message = text_data_json['message'].strip()
+        message = await remove_br(message)
+        if message:
+            message_ = await self.write_message(message)
+            # Send message to room group
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'chat_message',
+                    'message': message,
+                    'message_': message_,
+                    'userid': self.scope['user'].userid,
+                    'username': self.scope['user'].username,
+                    # add line for user profile pic
+                }
+            )
 
     @database_sync_to_async
     def message_seen(self, message):

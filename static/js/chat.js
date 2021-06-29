@@ -1,3 +1,4 @@
+
 const roomName = JSON.parse(document.getElementById('room-name').textContent);
 let messages = [];
 let self = ""
@@ -5,7 +6,7 @@ let self = ""
 
 // checks if messages dows not exist in existing messages and appends it in chat log
 function closest_message(key){
-    const closest = messages.reduce((a, b) => {
+    let closest = messages.reduce((a, b) => {
         return Math.abs(b - key) < Math.abs(a - key) ? b : a;
     })
     return closest;
@@ -14,33 +15,49 @@ function closest_message(key){
 function update_messages(message, i=0){
     if (messages.indexOf(message.id) === -1){
 
-        let classes = "message ";
+        let time_ = (new Date(message.sent_at)).toLocaleTimeString(undefined, {hour12:true, timeZone: 'Asia/Kolkata', timeStyle: 'short'});
+
+        let message_to_be_appeded = "";
+        // TODO: add user profile
         if (message.senderid === self){
-            classes += "self ";
+            message_to_be_appeded = '<li class="chat-right" id="mess_' + message.id + '">\
+                                        <div class="chat-hour">' + time_ + '<span class="fa fa-check-circle"></span></div>\
+                                        <div class="chat-text">' + message.message + '</div>\
+                                        <div class="chat-avatar">\
+                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">\
+                                            <div class="chat-name">' + message.sender + '</div>\
+                                        </div>\
+                                    </li>'
         }else{
-            classes += "other ";
+            message_to_be_appeded = '<li class="chat-left" id="mess_' + message.id + '">\
+                                        <div class="chat-avatar">\
+                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">\
+                                            <div class="chat-name">' + message.sender + '</div>\
+                                        </div>\
+                                        <div class="chat-text">' + message.message + '</div>\
+                                        <div class="chat-hour">' + time_ + '<span class="fa fa-check-circle"></span></div>\
+                                    </li>'
         }
-        let id_ = "mess_" + message.id;
 
         if (messages.length === 0){
-            document.getElementById("chat-log").innerHTML += "<div class='" + classes +"' id='" + id_ + "'>" + message.sender + " " + message.senderid + "<br>" + message.message + "</div>";
+            document.getElementById("chat-log").innerHTML = message_to_be_appeded;
         } else {
             let min = Math.min.apply(null, messages);
             let max = Math.max.apply(null, messages);
             if (message.id > max) {
                 let mess = document.getElementById("mess_"+max);
-                mess.insertAdjacentHTML("afterend", "<div class='" + classes +"' id='" + id_ + "'>" + message.sender + " " + message.senderid + "<br>" + message.message + "</div>")
+                mess.insertAdjacentHTML("afterend", message_to_be_appeded);
             } else if (message.id < min) {
                 let mess = document.getElementById("mess_"+min);
-                mess.insertAdjacentHTML("beforebegin", "<div class='" + classes +"' id='" + id_ + "'>" + message.sender + " " + message.senderid + "<br>" + message.message + "</div>")
+                mess.insertAdjacentHTML("beforebegin", message_to_be_appeded);
             } else{
                 let closest = closest_message(message.id);
                 if (closest > message.id){
                     let mess = document.getElementById("mess_"+closest);
-                    mess.insertAdjacentHTML("beforebegin", "<div class='" + classes +"' id='" + id_ + "'>" + message.sender + " " + message.senderid + "<br>" + message.message + "</div>")
+                    mess.insertAdjacentHTML("beforebegin", message_to_be_appeded);
                 } else{
                     let mess = document.getElementById("mess_"+closest);
-                    mess.insertAdjacentHTML("afterend", "<div class='" + classes +"' id='" + id_ + "'>" + message.sender + " " + message.senderid + "<br>" + message.message + "</div>")
+                    mess.insertAdjacentHTML("afterend", message_to_be_appeded);
                 }
             }
         }
@@ -89,7 +106,7 @@ function connect() {
     chatSocket.onmessage = function (e) {
         const data = JSON.parse(e.data);
         if (data.type_ === 'message'){
-            update_messages({'sender': data.username, 'senderid': data.userid, 'message': data.message, 'id': data.messageid});
+            update_messages({'sender': data.username, 'senderid': data.userid, 'message': data.message, 'id': data.messageid, 'sent_at': data.sent_at});
         }
         console.log(data);
     };
@@ -104,20 +121,50 @@ function connect() {
     // key bind Send on Enter
     document.querySelector('#chat-message-input').focus();
     document.querySelector('#chat-message-input').onkeyup = function (e) {
-        if (e.keyCode === 13) {  // enter, return
+        e.preventDefault();
+        console.log(e);
+        if (e.keyCode === 13 && !e.shiftKey) {  // enter, return
             document.querySelector('#chat-message-submit').click();
+            const messageInputDom = document.querySelector('#chat-message-input');
+            let message = messageInputDom.innerHTML.toString();
+            console.log(message);
+            message = message.replace(/<br>$/, "");
+            message = message.replace(/<div><br><\/div>$/, "");
+            console.log(message);
+            chatSocket.send(JSON.stringify({
+                'message': message
+            }));
+            messageInputDom.innerHTML = '';
         }
     };
 
     // Send button function
     document.querySelector('#chat-message-submit').onclick = function (e) {
         const messageInputDom = document.querySelector('#chat-message-input');
-        const message = messageInputDom.value;
+        let message = messageInputDom.innerHTML;
+        console.log(message);
+        message = message.replace(/<br>$/, "");
+        message = message.replace(/<div><br><\/div>$/, "");
+        console.log(message);
         chatSocket.send(JSON.stringify({
-            'message': message
+            'message': message.trim()
         }));
-        messageInputDom.value = '';
+        messageInputDom.innerHTML = '';
     };
 }
 
 connect();
+
+function extralargescreen() {
+    if (window.innerHeight > 1080) {
+        document.children[0].setAttribute("style", "font-size: " + (window.innerHeight / 1080) + "em;");
+    }else if (window.innerHeight < 577) {
+        document.children[0].setAttribute("style", "font-size: " + (window.innerWidth / 577) + "em;");
+    }
+    else {
+        document.children[0].setAttribute("style", "font-size: 1em");
+    }
+    setTimeout(extralargescreen, 1000);
+}
+
+setTimeout(extralargescreen, 1000);

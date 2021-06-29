@@ -6,8 +6,8 @@
     <title>Chat</title>
     <link rel="stylesheet" href="../../../static/css/bootstrap.min.css">
     <link rel="stylesheet" href="../../../static/css/Login-Form-Dark.css">
-    <link rel="stylesheet" href="chat.css">
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../../static/css/chat.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 </head>
 <body>
 <section class="login-dark">
@@ -117,8 +117,8 @@
                                 <span>To: <span class="name">Emily Russell</span></span>
                             </div>
                             <div class="chat-container">
-                                <ul class="chatContainerScroll">
-                                <div class="chat-box">
+                                <div class="chatContainerScroll">
+                                <ul class="chat-box" id="chat-log">
                                     <li class="chat-left">
                                         <div class="chat-avatar">
                                             <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">
@@ -180,18 +180,18 @@
                                             <br>I'm very excited to show this to our team.</div>
                                         <div class="chat-hour">07:00 <span class="fa fa-check-circle"></span></div>
                                     </li>
-                                </div>
                                 </ul>
+                                </div>
                                 <div style="margin-top: 0.5rem" class="form-group mb-0">
                                     <div class="publisher">
-                                        <a style="transform: scale(1.5)" class="publisher-btn" href="#" data-abc="true">
-                                            <i style="color: black;margin-left: 33%" class="fa fa-smile-o"></i>
-                                        </a>
-                                        <textarea class="publisher-input" placeholder="Write something" rows="1"></textarea>
+                                        <button style="transform: scale(1.5)" class="publisher-btn" id="emojibutton" data-abc="true">
+                                            <i style="color: #f3d300; background: black; border-radius: 50%" class="fa fa-smile-beam"></i>
+                                        </button>
+                                        <div class="publisher-input" contenteditable="true" id="chat-message-input" rows="1"></div>
                                         <span style="transform: scale(1.2)" class="publisher-btn file-group">
-                                            <i style="color: #1b1e21;" class="fa fa-paperclip file-browser"></i><input type="file">
+                                            <i style="color: #1b1e21;" class="fa fa-paperclip"><input type="file"></i>
                                         </span>
-                                        <a style="transform: scale(1.2)" class="publisher-btn text-info" href="#" data-abc="true">
+                                        <a style="transform: scale(1.2)" class="publisher-btn text-info" id="chat-message-submit" data-abc="true">
                                         <i style="color: dodgerblue" class="fa fa-paper-plane"></i>
                                         </a>
                                     </div>
@@ -211,11 +211,30 @@
     <!-- Content wrapper end -->
 
 </div>
-
+{{ room_name|json_script:"room-name" }}
 
 </section>
 <script src="../../../static/js/jquery.min.js"></script>
+<script src="../../../static/js/preajax.js"></script>
+<script src="../../../static/js/chat.js"></script>
 <script src="../../../static/js/bootstrap.min.js"></script>
-<script src="chat.js"></script>
+<link rel="stylesheet" href="../../../static/jquery-emoji-picker-master/css/jquery.emojipicker.tw.css">
+<link rel="stylesheet" href="../../../static/jquery-emoji-picker-master/css/jquery.emojipicker.css">
+<script type="text/javascript" src="../../../static/jquery-emoji-picker-master/js/jquery.emojis.js"></script>
+<script type="text/javascript" src="../../../static/jquery-emoji-picker-master/js/jquery.emojipicker.js"></script>
+<script src="../../../static/js/jquery.caret.js"></script>
+<script>
+    var caret_position_mes=0;
+    let mes_inp = $(".publisher-input");
+    mes_inp.emojiPicker({button: false, position: 'top'});
+    setTimeout(function () {
+        mes_inp.emojiPicker('toggle');
+        mes_inp.emojiPicker('toggle');
+    }, 1500);
+    $("#emojibutton").click(function (e){
+        e.preventDefault();
+        mes_inp.emojiPicker('toggle');
+    });
+</script>
 </body>
 </html>
