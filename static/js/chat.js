@@ -21,21 +21,20 @@ function update_messages(message, i=0){
         // TODO: add user profile
         if (message.senderid === self){
             message_to_be_appeded = '<li class="chat-right" id="mess_' + message.id + '">\
-                                        <div class="chat-hour">' + time_ + '<span class="fa fa-check-circle"></span></div>\
-                                        <div class="chat-text">' + message.message + '</div>\
-                                        <div class="chat-avatar">\
-                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">\
-                                            <div class="chat-name">' + message.sender + '</div>\
+                                        <div class="chat-text"><div class="chat-name">' + message.sender + '</div>' +
+                                            message.message +
+                                            '<div class="chat-hour">' + time_ + '<span class="fa fa-check-circle"></span></div>\
                                         </div>\
                                     </li>'
         }else{
             message_to_be_appeded = '<li class="chat-left" id="mess_' + message.id + '">\
                                         <div class="chat-avatar">\
                                             <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">\
-                                            <div class="chat-name">' + message.sender + '</div>\
                                         </div>\
-                                        <div class="chat-text">' + message.message + '</div>\
-                                        <div class="chat-hour">' + time_ + '<span class="fa fa-check-circle"></span></div>\
+                                        <div class="chat-text"><div class="chat-name">' + message.sender + '</div>' +
+                                            message.message +
+                                            '<div class="chat-hour">' + time_ + '<span class="fa fa-check-circle"></span></div>\
+                                        </div>\
                                     </li>'
         }
 
@@ -164,7 +163,19 @@ function extralargescreen() {
     else {
         document.children[0].setAttribute("style", "font-size: 1em");
     }
-    setTimeout(extralargescreen, 1000);
 }
 
 setTimeout(extralargescreen, 1000);
+
+var docWidth = document.documentElement.offsetWidth;
+console.log(window.innerWidth);
+[].forEach.call(document.querySelectorAll('*'), function(el) {
+            if (el.offsetWidth > docWidth) {
+                console.log(el);
+                }
+            }
+    );
+
+$('#file-group').on('click', function (){
+    document.getElementById('file-select-button').click();
+})
