@@ -69,6 +69,7 @@ user-select: text;
 }
 
 .chatContainerScroll .chat-box{
+    min-height: 10rem;
     width: 100%;
     height: auto;
     max-width: 100%;
@@ -329,7 +330,7 @@ user-select: text;
     margin-bottom: 1.5rem;
 }
 
-.chat-container li img {
+.chat-container .user-av {
     width: 2.5rem;
     height: 2.5rem;
     -webkit-border-radius: 1.875rem;
@@ -396,6 +397,7 @@ user-select: text;
     font-weight: 300;
     line-height: 130%;
     max-width: 70%;
+    width: max-content;
     height: max-content;
     position: relative;
 }
@@ -441,7 +443,7 @@ user-select: text;
 }
 
 @media (max-width: 767px) {
-    .chat-container li img {
+    .chat-container li .user-av {
         width: 2rem;
         height: 2rem;
     }
@@ -587,8 +589,19 @@ ul {
     .col-xl-8{
         width: 100%;
         max-width: 100%;
+        flex: 0 0 100%;
     }
     .page-title {
         display: none;
     }
+    .chat-container .chat-right .chat-name {
+        padding-left: 0.3rem;
+        padding-right: 0.3rem;
+    }
+
+    .chat-container .chat-left .chat-name {
+        padding-left: 0.3rem;
+        padding-right: 0.3rem;
+    }
+
 }

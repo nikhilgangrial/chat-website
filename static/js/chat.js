@@ -29,7 +29,7 @@ function update_messages(message, i=0){
         }else{
             message_to_be_appeded = '<li class="chat-left" id="mess_' + message.id + '">\
                                         <div class="chat-avatar">\
-                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">\
+                                            <img class="user-av" src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">\
                                         </div>\
                                         <div class="chat-text"><div class="chat-name">' + message.sender + '</div>' +
                                             message.message +
