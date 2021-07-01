@@ -115,7 +115,7 @@ $(document).on("imageResized", function (event) {
         success: function(response){
             console.log(response);
             let photo = response.data.link;
-            document.body.innerHTML = "<img src='" + photo + "'><br>" + document.body.innerHTML;
+            document.getElementById("chat-message-input").innerHTML += "<img data-enlargeable src='" + photo + "'><br>";
         },
         error: function (res){
             console.log(res);
@@ -138,7 +138,7 @@ function upload_to_server(formdata){
             let jsonObj = JSON.parse(response)
             console.log(jsonObj);
             let video = jsonObj.response.data
-            document.body.innerHTML = "<video loop controls><source src='" + video.link + "' type='" + video.type +"'></video><br>" + document.body.innerHTML;
+            document.getElementById("chat-message-input").innerHTML = "<video loop controls><source src='" + video.link + "' type='" + video.type +"'></video><br>" + document.body.innerHTML;
         },
         error: function (response){
             console.log(response);

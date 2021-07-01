@@ -10,7 +10,16 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 </head>
 <body style="height: 100%" class="login-dark no-copy no-scroll">
-<div style="min-width: min(100vh, 95vw);" class="container no-scroll">
+{# Expande image container #}
+<div hidden id="big-image-container">
+    <span onclick="revert_big_image();" class="closebtn">&times;</span>
+    <div id="inner-big-image-group">
+        <img id="expandedImg">
+        <a id="open-orignal-link" target="_blank"><u>Open Orignal</u></a>
+    </div>
+</div>
+
+<div style="min-width: min(100vh, 95vw);" class="container no-scroll" id="main-content">
 
     <!-- Page header start -->
     <div class="page-title no-scroll">
@@ -116,7 +125,7 @@
                                 <span>To: <span class="name">Emily Russell</span></span>
                             </div>
                             <div style="min-width: 10rem; min-height: 13.75rem; padding-right: 0" class="chat-container">
-                                <div class="chatContainerScroll all-copy">
+                                <div class="chatContainerScroll text-copy">
                                 <ul class="chat-box" id="chat-log">
                                     <li class="chat-left">
                                         <div class="chat-avatar">
@@ -187,10 +196,10 @@
                                             <i style="color: #f3d300; background: black; border-radius: 50%" class="fa fa-smile-beam"></i>
                                         </button>
                                         <div class="publisher-input" contenteditable="true" id="chat-message-input"></div>
-                                        <span style="transform: scale(1.2)" class="publisher-btn file-group" id="file-group">
+                                        <a style="transform: scale(1.2)" class="publisher-btn file-group" id="file-group">
                                             <i style="color: #1b1e21;" class="fa fa-paperclip"></i>
-                                            <input type="file" hidden id="file-select-button">
-                                        </span>
+                                            <input name="imagefile[]" multiple hidden type="file" id="file-select-button" accept="image/jpeg, image/png, image/gif, image/tiff, video/mp4, video/mpeg, video/webm, video/quicktime" onchange="uploadPhotos('https://api.imgur.com/3/upload')">
+                                        </a>
                                         <a style="transform: scale(1.2)" class="publisher-btn text-info" id="chat-message-submit" data-abc="true">
                                         <i style="color: dodgerblue" class="fa fa-paper-plane"></i>
                                         </a>
@@ -201,20 +210,17 @@
                     </div>
                     <!-- Row end -->
                 </div>
-
             </div>
-
         </div>
         <!-- Row end -->
-
     </div>
     <!-- Content wrapper end -->
 {{ room_name|json_script:"room-name" }}
 </div>
-
 <script src="../../../static/js/jquery.min.js"></script>
 <script src="../../../static/js/preajax.js"></script>
 <script src="../../../static/js/chat.js"></script>
+<script src="../../../static/js/uploadfromchat.js"></script>
 <script src="../../../static/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="../../../static/jquery-emoji-picker-master/css/jquery.emojipicker.tw.css">
 <link rel="stylesheet" href="../../../static/jquery-emoji-picker-master/css/jquery.emojipicker.css">

@@ -16,6 +16,50 @@
     color: white;
 }
 
+.closebtn{
+    position: absolute;
+    top: 0.5rem;
+    right: 1rem;
+    color: white;
+    font-size: 2.25rem;
+    z-index: 1001;
+    cursor: pointer;
+    text-shadow: #161616;
+}
+
+#open-orignal-link {
+    color: white;
+    font-size: 1rem;
+    z-index: 1000;
+    text-underline: white;
+}
+#expandedImg{
+    flex: 0 0 auto;
+    max-width: 95vw;
+    z-index: 1000;
+    max-height: calc(100vh - 3rem);
+    justify-self: center;
+}
+
+#big-image-container{
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    opacity: 0;
+    align-items: center;
+    transition: opacity 350ms ease-in;
+}
+
+#inner-big-image-group{
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
 .no-copy {
 -webkit-user-select: none;
 -khtml-user-select: none;
@@ -25,13 +69,22 @@
 user-select: none;
 }
 
-.all-copy {
+.text-copy {
 -webkit-user-select: text;
 -khtml-user-select: text;
 -moz-user-select: text;
 -ms-user-select: text;
 -o-user-select: text;
 user-select: text;
+}
+
+.all-copy {
+-webkit-user-select: all;
+-khtml-user-select: all;
+-moz-user-select: all;
+-ms-user-select: all;
+-o-user-select: all;
+user-select: all;
 }
 
 .no-scroll::-webkit-scrollbar{
@@ -50,13 +103,18 @@ user-select: text;
     margin-right: auto;
     margin-left: auto;
 }
+
+.container {
+    transition: filter 250ms;
+}
+
 .card, .content-wrapper{
     box-shadow: 0 0 0.375rem 0.375rem black;
     height: calc(100vh - 2 * 1.25rem);
 }
 
 .chatContainerScroll{
-    max-height: calc(100vh - (5 * 1.25rem) - 3.25rem);
+    height: calc(100vh - (5 * 1.25rem) - 3.25rem);
     min-height: 10rem;
     display: flex;
     flex-direction: column;
@@ -400,6 +458,11 @@ user-select: text;
     width: max-content;
     height: max-content;
     position: relative;
+}
+
+.chat-text img{
+    max-width: 95%;
+    max-height: 16rem;
 }
 
 .chat-container li.chat-right > .chat-text {
