@@ -388,6 +388,54 @@ user-select: all;
     margin-bottom: 1.5rem;
 }
 
+.chat-container .chat-left:hover,
+.chat-container .chat-right:hover,
+.chat-container .chat-left:active,
+.chat-container .chat-right:active{
+    background: #2e2e30;
+}
+
+.ballon{
+    visibility: hidden;
+    position: absolute;
+    z-index: 20;
+    top: -1rem;
+    right: 1rem;
+    border-radius: 0.15rem;
+    width: auto;
+    height: 1.5rem;
+    display: flex;
+}
+
+.ballon button{
+    order: 0;
+    width: 1.5rem;
+    border: transparent;
+    border-radius: inherit;
+    opacity: 1;
+    transition: opacity 0.2s;
+}
+
+.ballon button i {
+    transform: scale(0.8);
+    transition: transform 0.2s;
+}
+
+.ballon button:hover i, .ballon button:active i{
+    transform: scale(1);
+}
+
+.ballon button:hover, .ballon button:active{
+    opacity: 0.8;
+}
+
+.chat-container .chat-left:hover .ballon,
+.chat-container .chat-right:hover .ballon,
+.chat-container .chat-left:active .ballon,
+.chat-container .chat-right:active .ballon{
+    visibility: visible;
+}
+
 .chat-container .user-av {
     width: 2.5rem;
     height: 2.5rem;
@@ -570,6 +618,7 @@ ul {
 }
 
 .publisher-input {
+    order: 1;
     width: 100%;
     color: #111111;
     overflow-y: scroll;
@@ -581,7 +630,16 @@ ul {
     outline: none !important;
     background-color: transparent;
     flex-wrap: initial;
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    white-space: -o-pre-wrap;
 }
+
+.publisher-input:empty:before {
+    content: attr(data-placeholder);
+    color: #949191;
+}
+
 .publisher-input div{
     font-size: 1rem;
     color: #111111;
@@ -594,6 +652,7 @@ ul {
 }
 
 .publisher-btn {
+    order: 1;
     background-color: transparent;
     border: none;
     margin-top: 0.1rem;
@@ -667,6 +726,13 @@ ul {
     .chat-container .chat-left .chat-name {
         padding-left: 0.3rem;
         padding-right: 0.3rem;
+    }
+
+    #emojibutton{
+        display: none;
+    }
+    #file-group{
+        order: 0;
     }
 
 }

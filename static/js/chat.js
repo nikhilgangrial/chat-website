@@ -12,6 +12,7 @@ mobileAndTabletCheck = function() {
 
 let mobile = mobileAndTabletCheck();
 
+
 function isElementInViewport (el) {
 
     // Special bonus for those using jQuery
@@ -44,20 +45,31 @@ function update_messages(message, i=0){
         let message_to_be_appeded = "";
         // TODO: add user profile
         if (message.senderid === self){
-            message_to_be_appeded = '<li class="chat-right all-copy" id="mess_' + message.id + '">\
-                                        <div class="chat-text text-copy"><div class="chat-name">' + message.sender + '</div>' +
-                                            message.message +
-                                            '<div class="chat-hour">' + time_ + '<span class="fa fa-check-circle"></span></div>\
+            message_to_be_appeded = '<li class="chat-right no-copy" id="mess_' + message.id + '">\
+                                        <div class="ballon">\
+                                            <button data-type="edit" style="background: #252528;">\
+                                                <i class="fa fa-pencil-alt"></i>\
+                                            </button>\
+                                            <button data-type="delete" class="btn-danger">\
+                                                <i class="fa fa-trash"></i>\
+                                            </button>\
+                                            <button data-type="more" style="background: #252528">\
+                                                <i class="fa fa-ellipsis-v"></i>\
+                                            </button>\
+                                        </div>\
+                                        <div class="chat-text no-copy"><div class="chat-name text-copy">' + message.sender + '</div>\
+                                            <div class="text-copy">' + message.message + '</div>\
+                                            <div class="chat-hour">' + time_ + '<span class="fa fa-check-circle"></span></div>\
                                         </div>\
                                     </li>'
         }else{
-            message_to_be_appeded = '<li class="chat-left all-copy" id="mess_' + message.id + '">\
+            message_to_be_appeded = '<li class="chat-left no-copy" id="mess_' + message.id + '">\
                                         <div class="chat-avatar">\
                                             <img class="user-av" src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">\
                                         </div>\
-                                        <div class="chat-text text-copy"><div class="chat-name">' + message.sender + '</div>' +
-                                            message.message +
-                                            '<div class="chat-hour">' + time_ + '<span class="fa fa-check-circle"></span></div>\
+                                        <div class="chat-text no-copy"><div class="chat-name text-copy">' + message.sender + '</div>\
+                                        <div class="text-copy">' + message.message + '</div>\
+                                            <div class="chat-hour">' + time_ + '<span class="fa fa-check-circle"></span></div>\
                                         </div>\
                                     </li>'
         }
@@ -113,6 +125,7 @@ function get_messages(from=0){
                 let max = Math.max.apply(null, messages);
                 let mess = $("#mess_"+max)[0];
                 mess.scrollIntoView({behavior: "smooth"});
+                $(".publisher-input").focus();
             }
             setTimeout(function () {
                 loading_messages = false;

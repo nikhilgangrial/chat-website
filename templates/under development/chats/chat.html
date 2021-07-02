@@ -19,6 +19,22 @@
     </div>
 </div>
 
+{# modal form confirm delete #}
+<div id="modal-confirm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div style="border-radius: 0.75rem" class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-dark">
+                R u Sure?
+            </div>
+            <div class="modal-body bg-dark">Are you sure?</div>
+            <div class="modal-footer bg-dark">
+                <button style="width: 48%" type="button" id="modal-confirm-yes" data-dismiss="modal" class="btn btn-danger">Delete</button>
+                <button style="width: 48%" type="button" id="modal-confirm-no" data-dismiss="modal" class="btn badge-dark">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div style="min-width: min(100vh, 95vw);" class="container no-scroll" id="main-content">
 
     <!-- Page header start -->
@@ -48,9 +64,9 @@
                             <div class="users-container min-14">
                                 <div class="chat-search-box">
                                     <div class="input-group">
-                                        <input class="form-control" placeholder="Search">
+                                        <input style="border-radius: 0.75rem 0 0 0.75rem"class="form-control" placeholder="Search">
                                         <div class="input-group-btn">
-                                            <button style="background: dodgerblue" type="button" class="btn">
+                                            <button style="background: dodgerblue; border-radius: 0 0.75rem 0.75rem 0" type="button" class="btn">
                                                 <i class="fa fa-search"></i>
                                             </button>
                                         </div>
@@ -195,10 +211,10 @@
                                         <button style="transform: scale(1.5)" class="publisher-btn" id="emojibutton" data-abc="true">
                                             <i style="color: #f3d300; background: black; border-radius: 50%" class="fa fa-smile-beam"></i>
                                         </button>
-                                        <div class="publisher-input" contenteditable="true" id="chat-message-input"></div>
-                                        <a style="transform: scale(1.2)" class="publisher-btn file-group" id="file-group">
+                                        <div class="publisher-input" contenteditable="true" data-placeholder="Write message..." id="chat-message-input"></div>
+                                        <a style="transform: scale(1.2); overflow: visible" class="publisher-btn file-group" id="file-group">
                                             <i style="color: #1b1e21;" class="fa fa-paperclip"></i>
-                                            <input name="imagefile[]" multiple hidden type="file" id="file-select-button" accept="image/jpeg, image/png, image/gif, image/tiff, video/mp4, video/mpeg, video/webm, video/quicktime" onchange="uploadPhotos('https://api.imgur.com/3/upload')">
+                                            <input style="display: none" name="imagefile[]" multiple hidden type="file" id="file-select-button" accept="image/jpeg, image/png, image/gif, image/tiff, video/mp4, video/mpeg, video/webm, video/quicktime" onchange="uploadPhotos('https://api.imgur.com/3/upload')">
                                         </a>
                                         <a style="transform: scale(1.2)" class="publisher-btn text-info" id="chat-message-submit" data-abc="true">
                                         <i style="color: dodgerblue" class="fa fa-paper-plane"></i>

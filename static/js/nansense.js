@@ -78,3 +78,29 @@ function parse_before_send() {
     }
     console.log(mess.outerHTML);
 }
+
+$(document).on('click', 'div.ballon > button[data-type="delete"]', function (){
+    console.log(this.parentNode.parentNode.id);
+    $("#modal-confirm").modal('show');
+    var modalConfirm = function(callback) {
+        $("#modal-confirm-yes").on("click", function () {
+            $("#modal-confirm").modal('hide');
+            callback(true);
+        });
+
+        $("#modal-confirm-no").on("click", function () {
+            $("#modal-confirm").modal('hide');
+            callback(false);
+        });
+    }
+
+    modalConfirm(function(confirm) {
+        if (confirm) {
+            //Acciones si el usuario confirma
+            alert("YES");
+        } else {
+            //Acciones si el usuario no confirma
+            alert("NO");
+        }
+    });
+});
