@@ -33,14 +33,14 @@
     <!-- Page header end -->
 
     <!-- Content wrapper start -->
-    <div style="min-width: min(90vh, 95vw)" class="content-wrapper no-scroll">
+    <div style="border-radius: 0.5rem; min-width: min(90vh, 95vw)" class="content-wrapper no-scroll">
 
         <!-- Row start -->
         <div style="margin: auto" class="row gutters">
 
             <div style="padding: 0" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 col-12 min-14">
 
-                <div class="card m-0 min-14">
+                <div style="border-radius: 0.5rem" class="card m-0 min-14">
 
                     <!-- Row start -->
                     <div class="row no-gutters min-14">
@@ -223,27 +223,14 @@
 <script src="../../../static/js/uploadfromchat.js"></script>
 <script src="../../../static/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="../../../static/jquery-emoji-picker-master/css/jquery.emojipicker.tw.css">
+<script src="../../../static/js/nansense.js"></script>
 <link rel="stylesheet" href="../../../static/jquery-emoji-picker-master/css/jquery.emojipicker.css">
 <script type="text/javascript" src="../../../static/jquery-emoji-picker-master/js/jquery.emojis.js"></script>
 <script type="text/javascript" src="../../../static/jquery-emoji-picker-master/js/jquery.emojipicker.js"></script>
 <script src="../../../static/js/jquery.caret.js"></script>
 <script>
-    var caret_position_mes=0;
-    let mes_inp = $(".publisher-input");
+    var mes_inp = $(".publisher-input");
     mes_inp.emojiPicker({button: false, position: 'top'});
-    setTimeout(function () {
-        try {
-            mes_inp.emojiPicker('toggle');
-            mes_inp.emojiPicker('toggle');
-        }
-        catch (err){
-
-        }
-    }, 1500);
-    $("#emojibutton").click(function (e){
-        e.preventDefault();
-        mes_inp.emojiPicker('toggle');
-    });
 </script>
 </body>
 </html>

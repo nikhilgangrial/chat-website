@@ -138,7 +138,7 @@ function upload_to_server(formdata){
             let jsonObj = JSON.parse(response)
             console.log(jsonObj);
             let video = jsonObj.response.data
-            document.getElementById("chat-message-input").innerHTML = "<video loop controls><source src='" + video.link + "' type='" + video.type +"'></video><br>" + document.body.innerHTML;
+            document.getElementById("chat-message-input").innerHTML = "<video loop controls><source src='" + video.link + "' type='" + video.type +"'></video><br>";
         },
         error: function (response){
             console.log(response);

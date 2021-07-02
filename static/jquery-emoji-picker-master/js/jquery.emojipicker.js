@@ -400,7 +400,7 @@
         var results = [];
         searchEmojiWrap.find('em').remove();
 
-        $.each($.fn.emojiPicker.emojis, function(i, emoji) {
+        $.each(emojis_, function(i, emoji) {
           var shortcode = emoji.shortcode;
           if ( shortcode.indexOf(searchTerm) > -1 ) {
             results.push('<em><div class="emoji emoji-' + shortcode + '"></div></em>');
@@ -568,9 +568,7 @@
       //For browsers like Firefox and Webkit based
       // var startPos = inputField.selectionStart;
       // var endPos = inputField.selectionEnd;
-      console.log(inputField.innerHTML);
-      console.log(inputField.innerText);
-      console.log(inputField.parentNode.children);
+
       let careq = 0
       let offset = 0;
       for (let i=0; i<inputField.childNodes.length; i++){

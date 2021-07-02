@@ -183,7 +183,7 @@ emojis_ = [
   },
   {
     "name": "sunglasses",
-    "unicode": {"apple":"", "google":"", "twitter":"1F60E"},
+    "unicode": {"apple":"1F60E", "google":"1F60E", "twitter":"1F60E"},
     "shortcode": "sunglasses",
     "description": "SMILING FACE WITH SUNGLASSES",
     "category": "people"
@@ -396,6 +396,13 @@ emojis_ = [
     "unicode": {"apple":"1F622", "google":"1F622", "twitter":"1F622"},
     "shortcode": "cry",
     "description": "CRYING FACE",
+    "category": "people"
+  },
+  {
+    "name": "smiling_face_with_tears",
+    "unicode": {"apple":"1F972", "google":"1F972", "twitter":"1F972"},
+    "shortcode": "smiling_face_with_tears",
+    "description": "SMILING FACE WITH TEARS",
     "category": "people"
   },
   {
@@ -818,7 +825,7 @@ emojis_ = [
   },
   {
     "name": "eyes",
-    "unicode": {"apple":"", "google":"", "twitter":"1F440"},
+    "unicode": {"apple":"1F440", "google":"1F440", "twitter":"1F440"},
     "shortcode": "eyes",
     "description": "EYES",
     "category": "people"
@@ -2213,7 +2220,7 @@ emojis_ = [
   },
   {
     "name": "new_moon_with_face",
-    "unicode": {"apple":"", "google":"1F31A", "twitter":"1F31A"},
+    "unicode": {"apple":"1F31A", "google":"1F31A", "twitter":"1F31A"},
     "shortcode": "new_moon_with_face",
     "description": "NEW MOON WITH FACE",
     "category": "nature"
@@ -6225,7 +6232,7 @@ emojis_ = [
   },
   {
     "name": "restroom",
-    "unicode": {"apple":"", "google":"1F6BB", "twitter":"1F6BB"},
+    "unicode": {"apple":"1F6BB", "google":"1F6BB", "twitter":"1F6BB"},
     "shortcode": "restroom",
     "description": "RESTROOM",
     "category": "symbol"
@@ -6253,7 +6260,7 @@ emojis_ = [
   },
   {
     "name": "koko",
-    "unicode": {"apple":"", "google":"1F201", "twitter":"1F201"},
+    "unicode": {"apple":"1F201", "google":"1F201", "twitter":"1F201"},
     "shortcode": "koko",
     "description": "SQUARED KATAKANA KOKO",
     "category": "symbol"

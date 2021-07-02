@@ -90,7 +90,6 @@ function update_messages(message, i=0){
         messages.push(message.id);
         if (scroll_to_view){
             document.getElementById('mess_' + message.id).scrollIntoView();
-            console.log("scrolled")
         }
     }
 }
@@ -108,16 +107,12 @@ function get_messages(from=0){
         },
         success: function(response)
         {
-            console.log(response);
             self = response['self'];
             response['messages'].forEach(update_messages);
             if (from === 0){
-                console.log("here");
                 let max = Math.max.apply(null, messages);
                 let mess = $("#mess_"+max)[0];
-                console.log(mess);
                 mess.scrollIntoView({behavior: "smooth"});
-                console.log("scrolled_to_latest");
             }
             setTimeout(function () {
                 loading_messages = false;
@@ -149,7 +144,6 @@ function connect() {
         if (data.type_ === 'message'){
             update_messages({'sender': data.username, 'senderid': data.userid, 'message': data.message, 'id': data.messageid, 'sent_at': data.sent_at});
         }
-        console.log(data);
     };
 
     // reconnects on unexpected disconnect
@@ -163,15 +157,14 @@ function connect() {
     document.querySelector('#chat-message-input').focus();
     document.querySelector('#chat-message-input').onkeyup = function (e) {
         e.preventDefault();
-        console.log(e);
-        if (!mobile && (e.keyCode === 13 && !e.shiftKey)) {  // enter, return
-            document.querySelector('#chat-message-submit').click();
+        if (!mobile && (e.keyCode === 13 && !e.shiftKey)) {  // TODO: remove <br> when enter is pressed in between
             const messageInputDom = document.querySelector('#chat-message-input');
+            messageInputDom.innerHTML = messageInputDom.innerHTML.replace(/<div><br><\/div>$/, "");
+            parse_before_send();
             let message = messageInputDom.innerHTML.toString();
-            console.log(message);
             message = message.replace(/<br>$/, "");
             message = message.replace(/<div><br><\/div>$/, "");
-            console.log(message);
+            message = message.replace(/&times;$/, "");
             chatSocket.send(JSON.stringify({
                 'message': message
             }));
@@ -182,11 +175,10 @@ function connect() {
     // Send button function
     document.querySelector('#chat-message-submit').onclick = function (e) {
         const messageInputDom = document.querySelector('#chat-message-input');
+        parse_before_send();
         let message = messageInputDom.innerHTML;
-        console.log(message);
         message = message.replace(/<br>$/, "");
         message = message.replace(/<div><br><\/div>$/, "");
-        console.log(message);
         chatSocket.send(JSON.stringify({
             'message': message.trim()
         }));
@@ -221,14 +213,9 @@ $(".chat-box").on('resize scroll', function (){
     if (!loading_messages && isElementInViewport(mess)){
         loading_messages = true;
         get_messages(min);
-        console.log("getting messages");
     }
 });
 
-setTimeout(function (){
-    console.log("images");
-    console.log($('img'));
-}, 10000);
 
 // function to enlarge image when clicked
 $(document).on('click', 'img', function () {

@@ -461,8 +461,11 @@ user-select: all;
 }
 
 .chat-text img{
-    max-width: 95%;
+    max-width: 100%;
     max-height: 16rem;
+}
+.chat-text video{
+    max-width: 100%;
 }
 
 .chat-container li.chat-right > .chat-text {
@@ -551,9 +554,8 @@ ul {
 
 .publisher {
     position: relative;
-    display: -webkit-box;
     display: flex;
-    -webkit-box-align: start;
+    border-radius: 1rem;
     align-items: start;
     padding: 0.25rem 0.25rem;
     background-color: #f9fafb
