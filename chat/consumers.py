@@ -55,6 +55,7 @@ async def remove_br(message):
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
+    # noinspection PyAttributeOutsideInit
     async def connect(self):
         user = self.scope['user']
         if user.is_authenticated:
@@ -76,7 +77,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def validate_to_chat(self, user):   # check line 45 too
         return ChatRoom.objects.get_or_create(id=int(self.room_name))[0]
-        # validate if user is allowed to acess chat
+        # TODO: validate if user is allowed to acess chat
 
     @database_sync_to_async
     def go_online(self, user):
@@ -106,22 +107,53 @@ class ChatConsumer(AsyncWebsocketConsumer):
     # Receive message from WebSocket
     async def receive(self, text_data=None, bytes_data=None):
         text_data_json = json.loads(text_data)
-        message = text_data_json['message'].strip()
-        message = await remove_br(message)
-        if message:
-            message_ = await self.write_message(message)
-            # Send message to room group
-            await self.channel_layer.group_send(
-                self.room_group_name,
-                {
-                    'type': 'chat_message',
-                    'message': message,
-                    'message_': message_,
-                    'userid': self.scope['user'].userid,
-                    'username': self.scope['user'].username,
-                    # add line for user profile pic
-                }
-            )
+
+        # Normal message received
+        if text_data_json['type_'] == "message":
+            message = text_data_json['message'].strip()
+            message = await remove_br(message)
+            if message:
+                message_ = await self.write_message(message)
+                # Send message to room group
+                await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        'type': 'chat_message',
+                        'message': message,
+                        'message_': message_,
+                        'userid': self.scope['user'].userid,
+                        'username': self.scope['user'].username,
+                        # add line for user profile pic
+                    }
+                )
+
+        # Message delete request
+        elif text_data_json['type_'] == 'delete':
+            mess_id = text_data_json['mess_id']
+            userid = self.scope['user'].userid
+            res = await self.del_message_from_db(mess_id, userid)
+            if res:
+                await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        'type': 'deleted_message',
+                        'mess_id': mess_id,
+                    }
+                )
+
+    async def deleted_message(self, event):
+        await self.send(text_data=json.dumps({
+            'type_': 'deleted',
+            'messageid': event['mess_id'],
+        }))
+
+    @database_sync_to_async
+    def del_message_from_db(self, mess_id, userid):
+        try:
+            Messages.objects.get(id=mess_id, sender=userid).delete()
+            return True
+        except:
+            return False
 
     @database_sync_to_async
     def message_seen(self, message):

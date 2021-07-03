@@ -21,7 +21,6 @@ function parse_before_send() {
     console.log(mess.childNodes);
     let rep = {};
     let index = 0;
-    let sub = 1;
     mess.childNodes.forEach(function (node) {
         if (node.nodeType === 3) {
             let str = node.nodeValue;
@@ -35,16 +34,35 @@ function parse_before_send() {
             console.log(str);
             for (let i = 0; i < str.length; i++) {
                 let uni = str.codePointAt(i);
-                let code = uni.toString(16).toUpperCase();
-                if (code.length > 4) {
+                let code = uni.toString(16).toUpperCase().toString();
+                if (code.length >= 4) {
                     for (let j in emojis_) {
                         let emoji = emojis_[j];
-                        if (code == emoji.unicode.apple) {
-                            rep[index] = {};
-                            rep[index].shortcode = emoji.shortcode;
-                            rep[index].value = String.fromCodePoint(uni);
-                            rep[index].sub = sub;
-                            break;
+                        let temp = emoji.unicode.apple.split('-')
+                        if (temp.includes(code)) {
+                            if (temp.length === 2) {
+                                i += 2;
+                                let uni_ = uni;
+                                uni = str.codePointAt(i);
+                                code += '-' + uni.toString(16).toUpperCase();
+                                console.log(code);
+                                for (let j in emojis_) {
+                                    let emoji = emojis_[j];
+                                    if (emoji.unicode.apple === code) {
+                                        rep[index] = {};
+                                        rep[index].shortcode = emoji.shortcode;
+                                        rep[index].value = String.fromCodePoint(uni_, uni);
+                                        rep[index].sub = 2;
+                                        break;
+                                    }
+                                }
+                                continue;
+                            } else {
+                                rep[index] = {};
+                                rep[index].shortcode = emoji.shortcode;
+                                rep[index].value = String.fromCodePoint(uni);
+                                break;
+                            }
                         }
                     }
                 }
@@ -65,6 +83,10 @@ function parse_before_send() {
     console.log(rep);
     let extra = 0
     for (let ind in rep) {
+        let sub = 0;
+        if (rep[ind].sub){
+            sub = 2;
+        }
         ind = parseInt(ind);
         let replacement = '<div style="width: 1.5rem; height: 1.5rem;display: inline-block; color: transparent" contenteditable="false" class="emoji-' + rep[ind].shortcode + '">' + rep[ind].value + '</div>';
 
@@ -73,34 +95,38 @@ function parse_before_send() {
 
         });
 
-        mess.innerHTML = str.substring(0, ind + extra) + replacement + str.substring(ind + extra + 2);
+        mess.innerHTML = str.substring(0, ind + extra) + replacement + str.substring(ind + extra + 2 + sub);
         extra += replacement.length - 2;
     }
     console.log(mess.outerHTML);
 }
 
 $(document).on('click', 'div.ballon > button[data-type="delete"]', function (){
-    console.log(this.parentNode.parentNode.id);
+    let mess_id = parseInt(this.parentNode.parentNode.id.substring(5));
     $("#modal-confirm").modal('show');
     var modalConfirm = function(callback) {
         $("#modal-confirm-yes").on("click", function () {
             $("#modal-confirm").modal('hide');
             callback(true);
+            $("#modal-confirm-no").off();
+            $("#modal-confirm-yes").off();
         });
 
         $("#modal-confirm-no").on("click", function () {
             $("#modal-confirm").modal('hide');
             callback(false);
+            $("#modal-confirm-no").off();
+            $("#modal-confirm-yes").off();
         });
     }
 
     modalConfirm(function(confirm) {
         if (confirm) {
-            //Acciones si el usuario confirma
-            alert("YES");
+            chatSocket.send(JSON.stringify({
+                'mess_id': mess_id,
+                'type_': 'delete'
+            }));
         } else {
-            //Acciones si el usuario no confirma
-            alert("NO");
         }
     });
 });

@@ -14,22 +14,22 @@
 <div hidden id="big-image-container">
     <span onclick="revert_big_image();" class="closebtn">&times;</span>
     <div id="inner-big-image-group">
-        <img id="expandedImg">
+        <img id="expandedImg" src="" alt="">
         <a id="open-orignal-link" target="_blank"><u>Open Orignal</u></a>
     </div>
 </div>
 
 {# modal form confirm delete #}
 <div id="modal-confirm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div style="border-radius: 0.75rem" class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header bg-dark">
+    <div style="border-radius: 0.75rem; background: transparent;" class="modal-dialog modal-dialog-centered" role="document">
+        <div style="background: transparent;" class="modal-content">
+            <div style="background:#1b1e21;" class="modal-header">
                 R u Sure?
             </div>
-            <div class="modal-body bg-dark">Are you sure?</div>
-            <div class="modal-footer bg-dark">
-                <button style="width: 48%" type="button" id="modal-confirm-yes" data-dismiss="modal" class="btn btn-danger">Delete</button>
-                <button style="width: 48%" type="button" id="modal-confirm-no" data-dismiss="modal" class="btn badge-dark">Cancel</button>
+            <div style="background:#1b1e21;" class="modal-body">Are you sure?</div>
+            <div style="background:#1b1e21;" class="modal-footer">
+                <button style="flex: 1" type="button" id="modal-confirm-yes" data-dismiss="modal" class="btn btn-danger">Delete</button>
+                <button style="flex: 1; background:#252528;" type="button" id="modal-confirm-no" data-dismiss="modal" class="btn btn-dark">Cancel</button>
             </div>
         </div>
     </div>
@@ -64,7 +64,7 @@
                             <div class="users-container min-14">
                                 <div class="chat-search-box">
                                     <div class="input-group">
-                                        <input style="border-radius: 0.75rem 0 0 0.75rem"class="form-control" placeholder="Search">
+                                        <input style="border-radius: 0.75rem 0 0 0.75rem" class="form-control" placeholder="Search">
                                         <div class="input-group-btn">
                                             <button style="background: dodgerblue; border-radius: 0 0.75rem 0.75rem 0" type="button" class="btn">
                                                 <i class="fa fa-search"></i>
@@ -143,67 +143,11 @@
                             <div style="min-width: 10rem; min-height: 13.75rem; padding-right: 0" class="chat-container">
                                 <div class="chatContainerScroll text-copy">
                                 <ul class="chat-box" id="chat-log">
-                                    <li class="chat-left">
-                                        <div class="chat-avatar">
-                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">
-                                            <div class="chat-name">Russell</div>
+                                    <div class="d-flex justify-content-center">
+                                        <div class="spinner-border" role="status">
+                                            <span class="sr-only">Loading...</span>
                                         </div>
-                                        <div class="chat-text">Hello, I'm Russell.</div>
-                                        <div class="chat-hour">08:55 <span class="fa fa-check-circle"></span></div>
-                                    </li>
-                                    <li class="chat-right">
-                                        <div class="chat-hour">08:56 <span class="fa fa-check-circle"></span></div>
-                                        <div class="chat-text">Hi, Russell<br>Noice<br>Talking to you<br>bye no byr kjla sdjklha sdljkh asldjkh aslkdhja slkdjh aslkjdh akljsdh akjlhd lajkshd lkajshd lkajsh djklash djklah sdljahs dlhjas dlashjdh askdhl asd hasjldkh asdh lkjhasjd klahs dl
-                                            <br> I need more information about Developer Plan.</div>
-                                        <div class="chat-avatar">
-                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">
-                                            <div class="chat-name">Sam</div>
-                                        </div>
-                                    </li>
-                                    <li class="chat-left">
-                                        <div class="chat-avatar">
-                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">
-                                            <div class="chat-name">Russell</div>
-                                        </div>
-                                        <div class="chat-text">Are we meeting today?
-                                            <br>Project has been already finished and I have results to show you.</div>
-                                        <div class="chat-hour">08:57 <span class="fa fa-check-circle"></span></div>
-                                    </li>
-                                    <li class="chat-right">
-                                        <div class="chat-hour">08:59 <span class="fa fa-check-circle"></span></div>
-                                        <div class="chat-text">Well I am not sure.
-                                            <br>I have results to show you.</div>
-                                        <div class="chat-avatar">
-                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar5.png" alt="Retail Admin">
-                                            <div class="chat-name">Joyse</div>
-                                        </div>
-                                    </li>
-                                    <li class="chat-left">
-                                        <div class="chat-avatar">
-                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">
-                                            <div class="chat-name">Russell</div>
-                                        </div>
-                                        <div class="chat-text">The rest of the team is not here yet.
-                                            <br>Maybe in an hour or so?</div>
-                                        <div class="chat-hour">08:57 <span class="fa fa-check-circle"></span></div>
-                                    </li>
-                                    <li class="chat-right">
-                                        <div class="chat-hour">08:59 <span class="fa fa-check-circle"></span></div>
-                                        <div class="chat-text">Have you faced any problems at the last phase of the project?</div>
-                                        <div class="chat-avatar">
-                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar4.png" alt="Retail Admin">
-                                            <div class="chat-name">Jin</div>
-                                        </div>
-                                    </li>
-                                    <li class="chat-left">
-                                        <div class="chat-avatar">
-                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">
-                                            <div class="chat-name">Russell</div>
-                                        </div>
-                                        <div class="chat-text">Actually everything was fine.
-                                            <br>I'm very excited to show this to our team.</div>
-                                        <div class="chat-hour">07:00 <span class="fa fa-check-circle"></span></div>
-                                    </li>
+                                    </div>
                                 </ul>
                                 </div>
                                 <div style="margin-top: 0.5rem; margin-right: 0.5rem" class="form-group mb-0">

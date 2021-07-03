@@ -15,6 +15,9 @@
 *{
     color: white;
 }
+html {
+    font-size: 1.1em;
+}
 
 .closebtn{
     position: absolute;
@@ -537,8 +540,22 @@ user-select: all;
 }
 
 .chat-container li .chat-hour > span {
+    position: relative;
     font-size: 0.6rem;
     color: #9ec94a;
+}
+
+.chat-container .chat-right > .time-seen-at{
+    visibility: hidden;
+    align-self: center;
+    font-size: 0.7rem;
+    padding-right: 1.5rem;
+    color: #f0f0f0;
+    font-weight: 100;
+}
+
+.chat-container .chat-right:hover > .time-seen-at{
+    visibility: visible;
 }
 
 .chat-container li.chat-right > .chat-hour {
