@@ -40,26 +40,32 @@ function closest_message(key){
 function update_messages(message){
     if (messages.indexOf(message.id) === -1){
 
-        let time_ = (new Date(message.sent_at)).toLocaleTimeString(undefined, {hour12:true, timeZone: 'Asia/Kolkata', timeStyle: 'short'});
+        let time_ = parseDate(new Date(message.sent_at));
 
         let scroll_to_view = false;
         let message_to_be_appeded;
         // TODO: add user profile
+
+        let style = '';
+        if (selecting === true){
+            style = 'style="visibility: hidden;"';
+        }
         if (message.senderid === self){
+
             let seen = 'hidden';
             let time_seen = ""
             if (Boolean(message.seen_at) && message.seen_at !== 'None'){
                 seen = '';
-                time_seen = (new Date(message.seen_at)).toLocaleTimeString(undefined, {hour12:true, timeZone: 'Asia/Kolkata', timeStyle: 'short'});
+                time_seen = parseDate(new Date(message.seen_at));
             }
-            message_to_be_appeded = '<li class="chat-right no-copy" id="mess_' + message.id + '">\
+            message_to_be_appeded = '<li class="chat-right" id="mess_' + message.id + '">\
                                        <div class="time-seen-at">' + time_seen + '</div>\
-                                       <div class="ballon">\
+                                       <div class="ballon" ' + style + '>\
                                             <button data-type="edit" style="background: #252528;">\
                                                 <i class="fa fa-pencil-alt"></i>\
                                             </button>\
                                             <button data-type="delete" class="btn-danger">\
-                                                <i class="fa fa-trash"></i>\
+                                                <i class="fa fa-trash-alt"></i>\
                                             </button>\
                                             <button data-type="more" style="background: #252528">\
                                                 <i class="fa fa-ellipsis-v"></i>\
@@ -72,9 +78,14 @@ function update_messages(message){
                                     </li>'
         }
         else{
-            message_to_be_appeded = '<li class="chat-left no-copy" id="mess_' + message.id + '">\
+            message_to_be_appeded = '<li class="chat-left" id="mess_' + message.id + '">\
                                         <div class="chat-avatar">\
                                             <img class="user-av" src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">\
+                                        </div>\
+                                        <div class="ballon" '+ style +'>\
+                                            <button data-type="reply" style="background: #252528;">\
+                                                <i class="fa fa-reply"></i>\
+                                            </button>\
                                         </div>\
                                         <div class="chat-text no-copy"><div class="chat-name text-copy">' + message.sender + '</div>\
                                         <div class="text-copy">' + message.message + '</div>\
@@ -166,7 +177,7 @@ function connect() {
     // request latest 50 messages when connected to server
     chatSocket.onopen = function () {
         get_messages();
-    }
+    };
 
     // handles received message
     chatSocket.onmessage = function (e) {
@@ -182,13 +193,23 @@ function connect() {
             }
             delete messages_['mess_'+data.messageid]
         }
+        else if (data.type_ === "deleted_multi"){
+            data.message_ids.forEach(function (mess_id) {
+                document.getElementById("mess_" + mess_id).remove();
+                const index = messages.indexOf(data.mess_id);
+                if (index > -1) {
+                    messages.splice(index, 1);
+                }
+                delete messages_['mess_' + data.mess_id];
+            });
+        }
         else if (data.type_ === "delivery_report"){
-            $("#mes_" + data.messageid + " > div.time-seen-at")[0].innerText = (new Date(data.seen_at)).toLocaleTimeString(undefined, {
+            $("#mess_" + data.messageid + " > div.time-seen-at")[0].innerHTML = (new Date(data.seen_at)).toLocaleTimeString(undefined, {
                 hour12: true,
                 timeZone: 'Asia/Kolkata',
                 timeStyle: 'short'
             });
-            $("#mes_" + data.messageid + " > div.chat-text.no-copy > div.chat-hour > span")[0].hidden = false;
+            $("#mess_" + data.messageid + " > div.chat-text.no-copy > div.chat-hour > span.fa.fa-check-circle")[0].hidden = false;
             messages_['mess_' +data.messageid].seen_at = data.seen_at;
         }
     };
@@ -242,9 +263,6 @@ function extralargescreen() {
     if (window.innerHeight > 1080) {
         document.children[0].setAttribute("style", "font-size: " + (window.innerHeight / 970) + "em;");
     }
-    else if (window.innerHeight < 577) {
-        document.children[0].setAttribute("style", "font-size: " + (window.innerWidth / 550) + "em;");
-    }
     else {
         document.children[0].setAttribute("style", "font-size: 1.1em");
     }
@@ -287,4 +305,30 @@ function revert_big_image(){
     document.getElementById("big-image-container").setAttribute('style', 'opacity: 0');
     document.getElementById("main-content").setAttribute('style', "filter: blur(0); pointer-events: inherit");
     document.getElementById("main-content").setAttribute('disabled', "false");
+}
+
+const isToday = (someDate) => {
+  const today = new Date();
+  return someDate.getDate() === today.getDate() &&
+      someDate.getMonth() === today.getMonth() &&
+      someDate.getFullYear() === today.getFullYear();
+}
+
+const isYesterday = (someDate) => {
+  const yesterday = new Date((new Date()).valueOf() - 1000*60*60*24);
+  return someDate.getDate() === yesterday.getDate() &&
+      someDate.getMonth() === yesterday.getMonth() &&
+      someDate.getFullYear() === yesterday.getFullYear();
+}
+
+function parseDate(date){
+    let time = date.toLocaleTimeString(undefined, {hour12:true, timeZone: 'Asia/Kolkata', timeStyle: 'short'});
+    if (isToday(date)){
+        time = 'Today at ' + time;
+    } else if (isYesterday(date)){
+        time = 'Yesterday at ' + time;
+    }   else{
+        time = date.toLocaleDateString('en-GB', {timeZone: 'Asia/Kolkata', });
+    }
+    return time;
 }

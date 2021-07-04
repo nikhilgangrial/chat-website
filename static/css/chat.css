@@ -19,6 +19,18 @@ html {
     font-size: 1.1em;
 }
 
+@keyframes fadeIn {
+  0% {
+      opacity: 0;
+      height: 0;
+  }
+  100% {
+     visibility: visible;
+     opacity: 1;
+     height: 1.75rem;
+  }
+}
+
 .closebtn{
     position: absolute;
     top: 0.5rem;
@@ -364,6 +376,9 @@ user-select: all;
     -webkit-border-radius: 0 0.1875rem 0 0;
     -moz-border-radius: 0 0.1875rem 0 0;
     border-radius: 0 0.1875rem 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .selected-user span {
@@ -372,6 +387,25 @@ user-select: all;
 
 .selected-user span.name {
     font-weight: 700;
+}
+
+.selected-user > div > span{
+    width: 1.75rem;
+    height: 1.75rem;
+    opacity: 1;
+    padding: 0.45rem;
+    transition: opacity 0.2s;
+}
+.selected-user > div > span > i{
+    transition: transform 200ms;
+}
+
+.selected-user > div > span:hover, .selected-user > div > span:hover{
+    opacity: 0.8;
+}
+
+.selected-user > div > span:hover > i, .selected-user > div > span:active > i{
+    transform: scale(1.1);
 }
 
 .chat-container {
@@ -647,9 +681,7 @@ ul {
     outline: none !important;
     background-color: transparent;
     flex-wrap: initial;
-    white-space: pre-wrap;
-    white-space: -moz-pre-wrap;
-    white-space: -o-pre-wrap;
+    white-space: normal;
 }
 
 .publisher-input:empty:before {

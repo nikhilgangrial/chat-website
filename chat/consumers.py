@@ -39,6 +39,10 @@ async def remove_br(message):
     while 1:
         if message[-3:] == '<br>':
             message = message[:-3]
+        elif message[-6:] == '&nbsb;':
+            message = message[:-6]
+        elif message[-1:] == ' ':
+            message = message[:-1]
         elif message[-15:] == '<div><br></div>':
             message = message[:-15]
         else:
@@ -47,6 +51,10 @@ async def remove_br(message):
     while 1:
         if message[:3] == '<br>':
             message = message[3:]
+        elif message[:6] == '&nbsb;':
+            message = message[6:]
+        elif message[:1] == ' ':
+            message = message[1:]
         elif message[:15] == '<div><br></div>':
             message = message[15:]
         else:
@@ -140,6 +148,36 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         'mess_id': mess_id,
                     }
                 )
+
+        # Multiple Message Delete Request
+        elif text_data_json['type_'] == 'delete_multi':
+            print(datetime.now())
+            mess_ids = text_data_json['mess_ids']
+            userid = self.scope['user'].userid
+            res = await self.del_multi_messages_from_db(mess_ids, userid)
+            if res:
+                await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        'type': 'deleted_multi',
+                        'mess_ids': mess_ids,
+                    }
+                )
+
+    @database_sync_to_async
+    def del_multi_messages_from_db(self, mess_ids, userid):
+        try:
+            Messages.objects.filter(sender=userid, id__in=mess_ids).delete()
+            return True
+        except:
+            return False
+
+    async def deleted_multi(self, event):
+        await self.send(text_data=json.dumps({
+            'type_': 'deleted_multi',
+            'message_ids': event['mess_ids']
+        }))
+        print(datetime.now())
 
     async def deleted_message(self, event):
         await self.send(text_data=json.dumps({
