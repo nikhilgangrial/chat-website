@@ -71,7 +71,8 @@ function update_messages(message){
                                                 <i class="fa fa-ellipsis-v"></i>\
                                             </button>\
                                        </div>\
-                                       <div class="chat-text no-copy"><div class="chat-name text-copy">' + message.sender + '</div>\
+                                       <div class="chat-text no-copy">\
+                                           <div class="chat-name text-copy">' + message.sender + '</div>\
                                            <div class="text-copy">' + message.message + '</div>\
                                            <div class="chat-hour">' + time_ + '<span ' + seen + ' class="fa fa-check-circle"></span></div>\
                                        </div>\
@@ -87,8 +88,9 @@ function update_messages(message){
                                                 <i class="fa fa-reply"></i>\
                                             </button>\
                                         </div>\
-                                        <div class="chat-text no-copy"><div class="chat-name text-copy">' + message.sender + '</div>\
-                                        <div class="text-copy">' + message.message + '</div>\
+                                        <div class="chat-text no-copy">\
+                                            <div class="chat-name text-copy">' + message.sender + '</div>\
+                                            <div class="text-copy">' + message.message + '</div>\
                                             <div class="chat-hour">' + time_ + '</div>\
                                         </div>\
                                     </li>'

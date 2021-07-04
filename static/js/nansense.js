@@ -197,16 +197,40 @@ $(document).on('click', 'div.selected-user > div > span[data-type="cancel"]', fu
 })
 
 
-$(document).on('click', 'div.selected-user > div > span[data-type="copy"]', function (){
+$(document).on('click', 'div.selected-user > div > span[data-type="copy"]', function (e){
     if (selected_messages.length > 0) {
-        let result = "<div style='width: 100%; height: auto;'>"
+        let result = "<div style='width: 100%; height: auto; position: relative;'>\n";
+        let result_ = '';
         selected_messages.forEach(function (mess_id) {
             let ele = document.getElementById(mess_id);
             if (ele.className === "chat-left"){
-                result += '<div style="justify-self: flex-start">'
+                result += '  <div style="position: absolute; left: 0; text-align: left; max-width: 70%;">\n';
+            } else{
+                result += '  <div style="position: absolute; right: 0; text-align: right; max-width: 70%;">\n';
             }
+            let mess = ele.children[2].children;
+            result += '    <div style="font-size: 12px">' + mess[0].innerHTML + '</div>\n';
+            result += '    <div style="font-size: 12px">' + mess[1].innerText + '</div>\n';
+            result += '    <div style="font-size: 12px">' + mess[2].innerText + '</div>\n';
+            result += "  </div>\n";
+
+            result_ += mess[0].innerHTML + '\n';
+            result_ += mess[1].innerText + '\n';
+            result_ += mess[2].innerText + '\n';
         });
-        result += "</div>"
+        result += "</div>";
+        function copyToClipboard(text) {
+            const elem = document.createElement('textarea');
+            elem.value = text;
+            document.body.appendChild(elem);
+            elem.select();
+            document.execCommand('copy');
+            document.body.removeChild(elem);
+        }
+        copyToClipboard(result);
+        console.log(result);
+        console.log(result_);
+        e.preventDefault();
     }
 })
 
@@ -275,10 +299,10 @@ $(document).on('mousedown touchstart', 'li.chat-right, li.chat-left', function(e
             }
         }
     }
-}).on('mouseup mouseleave mousemove touchend touchmove', function(event) {
-    console.log(event);
+}).on('mouseup mouseleave mousemove touchend touchleave', function() {
     clearTimeout(timeoutId);
 });
+
 
 $(document).on('selecting', function (){
     $('li.chat-right > div.ballon, li.chat-left > div.ballon').css('visibility',  'hidden');
