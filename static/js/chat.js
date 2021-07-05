@@ -74,7 +74,7 @@ function update_messages(message){
                                        <div class="chat-text no-copy">\
                                            <div class="chat-name text-copy">' + message.sender + '</div>\
                                            <div class="text-copy">' + message.message + '</div>\
-                                           <div class="chat-hour">' + time_ + '<span ' + seen + ' class="fa fa-check-circle"></span></div>\
+                                           <div class="chat-hour">' + time_ + '&nbsp;<span ' + seen + ' class="fa fa-check-circle"></span></div>\
                                        </div>\
                                     </li>'
         }
@@ -107,6 +107,14 @@ function update_messages(message){
                     scroll_to_view = true
                 }
                 mess.insertAdjacentHTML("afterend", message_to_be_appeded);
+                if (messages_['mess_' + max].sender_id === message.senderid){
+                    mess.nextSibling.setAttribute('style', 'margin-top: -1.15rem!important;');
+                    mess.nextSibling.children[2].setAttribute('style', 'padding-top: 0.4rem!important;');
+                    mess.nextSibling.children[2].children[0].setAttribute('style', 'display: none!important;');
+                    if (message.sender !== self){
+                        mess.nextSibling.children[0].setAttribute('style', 'visibility: hidden;')
+                    }
+                }
             } else if (message.id < min) {
                 let mess = document.getElementById("mess_"+min);
                 mess.insertAdjacentHTML("beforebegin", message_to_be_appeded);
@@ -148,7 +156,10 @@ function get_messages(from=0){
         },
         success: function(response)
         {
+            document.getElementById("chat-spinner").setAttribute('style', 'display: none!important');
+            console.log(response);
             self = response['self'];
+            response['messages'].reverse();
             response['messages'].forEach(update_messages);
             if (from === 0){
                 setTimeout(function () {
@@ -192,17 +203,17 @@ function connect() {
             const index = messages.indexOf(data.messageid);
             if (index > -1) {
                 messages.splice(index, 1);
+                delete messages_['mess_'+data.messageid];
             }
-            delete messages_['mess_'+data.messageid]
         }
         else if (data.type_ === "deleted_multi"){
             data.message_ids.forEach(function (mess_id) {
                 document.getElementById("mess_" + mess_id).remove();
-                const index = messages.indexOf(data.mess_id);
+                const index = messages.indexOf(parseInt(mess_id));
                 if (index > -1) {
                     messages.splice(index, 1);
+                    delete messages_['mess_' + mess_id];
                 }
-                delete messages_['mess_' + data.mess_id];
             });
         }
         else if (data.type_ === "delivery_report"){
@@ -282,6 +293,7 @@ $(".chat-box").on('resize scroll', function (){
     let mess = document.getElementById("mess_"+min);
     if (!loading_messages && isElementInViewport(mess)){
         loading_messages = true;
+        document.getElementById("chat-spinner").setAttribute("style", "");
         get_messages(min);
     }
 });

@@ -137,10 +137,11 @@
                             </div>
                         </div>
                         <div class="col-xl-8 col-lg-8 col-md-8 col-sm-9 col-xs-9 col-9 min-14">
-                            <div class="selected-user">
-                                <span style="order: 1;">To: <span class="name">Emily Russell</span></span>
+                            <div style="position: relative" class="selected-user">
+                                <span style="order: 1;">To: <span class="name">Comp - B</span></span>
                                 <div style="order: 2;display: flex;visibility: hidden">
-                                    <span data-type="copy">
+                                    <span style="z-index: 45" data-type="copy">
+                                        <span style="visibility: hidden; background: rgb(2 2 2);border-radius: 0.5rem; position: absolute;z-index: 51;opacity: 0.85;font-size: 0.8rem;padding: 0.75rem;bottom: -3rem; left: 0;"><i style="font-size: 1.1rem" class="fa fa-clipboard-check"></i><span> Copied to Clipboard!</span></span>
                                         <i class="fa fa-copy"></i>
                                     </span>
                                     <span data-type="delete">
@@ -157,8 +158,8 @@
                             <div style="min-width: 10rem; min-height: 13.75rem; padding-right: 0" class="chat-container">
                                 <div class="chatContainerScroll">
                                 <ul class="chat-box no-copy" id="chat-log">
-                                    <div class="d-flex justify-content-center">
-                                        <div class="spinner-border" role="status">
+                                    <div id="chat-spinner" class="d-flex justify-content-center">
+                                        <div style="margin-bottom: 2rem;" class="spinner-border" role="status">
                                             <span class="sr-only">Loading...</span>
                                         </div>
                                     </div>

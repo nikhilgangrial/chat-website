@@ -4,6 +4,11 @@ from datetime import datetime
 from libs.imgur_python import Imgur
 
 
+class Empty:
+    def __init__(self, **kwargs):
+        self.__dict__.update(kwargs)
+
+
 def convert_message(q, user):
     res = []
     senders = {user.userid: user}   # keepings track of users to avoid reloading same data from database
@@ -16,7 +21,10 @@ def convert_message(q, user):
         if i.sender in senders:
             sender = senders[i.sender]
         else:
-            sender = Users.objects.get(userid=i.sender)
+            try:
+                sender = Users.objects.get(userid=i.sender)
+            except:
+                sender = Empty(username='<i style="color: inherit;">Deleted User</i>', userid=i.sender)
             senders[i.sender] = sender
 
         res.append({

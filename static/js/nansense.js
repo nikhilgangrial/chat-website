@@ -34,18 +34,18 @@ function parse_before_send() {
                 let uni = str.codePointAt(i);
                 let code = uni.toString(16).toUpperCase().toString();
                 if (code.length >= 4) {
-
                     for (let j in emojis_) {
+                        // noinspection JSUnfilteredForInLoop
                         let emoji = emojis_[j];
                         let temp = emoji.unicode.apple.split('-')
                         if (temp.includes(code)) {
-                            // noinspection JSUnfilteredForInLoop
                             if (temp.length === 2) {
                                 i += 2;
                                 let uni_ = uni;
                                 uni = str.codePointAt(i);
                                 code += '-' + uni.toString(16).toUpperCase();
                                 for (let j in emojis_) {
+                                    // noinspection JSUnfilteredForInLoop
                                     let emoji = emojis_[j];
                                     if (emoji.unicode.apple === code) {
                                         rep[index] = {};
@@ -151,7 +151,6 @@ $(document).on('click', 'div.selected-user > div > span[data-type="delete"]', fu
         if (messages_[ele_id].sender_id === self) {
             mess_ids.push(parseInt(ele_id.substring(5)));
         }
-        console.log("here");
     });
     var modalConfirm = function(callback) {
         $("#modal-confirm-yes").on("click", function () {
@@ -197,43 +196,46 @@ $(document).on('click', 'div.selected-user > div > span[data-type="cancel"]', fu
 })
 
 
-$(document).on('click', 'div.selected-user > div > span[data-type="copy"]', function (e){
+$(document).on('click', 'div.selected-user > div > span[data-type="copy"]', function (event){
     if (selected_messages.length > 0) {
-        let result = "<div style='width: 100%; height: auto; position: relative;'>\n";
+        let result = "";
         let result_ = '';
+        selected_messages.sort();
         selected_messages.forEach(function (mess_id) {
             let ele = document.getElementById(mess_id);
             if (ele.className === "chat-left"){
-                result += '  <div style="position: absolute; left: 0; text-align: left; max-width: 70%;">\n';
+                result += '  <span style="text-align: left;">';
             } else{
-                result += '  <div style="position: absolute; right: 0; text-align: right; max-width: 70%;">\n';
+                result += '  <span style="text-align: right;">';
             }
             let mess = ele.children[2].children;
-            result += '    <div style="font-size: 12px">' + mess[0].innerHTML + '</div>\n';
-            result += '    <div style="font-size: 12px">' + mess[1].innerText + '</div>\n';
-            result += '    <div style="font-size: 12px">' + mess[2].innerText + '</div>\n';
-            result += "  </div>\n";
+            result += '    <span style="font-size: 0.75rem">' + mess[0].innerText + '</span><br>';
+            result += '    <span style="font-size: 1rem">' + mess[1].innerText + '</span><br>';
+            result += '    <span style="font-size: 0.75rem">' + mess[2].innerText + '</span><br>';
+            result += "  </span><br>";
 
-            result_ += mess[0].innerHTML + '\n';
+            result_ += mess[0].innerText + '\n';
             result_ += mess[1].innerText + '\n';
             result_ += mess[2].innerText + '\n';
         });
-        result += "</div>";
-        function copyToClipboard(text) {
-            const elem = document.createElement('textarea');
-            elem.value = text;
-            document.body.appendChild(elem);
-            elem.select();
-            document.execCommand('copy');
-            document.body.removeChild(elem);
+        function listener(e) {
+            e.clipboardData.setData("text/html", result);
+            e.clipboardData.setData("text/plain", result_);
+            e.preventDefault();
         }
-        copyToClipboard(result);
+        document.addEventListener("copy", listener);
+        document.execCommand("copy");
+        document.removeEventListener("copy", listener);
         console.log(result);
         console.log(result_);
-        e.preventDefault();
+        let popup = $(event.currentTarget.children[0]);
+        popup.css({'visibility': 'visible', 'left': (event.currentTarget.parentNode.parentNode.offsetWidth - popup[0].offsetWidth)/2 + 'px'});
+        setTimeout(function (){
+            popup.css('visibility', 'hidden');
+            // $('div.selected-user > div > span[data-type="cancel"]').click();
+        }, 1500);
     }
 })
-
 
 $('[contenteditable]').on('paste', function (event){
     if (!event.currentTarget.innerHTML){
@@ -260,7 +262,6 @@ let selected_messages = [];
 const selecting_event = new Event('selecting');
 
 $(document).on('mousedown touchstart', 'li.chat-right, li.chat-left', function(event) {
-    console.log(event);
     if (event.type === 'mousedown'){
         if (event.which !== 1){
             return ;
@@ -268,16 +269,15 @@ $(document).on('mousedown touchstart', 'li.chat-right, li.chat-left', function(e
     }
     if (!selecting) {
         timeoutId = setTimeout(function () {
-            console.log(event.target);
             selecting = true;
             document.dispatchEvent(selecting_event);
             if (!event.currentTarget.getAttribute('selected_') || event.currentTarget.getAttribute('selected_') === 'false') {
                 event.currentTarget.setAttribute('selected_', 'true');
-                event.currentTarget.setAttribute('style', 'background: rgba(51, 153, 255, 0.45)');
+                $(event.currentTarget).css('background', 'rgba(51, 153, 255, 0.45)');
                 selected_messages.push(event.currentTarget.id);
             } else {
                 event.currentTarget.setAttribute('selected_', 'false');
-                event.currentTarget.setAttribute('style', '');
+                $(event.currentTarget).css('background', '');
                 const index = selected_messages.indexOf(event.currentTarget.id);
                 if (index > -1) {
                     selected_messages.splice(index, 1);
@@ -285,14 +285,13 @@ $(document).on('mousedown touchstart', 'li.chat-right, li.chat-left', function(e
             }
         }, 750);
     } else {
-        console.log(event.currentTarget.getAttribute('selected_'));
         if (!event.currentTarget.getAttribute('selected_') || event.currentTarget.getAttribute('selected_') === 'false') {
             event.currentTarget.setAttribute('selected_', 'true');
-            event.currentTarget.setAttribute('style', 'background: rgba(51, 153, 255, 0.45)');
+            $(event.currentTarget).css('background', 'rgba(51, 153, 255, 0.45)');
             selected_messages.push(event.currentTarget.id);
         } else {
             event.currentTarget.setAttribute('selected_', 'false');
-            event.currentTarget.setAttribute('style', '');
+            $(event.currentTarget).css('background', '');
             const index = selected_messages.indexOf(event.currentTarget.id);
             if (index > -1) {
                 selected_messages.splice(index, 1);
