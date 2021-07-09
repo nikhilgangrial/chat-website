@@ -1,5 +1,3 @@
-var caret_position_mes=0;
-
 // intialize emojipicker
 setTimeout(function () {
     try {
@@ -55,7 +53,7 @@ function parse_before_send() {
                                         break;
                                     }
                                 }
-                                continue;
+                                // continue; i do non't khow why :pain:
                             } else {
                                 rep[index] = {};
                                 rep[index].shortcode = emoji.shortcode;
@@ -148,7 +146,7 @@ $(document).on('click', 'div.selected-user > div > span[data-type="delete"]', fu
     modal.modal('show');
     let mess_ids = []
     selected_messages.forEach(function (ele_id) {
-        if (messages_[ele_id].sender_id === self) {
+        if (messages_[current_room][ele_id].sender_id === self) {
             mess_ids.push(parseInt(ele_id.substring(5)));
         }
     });
@@ -188,8 +186,9 @@ $(document).on('click', 'div.selected-user > div > span[data-type="cancel"]', fu
     $('li.chat-right > div.ballon, li.chat-left > div.ballon').css('visibility',  '');
     let options = $('div.selected-user > div');
     setTimeout(function () {
-        options.css('visibility', 'hidden');
-        options.css('animation', '');
+        options.fadeOut(200, function (){
+            options.css('visibility', 'hidden');
+        });
     },150);
     selecting = false;
     selected_messages = [];
@@ -219,21 +218,23 @@ $(document).on('click', 'div.selected-user > div > span[data-type="copy"]', func
             result_ += mess[2].innerText + '\n';
         });
         function listener(e) {
-            e.clipboardData.setData("text/html", result);
+            e.clipboardData.setData("text/html", result.substring(0, result.length-1));
             e.clipboardData.setData("text/plain", result_);
             e.preventDefault();
         }
         document.addEventListener("copy", listener);
         document.execCommand("copy");
         document.removeEventListener("copy", listener);
-        console.log(result);
-        console.log(result_);
+        // console.log(result);
+        // console.log(result_);
         let popup = $(event.currentTarget.children[0]);
-        popup.css({'visibility': 'visible', 'left': (event.currentTarget.parentNode.parentNode.offsetWidth - popup[0].offsetWidth)/2 + 'px'});
+        popup.css({visibility: 'visible'});
+        popup.fadeIn();
+        popup.css({'left': (event.currentTarget.parentNode.parentNode.clientWidth - popup[0].offsetWidth)/2 + 'px'});
         setTimeout(function (){
-            popup.css('visibility', 'hidden');
+            popup.fadeOut(200);
             // $('div.selected-user > div > span[data-type="cancel"]').click();
-        }, 1500);
+        }, 1200);
     }
 })
 
@@ -254,11 +255,6 @@ $('#big-image-container').on('click', function (event){
     }
 });
 
-
-var timeoutId = 0;
-let selecting = false;
-let selected_messages = [];
-
 const selecting_event = new Event('selecting');
 
 $(document).on('mousedown touchstart', 'li.chat-right, li.chat-left', function(event) {
@@ -267,10 +263,34 @@ $(document).on('mousedown touchstart', 'li.chat-right, li.chat-left', function(e
             return ;
         }
     }
+
     if (!selecting) {
         timeoutId = setTimeout(function () {
             selecting = true;
             document.dispatchEvent(selecting_event);
+                event.currentTarget.setAttribute('selected_', 'true');
+                let ele = $(event.currentTarget);
+                ele.css('background', 'rgba(51, 153, 255, 0.45)');
+                selected_messages.push(event.currentTarget.id);
+        }, 750);
+    } else {
+        if (event.type === 'touchstart'){
+            timeoutId = setTimeout(function () {
+                if (!event.currentTarget.getAttribute('selected_') || event.currentTarget.getAttribute('selected_') === 'false') {
+                    event.currentTarget.setAttribute('selected_', 'true');
+                    $(event.currentTarget).css('background', 'rgba(51, 153, 255, 0.45)');
+                    selected_messages.push(event.currentTarget.id);
+                } else {
+                    event.currentTarget.setAttribute('selected_', 'false');
+                    $(event.currentTarget).css('background', '');
+                    const index = selected_messages.indexOf(event.currentTarget.id);
+                    if (index > -1) {
+                        selected_messages.splice(index, 1);
+                    }
+                }
+            }, 500);
+        }
+        else {
             if (!event.currentTarget.getAttribute('selected_') || event.currentTarget.getAttribute('selected_') === 'false') {
                 event.currentTarget.setAttribute('selected_', 'true');
                 $(event.currentTarget).css('background', 'rgba(51, 153, 255, 0.45)');
@@ -283,23 +303,14 @@ $(document).on('mousedown touchstart', 'li.chat-right, li.chat-left', function(e
                     selected_messages.splice(index, 1);
                 }
             }
-        }, 750);
-    } else {
-        if (!event.currentTarget.getAttribute('selected_') || event.currentTarget.getAttribute('selected_') === 'false') {
-            event.currentTarget.setAttribute('selected_', 'true');
-            $(event.currentTarget).css('background', 'rgba(51, 153, 255, 0.45)');
-            selected_messages.push(event.currentTarget.id);
-        } else {
-            event.currentTarget.setAttribute('selected_', 'false');
-            $(event.currentTarget).css('background', '');
-            const index = selected_messages.indexOf(event.currentTarget.id);
-            if (index > -1) {
-                selected_messages.splice(index, 1);
-            }
         }
     }
-}).on('mouseup mouseleave mousemove touchend touchleave', function() {
+}).on('mouseup mouseleave mousemove touchend touchcancel', function() {
     clearTimeout(timeoutId);
+});
+
+$('ul.chat-box.no-copy').on('scroll touchcancel touchend', function (){
+    clearTimeout(timeoutId)
 });
 
 
@@ -307,5 +318,5 @@ $(document).on('selecting', function (){
     $('li.chat-right > div.ballon, li.chat-left > div.ballon').css('visibility',  'hidden');
     let options = $('div.selected-user > div');
     options.css('visibility', 'visible');
-    options.css('animation', 'linear .2s fadeIn 1');
+    options.fadeIn(200);
 });

@@ -72,6 +72,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
             self.room_id = await self.validate_to_chat(user)
 
+            if not self.room_id:
+                await self.close()
+
             # Join room group
             await self.channel_layer.group_add(
                 self.room_group_name,
@@ -84,8 +87,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def validate_to_chat(self, user):   # check line 45 too
-        return ChatRoom.objects.get_or_create(id=int(self.room_name))[0]
-        # TODO: validate if user is allowed to acess chat
+        try:
+            return ChatRoom.objects.get(id=int(self.room_name), members={'user': user.userid})
+        except:
+            return False
 
     @database_sync_to_async
     def go_online(self, user):
@@ -202,7 +207,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         userid = event['userid']
 
         if self.scope['user'].userid == userid:
-            seen_at = str(event['seen_at'])
+            seen_at = event['seen_at']
             await self.send(text_data=json.dumps({
                 'type_': 'delivery_report',
                 'messageid': event['messageid'],
@@ -225,7 +230,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'message': '',
                     'userid': userid,
                     'messageid': message_.id,
-                    'seen_at': message_.seen_at,
+                    'seen_at': str(message_.seen_at),
                 }
             )
 

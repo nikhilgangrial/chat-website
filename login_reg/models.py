@@ -31,10 +31,10 @@ class Users(AbstractBaseUser):
     """
       Custom user class inheriting AbstractBaseUser class
     """
-    userid = models.CharField(max_length=45, unique=True)
+    userid = models.CharField(max_length=26, unique=True)
     email = models.EmailField(verbose_name='email', max_length=60, unique=True)
     username = models.CharField(max_length=65)
-    phoneno = models.CharField(max_length=13)
+    phoneno = models.CharField(max_length=13, default='')
     type = models.CharField(max_length=10)
     rollno = models.IntegerField()
     stu_class = models.CharField(max_length=15)  # class is python keyword
@@ -46,6 +46,7 @@ class Users(AbstractBaseUser):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     status = models.CharField(max_length=10, default="offline")
+    profile = models.CharField(max_length=30, default="")
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'userid']
@@ -53,7 +54,7 @@ class Users(AbstractBaseUser):
     objects = MyAccountManager()
 
     def __str__(self):
-        return self.email
+        return self.username
 
     def has_perm(self, perm, obj=None):
         return self.is_admin

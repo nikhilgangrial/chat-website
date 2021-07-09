@@ -2,17 +2,15 @@ from djongo import models as dmodels
 
 
 class Array(dmodels.Model):
-    value = dmodels.Field()
-
-    class Meta:
-        abstract = True
+    user = dmodels.Field(primary_key=True, default=[])
 
 
 class ChatRoom(dmodels.Model):
     id = dmodels.AutoField(primary_key=True, null=False)
     type = dmodels.CharField(default='dm', max_length=6)
-    members = dmodels.ArrayField(model_container=Array, null=True)
-    blocked = dmodels.ArrayField(model_container=Array, null=True)
+    title = dmodels.ForeignKey('groups.Group', on_delete=dmodels.CASCADE, default=None)
+    members = dmodels.ArrayField(model_container=Array, default=[])
+    blocked = dmodels.ArrayField(model_container=Array, default=[])
 
 
 class Messages(dmodels.Model):

@@ -70,8 +70,7 @@ def _get_user(post):
     user = graph_client.get(f"https://graph.microsoft.com/v1.0/users?$filter=userPrincipalName eq '{email}'")
     if user.status_code == 200:
         user = user.json()['value'][0]
-        res = {'email': email, 'userid': user['id'], 'password': post['password1'], 'username': post['username'],
-               'phoneno': user['mobilePhone']}
+        res = {'email': email, 'userid': user['id'], 'password': post['password1'], 'username': post['username']}
         temp = user['displayName'].split()[0]
         if temp.isdigit():
             res['type'] = 'Student'

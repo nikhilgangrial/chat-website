@@ -1,9 +1,14 @@
 
 const roomName = JSON.parse(document.getElementById('room-name').textContent);
-let messages = [];
+let messages = {};
 let messages_ = {};
+let current_room = '';
 let self = ""
 let loading_messages = false;
+var caret_position_mes=0;
+var timeoutId = 0;
+let selecting = false;
+let selected_messages = [];
 
 mobileAndTabletCheck = function() {
   let check = false;
@@ -32,19 +37,23 @@ function isElementInViewport (el) {
 
 // checks if messages dows not exist in existing messages and appends it in chat log
 function closest_message(key){
-    return messages.reduce((a, b) => {
+    return messages[current_room].reduce((a, b) => {
         return Math.abs(b - key) < Math.abs(a - key) ? b : a;
     });
 }
 
 function update_messages(message){
-    if (messages.indexOf(message.id) === -1){
+    if (!messages[current_room]) {
+        messages[current_room] = [];
+        messages_[current_room] = {};
+    }
+
+    if (messages[current_room].indexOf(message.id) === -1){
 
         let time_ = parseDate(new Date(message.sent_at));
 
         let scroll_to_view = false;
         let message_to_be_appeded;
-        // TODO: add user profile
 
         let style = '';
         if (selecting === true){
@@ -72,16 +81,22 @@ function update_messages(message){
                                             </button>\
                                        </div>\
                                        <div class="chat-text no-copy">\
-                                           <div class="chat-name text-copy">' + message.sender + '</div>\
-                                           <div class="text-copy">' + message.message + '</div>\
+                                           <div class="chat-name no-copy">' + message.sender + '</div>\
+                                           <div class="no-copy">' + message.message + '</div>\
                                            <div class="chat-hour">' + time_ + '&nbsp;<span ' + seen + ' class="fa fa-check-circle"></span></div>\
                                        </div>\
                                     </li>'
         }
         else{
+            let av;
+            if (message.profile !== ""){
+                av = '<img class="user-av" src="' + message.profile + '" alt="">';
+            } else{
+                av = '<span style="font-size: 2.5rem;" class="user-av fa fa-user-circle"></span>';
+            }
             message_to_be_appeded = '<li class="chat-left" id="mess_' + message.id + '">\
                                         <div class="chat-avatar">\
-                                            <img class="user-av" src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">\
+                                            ' + av + '\
                                         </div>\
                                         <div class="ballon" '+ style +'>\
                                             <button data-type="reply" style="background: #252528;">\
@@ -89,30 +104,30 @@ function update_messages(message){
                                             </button>\
                                         </div>\
                                         <div class="chat-text no-copy">\
-                                            <div class="chat-name text-copy">' + message.sender + '</div>\
-                                            <div class="text-copy">' + message.message + '</div>\
+                                            <div class="chat-name no-copy">' + message.sender + '</div>\
+                                            <div class="no-copy">' + message.message + '</div>\
                                             <div class="chat-hour">' + time_ + '</div>\
                                         </div>\
                                     </li>'
         }
 
-        if (messages.length === 0){
+        if (messages[current_room].length === 0){
             document.getElementById("chat-log").innerHTML += message_to_be_appeded;
         } else {
-            let min = Math.min.apply(null, messages);
-            let max = Math.max.apply(null, messages);
+            let min = Math.min.apply(null, messages[current_room]);
+            let max = Math.max.apply(null, messages[current_room]);
             if (message.id > max) {
                 let mess = document.getElementById("mess_"+max);
                 if (isElementInViewport(mess) || message.senderid === self){
                     scroll_to_view = true
                 }
                 mess.insertAdjacentHTML("afterend", message_to_be_appeded);
-                if (messages_['mess_' + max].sender_id === message.senderid){
-                    mess.nextSibling.setAttribute('style', 'margin-top: -1.15rem!important;');
-                    mess.nextSibling.children[2].setAttribute('style', 'padding-top: 0.4rem!important;');
-                    mess.nextSibling.children[2].children[0].setAttribute('style', 'display: none!important;');
-                    if (message.sender !== self){
-                        mess.nextSibling.children[0].setAttribute('style', 'visibility: hidden;')
+                if (messages_[current_room]['mess_' + max].sender_id === message.senderid){
+                    mess.nextElementSibling.setAttribute('style', 'margin-top: -1.15rem!important;');
+                    mess.nextElementSibling.children[2].setAttribute('style', 'padding-top: 0.4rem!important;');
+                    mess.nextElementSibling.children[2].children[0].setAttribute('style', 'display: none!important;');
+                    if (message.senderid !== self){
+                        mess.nextElementSibling.children[0].setAttribute('style', 'visibility: hidden;')
                     }
                 }
             } else if (message.id < min) {
@@ -129,14 +144,15 @@ function update_messages(message){
                 }
             }
         }
-        messages.push(message.id);
-        messages_['mess_' + message.id] = {
+        messages[current_room].push(message.id);
+        messages_[current_room]['mess_' + message.id] = {
             'id': message.id,
             'message': message.message,
             'sender_id': message.senderid,
             'sender': message.sender,
             'sent_at': message.sent_at,
             'seen_at': message.seen_at,
+            'profile': message.profile,
         }
 
         if (scroll_to_view){
@@ -159,11 +175,12 @@ function get_messages(from=0){
             document.getElementById("chat-spinner").setAttribute('style', 'display: none!important');
             console.log(response);
             self = response['self'];
+            current_room = response['room'];
             response['messages'].reverse();
             response['messages'].forEach(update_messages);
             if (from === 0){
                 setTimeout(function () {
-                    let max = Math.max.apply(null, messages);
+                    let max = Math.max.apply(null, messages[current_room]);
                     let mess = $("#mess_" + max)[0];
                     mess.scrollIntoView({behavior: "smooth"});
                     setTimeout(function (){$(".publisher-input").focus();}, 1200);
@@ -199,31 +216,17 @@ function connect() {
             update_messages({'sender': data.username, 'senderid': data.userid, 'message': data.message, 'id': data.messageid, 'sent_at': data.sent_at, 'seen_at': data.seen_at});
         }
         else if (data.type_ === "deleted"){
-            document.getElementById("mess_" + data.messageid).remove();
-            const index = messages.indexOf(data.messageid);
-            if (index > -1) {
-                messages.splice(index, 1);
-                delete messages_['mess_'+data.messageid];
-            }
+            remove_message(data.messageid);
         }
         else if (data.type_ === "deleted_multi"){
             data.message_ids.forEach(function (mess_id) {
-                document.getElementById("mess_" + mess_id).remove();
-                const index = messages.indexOf(parseInt(mess_id));
-                if (index > -1) {
-                    messages.splice(index, 1);
-                    delete messages_['mess_' + mess_id];
-                }
+                remove_message(mess_id);
             });
         }
         else if (data.type_ === "delivery_report"){
-            $("#mess_" + data.messageid + " > div.time-seen-at")[0].innerHTML = (new Date(data.seen_at)).toLocaleTimeString(undefined, {
-                hour12: true,
-                timeZone: 'Asia/Kolkata',
-                timeStyle: 'short'
-            });
+            $("#mess_" + data.messageid + " > div.time-seen-at")[0].innerHTML = parseDate(new Date(data.seen_at + " UTC"));
             $("#mess_" + data.messageid + " > div.chat-text.no-copy > div.chat-hour > span.fa.fa-check-circle")[0].hidden = false;
-            messages_['mess_' +data.messageid].seen_at = data.seen_at;
+            messages_[current_room]['mess_' +data.messageid].seen_at = data.seen_at;
         }
     };
 
@@ -288,10 +291,23 @@ $('#file-group').on('click', function (){
     document.getElementById('file-select-button').click();
 })
 
+$('#chat-bottom-scroll').on('click', function (event){
+    event.currentTarget.nextElementSibling.scrollTo({top: event.currentTarget.nextElementSibling.scrollHeight, behavior: "smooth"});
+});
+
 $(".chat-box").on('resize scroll', function (){
-    let min = Math.min.apply(null, messages);
-    let mess = document.getElementById("mess_"+min);
-    if (!loading_messages && isElementInViewport(mess)){
+    let min = Math.min.apply(null, messages[current_room]);
+    let mess_min = document.getElementById("mess_"+min);
+
+    let max = Math.max.apply(null, messages[current_room]);
+    let mess_max = document.getElementById("mess_"+max);
+    if (isElementInViewport(mess_max)){
+        $('#chat-bottom-scroll').css('visibility', 'hidden');
+    }else{
+        $('#chat-bottom-scroll').css('visibility', 'visible');
+    }
+
+    if (!loading_messages && isElementInViewport(mess_min)){
         loading_messages = true;
         document.getElementById("chat-spinner").setAttribute("style", "");
         get_messages(min);
@@ -300,7 +316,7 @@ $(".chat-box").on('resize scroll', function (){
 
 
 // function to enlarge image when clicked
-$(document).on('click', 'img', function () {
+$(document).on('click', 'img[data-enlargeable]', function () {
     let exp = document.getElementById("expandedImg")
     let bottom = document.getElementById("open-orignal-link")
 
@@ -345,4 +361,26 @@ function parseDate(date){
         time = date.toLocaleDateString('en-GB', {timeZone: 'Asia/Kolkata', });
     }
     return time;
+}
+
+
+function remove_message(messid){
+    let ele = document.getElementById("mess_" + messid);
+    try{
+        if (ele.children[2].children[0].innerHTML === ele.nextElementSibling.children[2].children[0].innerHTML &&
+        ele.children[2].children[0].getAttribute('style') !== 'display: none!important;'){
+            ele.nextElementSibling.children[2].children[0].setAttribute('style', '');
+            ele.nextElementSibling.children[2].setAttribute('style', '');
+            $(ele.nextElementSibling).css('margin-top', '');
+            if (messages_[current_room][ele.id].sender_id !== self){
+                ele.nextElementSibling.children[0].setAttribute('style', '');
+            }
+        }
+    } catch (err){} // do noting on error
+    ele.remove();
+    const index = messages[current_room].indexOf(parseInt(messid));
+    if (index > -1) {
+        messages[current_room].splice(index, 1);
+        delete messages_[current_room]['mess_' + messid];
+    }
 }

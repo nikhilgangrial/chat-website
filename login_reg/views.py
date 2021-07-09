@@ -70,7 +70,7 @@ def registration_view(request):
             user = authenticate(email=user['email'], password=user['password'])
             login(request, user)
             messages.success(request, "You have been Registered as {}".format(request.user.username))
-            return HttpResponseRedirect('/account/home/')
+            return HttpResponseRedirect('/chat/123/')
         elif request.POST['otp']:
             return HttpResponse("Invalid Otp", status=400)
         else:
@@ -94,7 +94,7 @@ def login_view(request):
       Renders Login Form
     """
     if request.user.is_authenticated:
-        return HttpResponseRedirect("/account/home/")
+        return HttpResponseRedirect("/chat/123/")
     if request.POST:
         email = request.POST.get('email')
         password = request.POST.get('password')
@@ -112,7 +112,7 @@ def login_view(request):
             try:
                 return HttpResponseRedirect(request.GET['next'])
             except:
-                return HttpResponseRedirect("/account/home")
+                return HttpResponseRedirect("/chat/123/")
         else:
             messages.error(request, "Incorrect Password/ Email")
     return render(request, "account/login.html")

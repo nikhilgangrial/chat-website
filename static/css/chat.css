@@ -19,18 +19,6 @@ html {
     font-size: 1.1em;
 }
 
-@keyframes fadeIn {
-  0% {
-      opacity: 0;
-      height: 0;
-  }
-  100% {
-     visibility: visible;
-     opacity: 1;
-     height: 1.75rem;
-  }
-}
-
 .closebtn{
     position: absolute;
     top: 0.5rem;
@@ -309,7 +297,7 @@ user-select: all;
     border-radius: 6.25rem;
     background: #e6ecf3;
     position: absolute;
-    top: 0;
+    bottom: 0;
     right: 0;
 }
 
@@ -459,7 +447,7 @@ user-select: all;
 }
 
 .ballon button:hover i, .ballon button:active i{
-    transform: scale(1);
+    transform: scale(0.9);
 }
 
 .ballon button:hover, .ballon button:active{
@@ -476,6 +464,7 @@ user-select: all;
 .chat-container .user-av {
     width: 2.5rem;
     height: 2.5rem;
+    font-size: 2.5rem!important;
     -webkit-border-radius: 1.875rem;
     -moz-border-radius: 1.875rem;
     border-radius: 1.875rem;
@@ -606,6 +595,7 @@ user-select: all;
 
 @media (max-width: 767px) {
     .chat-container li .user-av {
+        font-size: 2rem!important;
         width: 2rem;
         height: 2rem;
     }

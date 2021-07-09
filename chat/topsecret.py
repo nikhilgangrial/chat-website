@@ -24,7 +24,7 @@ def convert_message(q, user):
             try:
                 sender = Users.objects.get(userid=i.sender)
             except:
-                sender = Empty(username='<i style="color: inherit;">Deleted User</i>', userid=i.sender)
+                sender = Empty(username='<i style="color: inherit;">Deleted User</i>', userid=i.sender, profile="")
             senders[i.sender] = sender
 
         res.append({
@@ -34,7 +34,7 @@ def convert_message(q, user):
             "sender": sender.username,
             "senderid": sender.userid,
             "id": i.id,
-            # TODO: Add code for profile pic
+            "profile": sender.profile,
         })
 
     if len(res) == 51:
@@ -44,11 +44,11 @@ def convert_message(q, user):
 
 
 def get_messages(user, room, start):
-    src = ChatRoom.objects.get(id=int(room))
-    """
-    if user not in src.members:   # TODO: check is user is allowed to acess chat  
+    try:
+        src = ChatRoom.objects.get(id=int(room), members={'user': user.userid})
+    except:
         return None, 400
-    """
+
     start = int(start)
     if start == 0:
         q = Messages.objects.filter(roomid=src).order_by("-id")[:51]
