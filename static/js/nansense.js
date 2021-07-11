@@ -99,7 +99,7 @@ function parse_before_send() {
 }
 
 $(document).on('click', 'div.ballon > button[data-type="delete"]', function (){
-    let mess_id = parseInt(this.parentNode.parentNode.id.substring(5));
+    let mess_id = parseInt(this.parentElement.parentElement.id.substring(5));
     let modal = $("#modal-confirm");
     let content = modal[0].children[0].children[0].children;
     content[0].innerHTML = 'Delete message';
@@ -132,11 +132,92 @@ $(document).on('click', 'div.ballon > button[data-type="delete"]', function (){
     });
 });
 
+$(document).on('click', 'div.ballon > button[data-type="reply"]', reply_message);
 
-$(document).on('click', 'div.ballon > button[data-type="reply"]', function (){
-    console.log("relply " + this.parentNode.parentNode.id);
+let click_count = 0;
+let dbl_timeout = 0;
+$(document).on('click', 'li.chat-left, li.chat-right', function (event) {
+    clearTimeout(dbl_timeout);
+    click_count += 1;
+    if (click_count === 2) {
+        reply_message(event);
+        click_count = 0;
+    } else {
+        dbl_timeout = setTimeout(function () {
+            click_count = 0;
+        }, 250);
+    }
 });
 
+function reply_message(event){
+    let messid;
+    if (event.currentTarget.tagName === "BUTTON") {
+        messid = event.currentTarget.parentElement.parentElement.id;
+    } else{
+        messid = event.currentTarget.id;
+    }
+
+    $('.input-group-upper').remove();
+    // noinspection EqualityComparisonWithCoercionJS
+    if (reply_mess_id != 0){
+        let mess = $(`#${reply_mess_id}`);
+        mess.css("background", "");
+        mess.css("border-left", "")
+    }
+
+    reply_mess_id = messid;
+    let mess = $(`#${messid}`);
+    mess.css("background", "#2e2e30");
+    mess.css("border-left", "var(--primary) 0.25rem solid")
+
+    let ele = document.getElementById("input-group");
+    // noinspection JSCheckFunctionSignatures   //TODO: DO SOMETHING WHILE SENDING
+    ele.innerHTML = `<div style="position: relative; width: 100%;background: #111111;border-radius: 0.5rem 0.5rem 0 0; height: 2rem; display: flex; padding: 0.2rem 0.5rem; align-items: center;" class="input-group-upper" onclick="reply_message_scroll(event, ${messid})">
+                        <span style="font-size: 0.9rem">Replying to </span>
+                        <span style="font-size: 0.9rem; padding-left: 0.25rem;font-weight: bold; color: #888888">${messages_[current_room][messid].sender}</span>
+                        <span class="reply-close" style="padding: 0.25rem 0.5rem; position: absolute; right: 0.25rem; font-size: 0.9rem;-webkit-text-stroke: 0.03rem rgba(22, 22, 22, 1);"><i class="fa fa-times"></i></span>
+                     </div>${ele.innerHTML}`;
+}
+
+function reply_message_scroll(event, messid){
+    if (event.target.getAttribute('class') !== "reply-close" && event.target.getAttribute('class') !== "fa fa-times") {
+        messid.scrollIntoView({behavior: "smooth", block: "center"});
+        $(".chat-box").on('scroll', function () {
+            if (isElementInViewport(messid)) {
+                setTimeout(function (){$(messid).css('background', '#2e2e2e')}, 200);
+                setTimeout(function (){$(messid).css('background', '#2e2e30')}, 400);
+                $(this).off('scroll');
+                $(".chat-box").on('resize scroll', function () {
+                    let min = Math.min.apply(null, messages[current_room]);
+                    let mess_min = document.getElementById("mess_" + min);
+
+                    let max = Math.max.apply(null, messages[current_room]);
+                    let mess_max = document.getElementById("mess_" + max);
+                    if (isElementInViewport(mess_max)) {
+                        $('#chat-bottom-scroll').css('visibility', 'hidden');
+                    } else {
+                        $('#chat-bottom-scroll').css('visibility', 'visible');
+                    }
+
+                    if (!loading_messages && isElementInViewport(mess_min)) {
+                        loading_messages = true;
+                        document.getElementById("chat-spinner").setAttribute("style", "");
+                        get_messages(min);
+                    }
+                });
+            }
+        });
+    } else {
+        $('.input-group-upper').remove();
+        // noinspection EqualityComparisonWithCoercionJS
+        if (reply_mess_id != 0) {
+            let mess = $(`#${reply_mess_id}`);
+            mess.css("background", "");
+            mess.css("border-left", "")
+        }
+        reply_mess_id = 0;
+    }
+}
 
 $(document).on('click', 'div.selected-user > div > span[data-type="delete"]', function (){
     let modal = $("#modal-confirm");
@@ -146,7 +227,7 @@ $(document).on('click', 'div.selected-user > div > span[data-type="delete"]', fu
     modal.modal('show');
     let mess_ids = []
     selected_messages.forEach(function (ele_id) {
-        if (messages_[current_room][ele_id].sender_id === self) {
+        if (messages_[current_room][ele_id].senderid === self) {
             mess_ids.push(parseInt(ele_id.substring(5)));
         }
     });
@@ -219,6 +300,7 @@ $(document).on('click', 'div.selected-user > div > span[data-type="copy"]', func
         });
         function listener(e) {
             e.clipboardData.setData("text/html", result.substring(0, result.length-1));
+            console.log(result_);
             e.clipboardData.setData("text/plain", result_);
             e.preventDefault();
         }
@@ -230,7 +312,7 @@ $(document).on('click', 'div.selected-user > div > span[data-type="copy"]', func
         let popup = $(event.currentTarget.children[0]);
         popup.css({visibility: 'visible'});
         popup.fadeIn();
-        popup.css({'left': (event.currentTarget.parentNode.parentNode.clientWidth - popup[0].offsetWidth)/2 + 'px'});
+        popup.css({'left': (event.currentTarget.parentElement.parentElement.clientWidth - popup[0].offsetWidth)/2 + 'px'});
         setTimeout(function (){
             popup.fadeOut(200);
             // $('div.selected-user > div > span[data-type="cancel"]').click();
@@ -319,4 +401,20 @@ $(document).on('selecting', function (){
     let options = $('div.selected-user > div');
     options.css('visibility', 'visible');
     options.fadeIn(200);
+});
+
+
+console.log($('li.users_person'));
+$(document).on('click', 'li.users_person', function (event){
+    try {
+        $('li.users_person.active-user')[0].setAttribute('class', 'users_person');
+    }catch {}
+    // noinspection EqualityComparisonWithCoercionJS
+    if (event.currentTarget.getAttribute('data-chat') != current_room) {
+        event.currentTarget.setAttribute('class', 'users_person active-user');
+        chatSocket.send(JSON.stringify({
+            'room': event.currentTarget.getAttribute('data-chat'),
+            'type_': 'switchroom'
+        }));
+    }
 });

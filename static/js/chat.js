@@ -1,14 +1,16 @@
 
-const roomName = JSON.parse(document.getElementById('room-name').textContent);
 let messages = {};
 let messages_ = {};
-let current_room = '';
+let current_room = '123';
 let self = ""
 let loading_messages = false;
 var caret_position_mes=0;
 var timeoutId = 0;
 let selecting = false;
 let selected_messages = [];
+let chats = []
+let chats_ = {}
+let reply_mess_id = 0;
 
 mobileAndTabletCheck = function() {
   let check = false;
@@ -26,13 +28,15 @@ function isElementInViewport (el) {
     if (typeof jQuery === "function" && el instanceof jQuery) {
         el = el[0];
     }
-    var rect = el.getBoundingClientRect();
-    return (
-        rect.top >= 0 &&
-        rect.left >= 0 &&
-        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /* or $(window).height() */
-        rect.right <= (window.innerWidth || document.documentElement.clientWidth) /* or $(window).width() */
-    );
+    try {
+        var rect = el.getBoundingClientRect();
+        return (
+            rect.top >= 0 &&
+            rect.left >= 0 &&
+            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /* or $(window).height() */
+            rect.right <= (window.innerWidth || document.documentElement.clientWidth) /* or $(window).width() */
+        );
+    } catch { return false;}
 }
 
 // checks if messages dows not exist in existing messages and appends it in chat log
@@ -89,7 +93,7 @@ function update_messages(message){
         }
         else{
             let av;
-            if (message.profile !== ""){
+            if (message.profile && message.profile !== ""){
                 av = '<img class="user-av" src="' + message.profile + '" alt="">';
             } else{
                 av = '<span style="font-size: 2.5rem;" class="user-av fa fa-user-circle"></span>';
@@ -122,7 +126,7 @@ function update_messages(message){
                     scroll_to_view = true
                 }
                 mess.insertAdjacentHTML("afterend", message_to_be_appeded);
-                if (messages_[current_room]['mess_' + max].sender_id === message.senderid){
+                if (messages_[current_room]['mess_' + max].senderid === message.senderid){
                     mess.nextElementSibling.setAttribute('style', 'margin-top: -1.15rem!important;');
                     mess.nextElementSibling.children[2].setAttribute('style', 'padding-top: 0.4rem!important;');
                     mess.nextElementSibling.children[2].children[0].setAttribute('style', 'display: none!important;');
@@ -148,7 +152,7 @@ function update_messages(message){
         messages_[current_room]['mess_' + message.id] = {
             'id': message.id,
             'message': message.message,
-            'sender_id': message.senderid,
+            'senderid': message.senderid,
             'sender': message.sender,
             'sent_at': message.sent_at,
             'seen_at': message.seen_at,
@@ -166,7 +170,7 @@ function get_messages(from=0){
     loading_messages = true;
     $.ajax({
         type:"POST",
-        url: "/chat/" + roomName + "/",
+        url: "/chat/" + current_room + "/",
         data: {
             'from': from
         },
@@ -182,7 +186,7 @@ function get_messages(from=0){
                 setTimeout(function () {
                     let max = Math.max.apply(null, messages[current_room]);
                     let mess = $("#mess_" + max)[0];
-                    mess.scrollIntoView({behavior: "smooth"});
+                    try{mess.scrollIntoView({behavior: "smooth"});}catch{}
                     setTimeout(function (){$(".publisher-input").focus();}, 1200);
                 }, 50);
             }
@@ -198,14 +202,17 @@ var chatSocket = null;
 function connect() {
     // connects to server
     if (location.protocol === "https:"){
-        chatSocket = new WebSocket('wss://' + window.location.host + '/ws/chat/' + roomName + '/');
+        chatSocket = new WebSocket('wss://' + window.location.host + '/ws/chat/' +  current_room +'/');
     } else {
-         chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/' + roomName + '/');
+         chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/' + current_room + '/');
     }
     //wss on secure network ws on insecure
 
     // request latest 50 messages when connected to server
     chatSocket.onopen = function () {
+        chatSocket.send(JSON.stringify({
+            'type_': 'load_chats'
+        }));
         get_messages();
     };
 
@@ -228,6 +235,51 @@ function connect() {
             $("#mess_" + data.messageid + " > div.chat-text.no-copy > div.chat-hour > span.fa.fa-check-circle")[0].hidden = false;
             messages_[current_room]['mess_' +data.messageid].seen_at = data.seen_at;
         }
+        else if (data.type_ === "switchroom"){
+            $('div.selected-user > span > span.name')[0].innerHTML = chats_[data.room].title;
+            messages[current_room] = [];
+            document.getElementById("chat-log").innerHTML = '<br>\
+                                                                     <div id="chat-spinner" class="d-flex justify-content-center">\
+                                                                        <div style="margin-bottom: 2rem;" class="spinner-border" role="status">\
+                                                                            <span class="sr-only">Loading...</span>\
+                                                                        </div>\
+                                                                     </div>';
+
+            current_room = data.room;
+            if (messages_[current_room]){
+                for (let i in messages_[current_room])
+                {
+                    // noinspection JSUnfilteredForInLoop
+                    update_messages(messages_[current_room][i]);
+                }
+            }
+            get_messages();
+        }
+        else if (data.type_ === "load_chats"){
+            chats = eval(data['chats']);
+            let container = document.getElementsByClassName("users")[0];
+            chats.forEach(function (chat){
+                chats_[chat.chatid] = chat;
+                let av;
+                console.log(chat.av);
+                if (chat.av !== ""){
+                    av = '<img class="user-av" src="' + chat.av + '" alt="">';
+                } else{
+                    av = '<span style="font-size: 2.5rem;" class="user-av fa fa-user-circle"></span>';
+                }
+                container.innerHTML += '<li class="users_person" data-chat="' + chat.chatid +'">\
+                                            <div class="user">'
+                                                + av + '\
+                                                <span class="status ' + chat.status + '"></span>\
+                                            </div>\
+                                            <p class="name-time" style="margin-bottom: 0!important;">\
+                                                <span class="name">' + chat.title +'</span>\
+                                                <span class="time">06/07/2021</span>\
+                                            </p>\
+                                        </li>'
+            //                           TODO: ADD LAST MESSAGE TIME
+            });
+        }
     };
 
     // reconnects on unexpected disconnect
@@ -239,41 +291,51 @@ function connect() {
 
     // key bind Send on Enter
     document.querySelector('#chat-message-input').focus();
-    document.querySelector('#chat-message-input').onkeydown = function (e) {
-        if (!mobile && (e.keyCode === 13 && !e.shiftKey)) {  // TODO: remove <br> when enter is pressed in between
+
+    $(document).on('keydown', '#chat-message-input', function (e) {
+        console.log(":pain:");
+        if (!mobile && (e.keyCode === 13 && !e.shiftKey)) {
             e.preventDefault();
             const messageInputDom = document.querySelector('#chat-message-input');
             messageInputDom.innerHTML = messageInputDom.innerHTML.replace(/<div><br><\/div>$/, "");
             parse_before_send();
-            let message = messageInputDom.innerHTML.toString();
-            message = message.replace(/<br>$/, "");
-            message = message.replace(/<div><br><\/div>$/, "");
-            message = message.replace(/&times;$/, "");
-            chatSocket.send(JSON.stringify({
-                'message': message.trim(),
-                'type_': 'message',
-            }));
-            messageInputDom.innerHTML = '';
+            send_message(messageInputDom);
         }
-    };
+    });
 
     // Send button function
-    document.querySelector('#chat-message-submit').onclick = function () {
+    $(document).on('click', '#chat-message-submit', function () {
         const messageInputDom = document.querySelector('#chat-message-input');
         parse_before_send();
-        let message = messageInputDom.innerHTML;
-        message = message.replace(/<br>$/, "");
-        message = message.replace(/<div><br><\/div>$/, "");
-        chatSocket.send(JSON.stringify({
-            'message': message.trim(),
-            'type_': 'message'
-        }));
-        messageInputDom.innerHTML = '';
+        send_message(messageInputDom);
         messageInputDom.focus();
-    };
+    });
 }
 
 connect();
+
+function send_message(messageInputDom) {
+    console.log("here");
+    check_for_reply(messageInputDom);
+    console.log("where");
+    let message = messageInputDom.innerHTML.toString();
+    message = message.replaceAll(":pain:", '<img style="width: 1.5rem; height: 1.29rem;display: inline-block; color: transparent;" alt="" src="https://i.imgur.com/sYDyc6L.png" contenteditable="false">')
+    message = message.replace(/<br>$/, "");
+    message = message.replace(/<div><br><\/div>$/, "");
+    message = message.replace(/&bnsp;$/, "");
+    chatSocket.send(JSON.stringify({
+        'message': message.trim(),
+        'type_': 'message',
+    }));
+    messageInputDom.innerHTML = '';
+}
+
+function check_for_reply(messageInputDom){
+    // noinspection EqualityComparisonWithCoercionJS
+    if (reply_mess_id != 0){
+        console.log("replying tp " + reply_mess_id);
+    }
+}
 
 function extralargescreen() {
     if (window.innerHeight > 1080) {
@@ -372,7 +434,7 @@ function remove_message(messid){
             ele.nextElementSibling.children[2].children[0].setAttribute('style', '');
             ele.nextElementSibling.children[2].setAttribute('style', '');
             $(ele.nextElementSibling).css('margin-top', '');
-            if (messages_[current_room][ele.id].sender_id !== self){
+            if (messages_[current_room][ele.id].senderid !== self){
                 ele.nextElementSibling.children[0].setAttribute('style', '');
             }
         }

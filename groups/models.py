@@ -8,6 +8,8 @@ class Array(dmodels.Model):
 
 class Group(dmodels.Model):
     id = dmodels.AutoField(primary_key=True, null=False)
+    av = dmodels.CharField(max_length=60, default="")
+    cover = dmodels.CharField(max_length=60, default="")
     type = dmodels.CharField(max_length=10, default="chat")
     name = dmodels.CharField(max_length=25, default="New Group")
     members = dmodels.ArrayField(model_container=Array, default=[])

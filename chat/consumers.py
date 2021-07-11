@@ -32,6 +32,7 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from chat.models import Messages, ChatRoom
+from login_reg.models import Users
 from datetime import datetime
 
 
@@ -118,6 +119,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         return message_
 
     # Receive message from WebSocket
+    # noinspection PyAttributeOutsideInit
     async def receive(self, text_data=None, bytes_data=None):
         text_data_json = json.loads(text_data)
 
@@ -136,7 +138,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         'message_': message_,
                         'userid': self.scope['user'].userid,
                         'username': self.scope['user'].username,
-                        # add line for user profile pic
+                        'profile': self.scope['user'].profile,
                     }
                 )
 
@@ -168,6 +170,64 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         'mess_ids': mess_ids,
                     }
                 )
+
+        elif text_data_json['type_'] == "switchroom":
+            print(text_data_json['room'])
+            old_room = self.room_name
+            self.room_name = str(text_data_json['room'])
+            roomid = await self.validate_to_chat(self.scope['user'])
+            if roomid:
+                self.room_id = roomid
+                print(self.room_id)
+                await self.channel_layer.group_discard(
+                    self.room_group_name,
+                    self.channel_name
+                )
+                self.room_group_name = 'chat_%s' % self.room_name
+                await self.channel_layer.group_add(
+                    self.room_group_name,
+                    self.channel_name
+                )
+                await self.send(text_data=json.dumps({
+                    'type_': 'switchroom',
+                    'room': self.room_name,
+                }))
+            else:
+                self.room_name = old_room
+        elif text_data_json['type_'] == "load_chats":
+            chats = await self.load_chats()
+            await self.send(text_data=json.dumps({
+                "type_": "load_chats",
+                "chats": str(chats),
+            }))
+
+    @database_sync_to_async
+    def load_chats(self):
+        userid = self.scope['user'].userid
+        chats = ChatRoom.objects.filter(members={'user': userid})
+        response = []
+        for chat in chats:
+            response.append({})
+            response[-1]['chatid'] = chat.id
+            response[-1]['type'] = chat.type
+            if chat.type == "dm":
+                try:
+                    if chat.members[0]['user'] == userid:
+                        other = Users.objects.get(userid=chat.members[1]['user'])
+                    else:
+                        other = Users.objects.get(userid=chat.members[0]['user'])
+                except:     #case deleted user
+                    other = object()
+                    other.__dict__ = {'profile': "", 'username': "<i>Deleted User</i>", 'status': "offline"}
+                response[-1]['av'] = other.profile
+                response[-1]['title'] = other.username
+                response[-1]['status'] = other.status
+            elif chat.type == "group":
+                grp = chat.title
+                response[-1]['av'] = grp.av
+                response[-1]['title'] = grp.name
+                response[-1]['status'] = 'blank'
+        return response
 
     @database_sync_to_async
     def del_multi_messages_from_db(self, mess_ids, userid):
@@ -220,7 +280,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         userid = event['userid']
         username = event['username']
         message_ = event['message_']
-        # addline for user profile
+        profile = event['profile']
 
         if not message_.seen_at and self.scope['user'].userid != userid:
             await self.message_seen(message_)
@@ -231,6 +291,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'userid': userid,
                     'messageid': message_.id,
                     'seen_at': str(message_.seen_at),
+                    'profile': profile,
                 }
             )
 
@@ -243,5 +304,5 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'messageid': message_.id,
             'sent_at': str(message_.sent_at),
             'seen_at': str(message_.seen_at),
-            # add code for user profile
+            'profile': profile,
         }))

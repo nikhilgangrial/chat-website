@@ -47,6 +47,7 @@ class Users(AbstractBaseUser):
     is_superuser = models.BooleanField(default=False)
     status = models.CharField(max_length=10, default="offline")
     profile = models.CharField(max_length=30, default="")
+    cover = models.CharField(max_length=30, default="")
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'userid']
