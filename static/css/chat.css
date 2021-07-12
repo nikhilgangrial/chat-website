@@ -19,6 +19,52 @@ html {
     font-size: 1.1em;
 }
 
+.ctx-menu{
+    z-index: 101;
+    width: 10rem;
+    background: #151515;
+    border: black 0.1rem solid;
+    border-radius: 0.5rem;
+    position: absolute;
+}
+.ctx-menu > hr{
+    width: 9.8rem;
+    height: 0.025rem;
+    margin: 0.1rem 0!important;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.ctx-option, .ctx-option-danger{
+    width: 9.4rem;
+    margin: 0.2rem;
+    padding: 0 0.2rem;
+    display: flex;
+    align-items: baseline;
+}
+.ctx-option-danger span{
+    color: var(--danger)!important;
+}
+
+.ctx-option:hover, .ctx-option:hover{
+    background-color: var(--primary);
+    border-radius: 0.1rem;
+}
+
+.ctx-option-danger:hover span, .ctx-option-danger:hover span{
+    color: white!important;
+}
+
+.ctx-option-danger:hover, .ctx-option-danger:hover{
+    background-color: var(--danger);
+    border-radius: 0.1rem;
+}
+
+.ctx-option-icon{
+    width: 1.9rem;
+    height: 1.5rem;
+    padding: 0 0.2rem;
+}
+
 .closebtn{
     position: absolute;
     top: 0.5rem;

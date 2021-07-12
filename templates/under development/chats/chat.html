@@ -136,6 +136,21 @@
     <!-- Content wrapper end -->
 {{ room_name|json_script:"room-name" }}
 </div>
+
+<div class="ctx-menu" style="display: none">
+    <div class="ctx-option">
+        <span class="ctx-option-icon fa fa-copy"></span><span class="ctx-option-name">Copy</span>
+    </div>
+    <hr>
+    <div class="ctx-option">
+        <span class="ctx-option-icon fa fa-paste"></span><span class="ctx-option-name">Paste</span>
+    </div>
+    <hr>
+    <div class="ctx-option-danger">
+        <span class="ctx-option-icon fa fa-trash-alt"></span><span class="ctx-option-name">Delete</span>
+    </div>
+</div>
+
 <script src="../../../static/js/jquery.min.js"></script>
 <script src="../../../static/js/preajax.js"></script>
 <script src="../../../static/js/chat.js"></script>

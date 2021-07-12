@@ -190,7 +190,6 @@ function reply_message_scroll(event, messid){
         if (messid.id === reply_mess_id){
             return;
         }
-        console.log("further");
         if (isElementInViewport(messid)) {
                 setTimeout(function (){$(messid).css('background', '#2e2e2e')}, 200);
                 setTimeout(function (){$(messid).css('background', '')}, 400);
@@ -297,15 +296,13 @@ $(document).on('click', 'div.selected-user > div > span[data-type="copy"]', func
         });
         function listener(e) {
             e.clipboardData.setData("text/html", result.substring(0, result.length-1));
-            console.log(result_);
             e.clipboardData.setData("text/plain", result_);
             e.preventDefault();
         }
         document.addEventListener("copy", listener);
         document.execCommand("copy");
         document.removeEventListener("copy", listener);
-        // console.log(result);
-        // console.log(result_);
+
         let popup = $(event.currentTarget.children[0]);
         popup.css({visibility: 'visible'});
         popup.fadeIn();
@@ -321,11 +318,6 @@ $('[contenteditable]').on('paste', function (event){
     if (!event.currentTarget.innerHTML){
         event.currentTarget.innerHTML = '&nbsp';
     }
-});
-
-$(document).on('copy', function (event){
-    console.log(event);
-    console.log(window.getSelection());
 });
 
 $('#big-image-container').on('click', function (event){
@@ -406,7 +398,6 @@ $(document).on('selecting', function (){
 });
 
 
-console.log($('li.users_person'));
 $(document).on('click', 'li.users_person', function (event){
     try {
         $('li.users_person.active-user')[0].setAttribute('class', 'users_person');
@@ -420,3 +411,168 @@ $(document).on('click', 'li.users_person', function (event){
         }));
     }
 });
+
+$(document).on('click', function(){
+    if (!selecting && reply_mess_id === 0) {
+        if (highlighted) {
+            highlighted.style.background = "";
+        }
+    }
+    highlighted = null;
+    $('.ctx-menu').css('display', 'none');
+});
+
+$(document).on('contextmenu', 'li.chat-right', function (e){
+    e.preventDefault();
+    let sel = $('.ctx-menu');
+    if (check_selecting_reply(sel, e)){
+        return;
+    }
+
+    if (highlighted){
+        highlighted.style.background = "";
+    }
+    highlighted = e.currentTarget;
+    e.currentTarget.style.background = "#30302e";
+    sel.css({display: 'inherit', left: 'min(' + e.pageX + 'px, calc(100% - 10.2rem))', top: 'min(' + e.pageY + 'px, calc(100% - 12.2rem))'});
+    sel[0].innerHTML =  '<div class="ctx-option">'+
+                            '<span class="ctx-option-icon fa fa-edit"></span><span class="ctx-option-name">Edit</span>'+
+                        '</div>'+
+                        '<hr>'+
+                        '<div class="ctx-option">'+
+                            '<span class="ctx-option-icon fa fa-copy"></span><span class="ctx-option-name">Copy</span>'+
+                        '</div>'+
+                        '<hr>'+
+                        '<div class="ctx-option">'+
+                            '<span class="ctx-option-icon fa fa-reply"></span><span class="ctx-option-name">Reply</span>'+
+                        '</div>'+
+                        '<hr>'+
+                        '<div class="ctx-option-danger">'+
+                            '<span class="ctx-option-icon fa fa-trash-alt"></span><span class="ctx-option-name">Delete</span>'+
+                        '</div>';
+
+    sel[0].children[0].onclick = function (){highlighted.children[1].children[0].click()};
+    sel[0].children[2].onclick = function (){copy_single_message(highlighted)};
+    sel[0].children[4].onclick = function (){reply_message({currentTarget: highlighted})};
+    sel[0].children[6].onclick = function (){highlighted.children[1].children[1].click()};
+});
+
+$(document).on('contextmenu', 'li.chat-left', function (e){
+    e.preventDefault();
+    let sel = $('.ctx-menu');
+    if (check_selecting_reply(sel, e)){
+        return;
+    }
+
+    if (highlighted){
+        highlighted.style.background = "";
+    }
+    highlighted = e.currentTarget;
+    e.currentTarget.style.background = "#30302e";
+    sel.css({display: 'inherit', left: 'min(' + e.pageX + 'px, calc(100% - 10.2rem))', top: 'min(' + e.pageY + 'px, calc(100% - 8.2rem))'});
+    sel[0].innerHTML =  '<div class="ctx-option">'+
+                            '<span class="ctx-option-icon fa fa-copy"></span><span class="ctx-option-name">Copy</span>'+
+                        '</div>'+
+                        '<hr>'+
+                        '<div class="ctx-option" onclick="reply_message(' + {currentTarget: e.currentTarget} +')">'+
+                            '<span class="ctx-option-icon fa fa-reply"></span><span class="ctx-option-name">Reply</span>'+
+                        '</div>';
+    sel[0].children[0].onclick = function (){copy_single_message(highlighted)};
+    sel[0].children[2].onclick = function (){reply_message({currentTarget: highlighted})};
+});
+
+function check_selecting_reply(sel, e){
+    let target = e.currentTarget;
+    if (selecting) {
+        sel.css({display: 'inherit', left: 'min(' + e.pageX + 'px, calc(100% - 10.2rem))', top: 'min(' + e.pageY + 'px, calc(100% - 12.2rem))'});
+        sel[0].innerHTML = '<div class="ctx-option">' +
+                '<span class="ctx-option-icon fa fa-copy"></span><span class="ctx-option-name">Copy</span>' +
+            '</div>' +
+            '<hr>' +
+            '<div class="ctx-option">' +
+                '<span class="ctx-option-icon fa fa-share"></span><span class="ctx-option-name">Forward</span>' +
+            '</div>'+
+            '<hr>'+
+            '<div class="ctx-option-danger">' +
+                '<span class="ctx-option-icon fa fa-trash-alt"></span><span class="ctx-option-name">Delete</span>' +
+            '</div>' +
+            '<hr>' +'<hr>' +
+            '<div class="ctx-option-danger">' +
+                '<span class="ctx-option-icon fa fa-times"></span><span class="ctx-option-name">Cancel</span>' +
+            '</div>';
+
+        let rel = $('.selected-user')[0].children[1];
+        sel[0].children[0].onclick = function (){rel.children[0].click()};
+        sel[0].children[2].onclick = function (){rel.children[2].click()};
+        sel[0].children[4].onclick = function (){rel.children[1].click()};
+        sel[0].children[7].onclick = function (){rel.children[3].click()};
+        return true;
+    }
+    // noinspection EqualityComparisonWithCoercionJS
+    if (reply_mess_id != 0) {
+        if (e.currentTarget.id === reply_mess_id) {
+            sel.css({
+                display: 'inherit',
+                left: 'min(' + e.pageX + 'px, calc(100% - 10.2rem))',
+                top: 'min(' + e.pageY + 'px, calc(100% - 8.2rem))'
+            });
+            sel[0].innerHTML =
+                '<div class="ctx-option">' +
+                '<span class="ctx-option-icon fa fa-copy"></span><span class="ctx-option-name">Copy</span>' +
+                '</div>' +
+                '<hr>' + '<hr>' +
+                '<div class="ctx-option-danger">' +
+                '<span class="ctx-option-icon fa fa-times"></span><span class="ctx-option-name">Cancel</span>' +
+                '</div>';
+
+            sel[0].children[0].onclick = function (){copy_single_message(target)};
+            sel[0].children[3].onclick = function (){$('.reply-close')[0].click()};
+            return true;
+        }else{
+            sel.css({
+                display: 'inherit',
+                left: 'min(' + e.pageX + 'px, calc(100% - 10.2rem))',
+                top: 'min(' + e.pageY + 'px, calc(100% - 10.2rem))'
+            });
+            sel[0].innerHTML =
+                '<div class="ctx-option">' +
+                '<span class="ctx-option-icon fa fa-copy"></span><span class="ctx-option-name">Copy</span>' +
+                '</div>' +
+                '<hr>' +
+                '<div class="ctx-option">' +
+                '<span class="ctx-option-icon fa fa-reply"></span><span class="ctx-option-name">Reply</span>' +
+                '</div>' +
+                '<hr>' + '<hr>' +
+                '<div class="ctx-option-danger">' +
+                '<span class="ctx-option-icon fa fa-times"></span><span class="ctx-option-name">Cancel</span>' +
+                '</div>';
+            sel[0].children[0].onclick = function (){copy_single_message(target)};
+            sel[0].children[2].onclick = function (){reply_message({currentTarget: target})};
+            sel[0].children[5].onclick = function (){$('.reply-close')[0].click()};
+            return true;
+        }
+    }
+}
+
+$(document).on('contextmenu', 'ul.chat-box.no-copy', function (e){e.preventDefault()});
+
+function copy_single_message(ele) {
+    let str;
+    ele = ele.children[2].children[1];
+    ele = $(ele).clone()[0];
+
+    try{if (ele.children[0].className === "chat-reply") {
+        ele.innerHTML = ele.innerHTML.toString().replace(ele.children[0].outerHTML.toString(), "");
+    }}
+    catch{}
+    str = ele.innerText;
+
+    function listener(e) {
+        e.clipboardData.setData("text/plain", str);
+        e.preventDefault();
+    }
+
+    document.addEventListener("copy", listener);
+    document.execCommand("copy");
+    document.removeEventListener("copy", listener);
+}

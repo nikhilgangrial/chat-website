@@ -11,6 +11,7 @@ let selected_messages = [];
 let chats = []
 let chats_ = {}
 let reply_mess_id = 0;
+let highlighted = null;
 
 mobileAndTabletCheck = function() {
   let check = false;
@@ -75,7 +76,7 @@ function update_messages(message){
                                        <div class="time-seen-at">' + time_seen + '</div>\
                                        <div class="ballon" ' + style + '>\
                                             <button data-type="edit" style="background: #252528;">\
-                                                <i class="fa fa-pencil-alt"></i>\
+                                                <i class="fa fa-edit"></i>\
                                             </button>\
                                             <button data-type="delete" class="btn-danger">\
                                                 <i class="fa fa-trash-alt"></i>\
@@ -263,7 +264,6 @@ function connect() {
             chats.forEach(function (chat){
                 chats_[chat.chatid] = chat;
                 let av;
-                console.log(chat.av);
                 if (chat.av !== ""){
                     av = '<img class="user-av" src="' + chat.av + '" alt="">';
                 } else{
@@ -295,7 +295,6 @@ function connect() {
     document.querySelector('#chat-message-input').focus();
 
     $(document).on('keydown', '#chat-message-input', function (e) {
-        console.log(":pain:");
         if (!mobile && (e.keyCode === 13 && !e.shiftKey)) {
             e.preventDefault();
             const messageInputDom = document.querySelector('#chat-message-input');
@@ -317,9 +316,7 @@ function connect() {
 connect();
 
 function send_message(messageInputDom) {
-    console.log("here");
     check_for_reply(messageInputDom);
-    console.log("where");
     let message = messageInputDom.innerHTML.toString();
     message = message.replaceAll(":pain:", '<img style="width: 1.5rem; height: 1.29rem;display: inline-block; color: transparent;" alt="" src="https://i.imgur.com/sYDyc6L.png" contenteditable="false">')
     message = message.replace(/<br>$/, "");
@@ -335,7 +332,6 @@ function send_message(messageInputDom) {
 function check_for_reply(messageInputDom){
     // noinspection EqualityComparisonWithCoercionJS
     if (reply_mess_id != 0){
-        console.log("replying tp " + reply_mess_id);
         messageInputDom.innerHTML = `<div class="chat-reply" onclick="reply_message_scroll(event, ${reply_mess_id});">`+
                                     `  <div class="name">${messages_[current_room][reply_mess_id].sender}</div>`+
                                     `   ${messages_[current_room][reply_mess_id].message}`+
