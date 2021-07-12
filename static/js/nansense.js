@@ -1,17 +1,16 @@
 // intialize emojipicker
 setTimeout(function () {
     try {
-        mes_inp.emojiPicker('toggle');
-        mes_inp.emojiPicker('toggle');
+        messinp.emojiPicker('toggle');
+        messinp.emojiPicker('toggle');
     }
     catch (err){}
 }, 1500);
 
-$("#emojibutton").click(function (e){
+$("#emojibutton").on('click', function (e){
     e.preventDefault();
-    mes_inp.emojiPicker('toggle');
+    messinp.emojiPicker('toggle');
 });
-
 
 // parse message before send
 function parse_before_send() {
@@ -150,6 +149,9 @@ $(document).on('click', 'li.chat-left, li.chat-right', function (event) {
 });
 
 function reply_message(event){
+    if (selecting){
+        return;
+    }
     let messid;
     if (event.currentTarget.tagName === "BUTTON") {
         messid = event.currentTarget.parentElement.parentElement.id;
@@ -170,43 +172,38 @@ function reply_message(event){
     mess.css("background", "#2e2e30");
     mess.css("border-left", "var(--primary) 0.25rem solid")
 
-    let ele = document.getElementById("input-group");
+    let ele = $(".publisher")[0];
     // noinspection JSCheckFunctionSignatures   //TODO: DO SOMETHING WHILE SENDING
-    ele.innerHTML = `<div style="position: relative; width: 100%;background: #111111;border-radius: 0.5rem 0.5rem 0 0; height: 2rem; display: flex; padding: 0.2rem 0.5rem; align-items: center;" class="input-group-upper" onclick="reply_message_scroll(event, ${messid})">
+    let to_be_appeded = `<div style="position: relative; width: 100%;background: #111111;border-radius: 0.5rem 0.5rem 0 0; height: 2rem; display: flex; padding: 0.2rem 0.5rem; align-items: center;" class="input-group-upper" onclick="reply_message_scroll(event, ${messid})">
                         <span style="font-size: 0.9rem">Replying to </span>
                         <span style="font-size: 0.9rem; padding-left: 0.25rem;font-weight: bold; color: #888888">${messages_[current_room][messid].sender}</span>
                         <span class="reply-close" style="padding: 0.25rem 0.5rem; position: absolute; right: 0.25rem; font-size: 0.9rem;-webkit-text-stroke: 0.03rem rgba(22, 22, 22, 1);"><i class="fa fa-times"></i></span>
-                     </div>${ele.innerHTML}`;
+                     </div>`;
+    ele.insertAdjacentHTML("beforebegin", to_be_appeded);
+    $("#chat-message-input").focus();
 }
 
 function reply_message_scroll(event, messid){
-    if (event.target.getAttribute('class') !== "reply-close" && event.target.getAttribute('class') !== "fa fa-times") {
+    if (event.target.getAttribute('class') !== "reply-close" && event.target.getAttribute('class') !== "fa fa-times" && !selecting) {
+        event.preventDefault();
         messid.scrollIntoView({behavior: "smooth", block: "center"});
-        $(".chat-box").on('scroll', function () {
-            if (isElementInViewport(messid)) {
+        if (messid.id === reply_mess_id){
+            return;
+        }
+        console.log("further");
+        if (isElementInViewport(messid)) {
                 setTimeout(function (){$(messid).css('background', '#2e2e2e')}, 200);
-                setTimeout(function (){$(messid).css('background', '#2e2e30')}, 400);
-                $(this).off('scroll');
-                $(".chat-box").on('resize scroll', function () {
-                    let min = Math.min.apply(null, messages[current_room]);
-                    let mess_min = document.getElementById("mess_" + min);
-
-                    let max = Math.max.apply(null, messages[current_room]);
-                    let mess_max = document.getElementById("mess_" + max);
-                    if (isElementInViewport(mess_max)) {
-                        $('#chat-bottom-scroll').css('visibility', 'hidden');
-                    } else {
-                        $('#chat-bottom-scroll').css('visibility', 'visible');
-                    }
-
-                    if (!loading_messages && isElementInViewport(mess_min)) {
-                        loading_messages = true;
-                        document.getElementById("chat-spinner").setAttribute("style", "");
-                        get_messages(min);
-                    }
-                });
-            }
-        });
+                setTimeout(function (){$(messid).css('background', '')}, 400);
+        } else {
+            $(".chat-box").on('scroll', function (e) {
+                if (isElementInViewport(messid)) {
+                    setTimeout(function () {$(messid).css('background', '#2e2e2e')}, 200);
+                    setTimeout(function () {$(messid).css('background', '')}, 400);
+                    $(this).off(e);
+                    e.stopPropagation();
+                }
+            });
+        }
     } else {
         $('.input-group-upper').remove();
         // noinspection EqualityComparisonWithCoercionJS
@@ -345,9 +342,14 @@ $(document).on('mousedown touchstart', 'li.chat-right, li.chat-left', function(e
             return ;
         }
     }
+    // noinspection EqualityComparisonWithCoercionJS
+    if (reply_mess_id != 0){
+        return;
+    }
 
     if (!selecting) {
         timeoutId = setTimeout(function () {
+            event.preventDefault();
             selecting = true;
             document.dispatchEvent(selecting_event);
                 event.currentTarget.setAttribute('selected_', 'true');

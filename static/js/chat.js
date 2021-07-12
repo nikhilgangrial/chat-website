@@ -237,6 +237,8 @@ function connect() {
         }
         else if (data.type_ === "switchroom"){
             $('div.selected-user > span > span.name')[0].innerHTML = chats_[data.room].title;
+            $('.reply-close').click();
+            $('span[data-type="cancel"]').click();
             messages[current_room] = [];
             document.getElementById("chat-log").innerHTML = '<br>\
                                                                      <div id="chat-spinner" class="d-flex justify-content-center">\
@@ -334,6 +336,11 @@ function check_for_reply(messageInputDom){
     // noinspection EqualityComparisonWithCoercionJS
     if (reply_mess_id != 0){
         console.log("replying tp " + reply_mess_id);
+        messageInputDom.innerHTML = `<div class="chat-reply" onclick="reply_message_scroll(event, ${reply_mess_id});">`+
+                                    `  <div class="name">${messages_[current_room][reply_mess_id].sender}</div>`+
+                                    `   ${messages_[current_room][reply_mess_id].message}`+
+                                    `</div>${messageInputDom.innerHTML}`;
+        $('.reply-close').click();
     }
 }
 

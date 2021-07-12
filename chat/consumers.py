@@ -37,9 +37,10 @@ from datetime import datetime
 
 
 async def remove_br(message):
+    print(message)
     while 1:
-        if message[-3:] == '<br>':
-            message = message[:-3]
+        if message[-4:] == '<br>':
+            message = message[:-4]
         elif message[-6:] == '&nbsb;':
             message = message[:-6]
         elif message[-1:] == ' ':
@@ -50,8 +51,8 @@ async def remove_br(message):
             break
 
     while 1:
-        if message[:3] == '<br>':
-            message = message[3:]
+        if message[:4] == '<br>':
+            message = message[4:]
         elif message[:6] == '&nbsb;':
             message = message[6:]
         elif message[:1] == ' ':
@@ -60,6 +61,7 @@ async def remove_br(message):
             message = message[15:]
         else:
             break
+
     return message.strip()
 
 
