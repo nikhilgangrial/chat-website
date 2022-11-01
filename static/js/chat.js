@@ -4,8 +4,8 @@ let messages_ = {};
 let current_room = '123';
 let self = ""
 let loading_messages = false;
-var caret_position_mes=0;
-var timeoutId = 0;
+let caret_position_mes=0;
+let timeoutId = 0;
 let selecting = false;
 let selected_messages = [];
 let chats = []
@@ -31,7 +31,7 @@ function isElementInViewport (el) {
         el = el[0];
     }
     try {
-        var rect = el.getBoundingClientRect();
+        let rect = el.getBoundingClientRect();
         return (
             rect.top >= 0 &&
             rect.left >= 0 &&
@@ -179,7 +179,6 @@ function get_messages(from=0){
         success: function(response)
         {
             document.getElementById("chat-spinner").setAttribute('style', 'display: none!important');
-            console.log(response);
             self = response['self'];
             current_room = response['room'];
             response['messages'].reverse();
@@ -199,7 +198,7 @@ function get_messages(from=0){
     });
 }
 
-var chatSocket = null;
+let chatSocket = null;
 
 function connect() {
     // connects to server
@@ -231,6 +230,9 @@ function connect() {
             data.message_ids.forEach(function (mess_id) {
                 remove_message(mess_id);
             });
+        }
+        else if (data.type_ === "edit"){
+
         }
         else if (data.type_ === "delivery_report"){
             $("#mess_" + data.messageid + " > div.time-seen-at")[0].innerHTML = parseDate(new Date(data.seen_at + " UTC"));
@@ -305,6 +307,16 @@ function connect() {
         }
     });
 
+    // if empty div in input
+    $(document).on('keyup', '#chat-message-input', function (e) {
+        if (e.keyCode === 8 || e.keyCode === 46) {
+            const messageInputDom = document.querySelector('#chat-message-input');
+            if (messageInputDom.innerHTML === "<br>" || messageInputDom.innerHTML === "<div></div>"){
+                messageInputDom.innerHTML = "";
+            }
+        }
+    });
+
     // Send button function
     $(document).on('click', '#chat-message-submit', function () {
         const messageInputDom = document.querySelector('#chat-message-input');
@@ -315,6 +327,7 @@ function connect() {
 }
 
 connect();
+
 
 function send_message(messageInputDom) {
     check_for_reply(messageInputDom);
