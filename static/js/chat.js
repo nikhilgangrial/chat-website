@@ -11,6 +11,7 @@ let selected_messages = [];
 let chats = []
 let chats_ = {}
 let reply_mess_id = 0;
+let edit_mess_id = 0;
 let highlighted = null;
 
 mobileAndTabletCheck = function() {

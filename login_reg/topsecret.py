@@ -12,90 +12,14 @@ import os
 import webbrowser
 
 stream = open('oauth_settings.yml', 'r')
-settings = yaml.load(stream, yaml.SafeLoader)
-authorize_url = '{0}{1}'.format(settings['authority'], settings['authorize_endpoint'])
-token_url = '{0}{1}'.format(settings['authority'], settings['token_endpoint'])
-
-os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
-os.environ['OAUTHLIB_RELAX_TOKEN_SCOPE'] = '1'
-
-token = {}
-
-
-def get_token_from_code(callback_url, expected_state):
-    # Initialize the OAuth client
-    aad_auth = OAuth2Session(settings['app_id'], state=expected_state, scope=settings['scopes'],
-                             redirect_uri=settings['redirect'])
-
-    token = aad_auth.fetch_token(token_url, client_secret=settings['app_secret'], authorization_response=callback_url)
-    return token
-
-
-def store_token(token_):
-    global token
-    token = token_
-
-
-def get_sign_in_url():
-    # Initialize the OAuth client
-    aad_auth = OAuth2Session(settings['app_id'], scope=settings['scopes'], redirect_uri=settings['redirect'])
-
-    sign_in_url, state = aad_auth.authorization_url(authorize_url, prompt='login')
-
-    webbrowser.open(sign_in_url)
-
-
-get_sign_in_url()
-
-
-def get_token():
-    global token
-    if token:
-        now = time.time()
-        expire_time = token['expires_at'] - 300
-        if now >= expire_time:
-            aad_auth = OAuth2Session(settings['app_id'], token=token, scope=settings['scopes'],
-                                     redirect_uri=settings['redirect'])
-
-            refresh_params = {'client_id': settings['app_id'], 'client_secret': settings['app_secret']}
-            new_token = aad_auth.refresh_token(token_url, **refresh_params)
-            token = new_token
-        return token
-
-
-def _get_user(post):
-    email = post['email']
-    token = get_token()
-    graph_client = OAuth2Session(token=token)
-    user = graph_client.get(f"https://graph.microsoft.com/v1.0/users?$filter=userPrincipalName eq '{email}'")
-    if user.status_code == 200:
-        user = user.json()['value'][0]
-        res = {'email': email, 'userid': user['id'], 'password': post['password1'], 'username': post['username']}
-        temp = user['displayName'].split()[0]
-        if temp.isdigit():
-            res['type'] = 'Student'
-            res['rollno'] = int(temp)
-            res['regno'] = int(email.split('_')[1].split('@')[0])
-            classes = {'1': 'ETC A', '2': 'MECHANICAL', '3': 'COMP A', '4': 'IT',
-                       '5': 'ETC B', '6': 'MECHANICAL PG', '7': 'COMP B'}
-            res['stu_class'] = classes[temp[0]]
-            year = {'1': 'FE', '2': 'SE', '3': 'TE', '4': 'BE'}
-            res['year'] = year[temp[1]]
-
-        elif temp[:6] == "Alumni":
-            res['type'] = "Alumni"
-            res['regno'] = int(email.split('_')[1].split('@')[0])
-        else:
-            res['type'] = "Staff"
-        return res
-    raise ValueError
-
+settings = yaml.safe_load(stream)
 
 """
 link = "mongodb://admin:4gWGjt4TLkdlZg1B@cluster0-shard-00-00.xrq2g.mongodb.net:27017,cluster0-shard-00-01.xrq2g.\
 mongodb.net:27017,cluster0-shard-00-02.xrq2g.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-1fpp0j-shard\
 -0&authSource=admin&retryWrites=true&w=majority"
 """
+
 dbclient = pymongo.MongoClient('localhost', 27017)
 db = dbclient['thewebsite']
 
@@ -106,7 +30,7 @@ def sendmail(email, message):
     smtp_server = "smtp.gmail.com"
     sender_email = "mushkilotp@gmail.com"  # Enter your address
     receiver_email = email  # Enter receiver address
-    password = "69@vahi sochna mushkil hai69"
+    password = settings['email_password']
 
     context = create_default_context()  # ssl function
     with SMTP_SSL(smtp_server, port, context=context) as server:    # smtplib function

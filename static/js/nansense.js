@@ -131,6 +131,34 @@ $(document).on('click', 'div.ballon > button[data-type="delete"]', function (){
     });
 });
 
+$(document).on('click', 'div.ballon > button[data-type="edit"]', function (event) {
+    if (reply_mess_id !== 0 || selecting){
+        return;
+    }
+    console.log("editing")
+    if (edit_mess_id !== 0){
+        $('.input-group-upper').remove();
+        let mess = $('#' + edit_mess_id);
+        mess.css("background", "");
+        mess.css("border-left", "")
+    }
+    edit_mess_id = event.currentTarget.parentElement.parentElement.id;
+    // noinspection JSJQueryEfficiency
+    let mess = $('#' + edit_mess_id);
+    console.log(mess);
+    mess.css("background", "#2e2e30");
+    mess.css("border-left", "var(--danger) 0.25rem solid");
+
+    let ele = $(".publisher")[0];
+    // noinspection JSCheckFunctionSignatures   //TODO: DO SOMETHING WHILE SENDING
+    let to_be_appeded = `<div style="position: relative; width: 100%;background: #111111;border-radius: 0.5rem 0.5rem 0 0; height: 2rem; display: flex; padding: 0.2rem 0.5rem; align-items: center;" class="input-group-upper" onclick="reply_message_scroll(event, ${edit_mess_id})">
+                        <span style="font-size: 0.9rem">Editing Message </span>
+                        <span class="reply-close" style="padding: 0.25rem 0.5rem; position: absolute; right: 0.25rem; font-size: 0.9rem;-webkit-text-stroke: 0.03rem rgba(22, 22, 22, 1);"><i class="fa fa-times"></i></span>
+                     </div>`;
+    ele.insertAdjacentHTML("beforebegin", to_be_appeded);
+});
+
+
 $(document).on('click', 'div.ballon > button[data-type="reply"]', reply_message);
 
 let click_count = 0;
@@ -149,7 +177,7 @@ $(document).on('click', 'li.chat-left, li.chat-right', function (event) {
 });
 
 function reply_message(event){
-    if (selecting){
+    if (selecting || edit_mess_id !== 0){
         return;
     }
     let messid;
@@ -173,7 +201,7 @@ function reply_message(event){
     mess.css("border-left", "var(--primary) 0.25rem solid")
 
     let ele = $(".publisher")[0];
-    // noinspection JSCheckFunctionSignatures   //TODO: DO SOMETHING WHILE SENDING
+    // noinspection JSCheckFunctionSignatures
     let to_be_appeded = `<div style="position: relative; width: 100%;background: #111111;border-radius: 0.5rem 0.5rem 0 0; height: 2rem; display: flex; padding: 0.2rem 0.5rem; align-items: center;" class="input-group-upper" onclick="reply_message_scroll(event, ${messid})">
                         <span style="font-size: 0.9rem">Replying to </span>
                         <span style="font-size: 0.9rem; padding-left: 0.25rem;font-weight: bold; color: #888888">${messages_[current_room][messid].sender}</span>
@@ -184,25 +212,11 @@ function reply_message(event){
 }
 
 function reply_message_scroll(event, messid){
+
     if (event.target.getAttribute('class') !== "reply-close" && event.target.getAttribute('class') !== "fa fa-times" && !selecting) {
         event.preventDefault();
         messid.scrollIntoView({behavior: "smooth", block: "center"});
-        if (messid.id === reply_mess_id){
-            return;
-        }
-        if (isElementInViewport(messid)) {
-                setTimeout(function (){$(messid).css('background', '#2e2e2e')}, 200);
-                setTimeout(function (){$(messid).css('background', '')}, 400);
-        } else {
-            $(".chat-box").on('scroll', function (e) {
-                if (isElementInViewport(messid)) {
-                    setTimeout(function () {$(messid).css('background', '#2e2e2e')}, 200);
-                    setTimeout(function () {$(messid).css('background', '')}, 400);
-                    $(this).off(e);
-                    e.stopPropagation();
-                }
-            });
-        }
+
     } else {
         $('.input-group-upper').remove();
         // noinspection EqualityComparisonWithCoercionJS
@@ -212,6 +226,12 @@ function reply_message_scroll(event, messid){
             mess.css("border-left", "")
         }
         reply_mess_id = 0;
+        if (edit_mess_id !== 0) {
+            let mess = $('#' + edit_mess_id);
+            mess.css("background", "");
+            mess.css("border-left", "")
+        }
+        edit_mess_id = 0;
     }
 }
 
@@ -335,7 +355,7 @@ $(document).on('mousedown touchstart', 'li.chat-right, li.chat-left', function(e
         }
     }
     // noinspection EqualityComparisonWithCoercionJS
-    if (reply_mess_id != 0){
+    if (reply_mess_id != 0 || edit_mess_id !== 0){
         return;
     }
 

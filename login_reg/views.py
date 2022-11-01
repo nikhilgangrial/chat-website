@@ -1,53 +1,10 @@
-"""
-from django.shortcuts import render, redirect
-from django.http import JsonResponse
-
-
-k = 0
-
-
-# Create your views here.
-def login_view(req):
-    if req.is_ajax and req.method == "POST":
-        f = open("debug.txt", "w")
-        f.write(str(req.POST))
-        f.close()
-        global k
-        k += 1
-        return JsonResponse({"instance": k}, status=200)
-    else:
-        return render(req, 'login.html')
-
-
-def logout_view(request):
-    # logout
-    return redirect("login")
-
-
-def register_view(request):
-    pass
-"""
-
 from django.contrib import messages
 from django.contrib.auth import authenticate, logout, login
 from django.shortcuts import render, redirect
 from .forms import AccountUpdateform
 from django.http import HttpResponseRedirect, HttpResponse, Http404
-from .topsecret import (_get_user, sendotp, checkotp, send_reset_token, check_reset_token, change_password, check_user,
-                        get_token_from_code, store_token, _create_user)
-
-
-def callback(request):
-    # Get the state saved in session
-    expected_state = request.session.pop('auth_state', '')
-    # Make the token request
-    token = get_token_from_code(request.get_full_path(), expected_state)
-
-    # Save token and user
-    store_token(token)
-
-    return HttpResponse(status=200)
-
+from .topsecret import (sendotp, checkotp, send_reset_token, check_reset_token, change_password, check_user,
+                        _create_user)
 
 def home(request):
     """
@@ -62,7 +19,8 @@ def registration_view(request):
     """
     if request.POST:
         if request.POST['otp'] and checkotp(request.POST['email'], int(request.POST['otp'])):
-            user = _get_user(request.POST)
+            user = request.POST
+            print(request.POST)
             f = open("debug.txt", "a")
             f.write(str(user) + "\n")
             f.close()
