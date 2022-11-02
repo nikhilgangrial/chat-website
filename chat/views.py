@@ -30,13 +30,13 @@ def room(request, room_name):
             start = request.POST['from']
             messages, status = get_messages(request.user, room_name, start)
 
-            if status == 400:  # user has no acess to chat
+            if status == 400:  # user has no access to chat
                 return HttpResponse(status=400)
             return JsonResponse({"messages": messages,
                                  "status": status,
-                                 "self": request.user.userid,
+                                 "self": request.user.id,
                                  "room": room_name
                                  })
         except:
             return render(request, 'chat/room.html', {'room_name': room_name})
-    return render(request, '../templates/under development/chats/chat.html', {'room_name': room_name})
+    return render(request, 'under development/chats/chat.html', {'room_name': room_name})

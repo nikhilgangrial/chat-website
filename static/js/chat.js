@@ -231,8 +231,11 @@ function connect() {
                 remove_message(mess_id);
             });
         }
-        else if (data.type_ === "edit"){
-
+        else if (data.type_ === "edit") {
+            console.log(data);
+            let ele = document.getElementById("mess_"+data.mess_id);
+            ele.children[2].children[1].innerHTML = data.message;
+            messages_[current_room]["mess_"+data.mess_id].message = data.message;
         }
         else if (data.type_ === "delivery_report"){
             $("#mess_" + data.messageid + " > div.time-seen-at")[0].innerHTML = parseDate(new Date(data.seen_at + " UTC"));
@@ -336,10 +339,42 @@ function send_message(messageInputDom) {
     message = message.replace(/<br>$/, "");
     message = message.replace(/<div><br><\/div>$/, "");
     message = message.replace(/&bnsp;$/, "");
-    chatSocket.send(JSON.stringify({
-        'message': message.trim(),
-        'type_': 'message',
-    }));
+    message = message.trim();
+
+    if (edit_mess_id !== 0){
+        if (message === ""){
+            let modal = $("#modal-confirm");
+            let content = modal[0].children[0].children[0].children;
+            content[0].innerHTML = 'Delete message';
+            content[1].innerHTML = 'Are you sure you want to delete this message?';
+            modal.modal('show');
+
+            modalConfirm(function(confirm) {
+                if (confirm) {
+                    chatSocket.send(JSON.stringify({
+                        'mess_id': messages_[current_room][edit_mess_id].id,
+                        'type_': 'delete'
+                    }));
+                    $('.reply-close').click();
+                }
+            });
+            return;
+
+        } else {
+            chatSocket.send(JSON.stringify({
+                'message': message,
+                'type_': 'edit',
+                'mess_id': messages_[current_room][edit_mess_id].id,
+            }));
+        }
+        $('.reply-close').click();
+
+    } else {
+        chatSocket.send(JSON.stringify({
+            'message': message,
+            'type_': 'message',
+        }));
+    }
     messageInputDom.innerHTML = '';
 }
 

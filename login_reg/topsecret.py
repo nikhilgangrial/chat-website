@@ -1,6 +1,4 @@
 import yaml
-import time
-from requests_oauthlib import OAuth2Session
 import pymongo
 from random import randint, choice
 from datetime import datetime
@@ -8,11 +6,11 @@ from smtplib import SMTP_SSL
 from ssl import create_default_context
 from threading import Thread
 from login_reg.models import Users
-import os
-import webbrowser
+
 
 stream = open('oauth_settings.yml', 'r')
 settings = yaml.safe_load(stream)
+stream.close()
 
 """
 link = "mongodb://admin:4gWGjt4TLkdlZg1B@cluster0-shard-00-00.xrq2g.mongodb.net:27017,cluster0-shard-00-01.xrq2g.\
@@ -24,18 +22,19 @@ dbclient = pymongo.MongoClient('localhost', 27017)
 db = dbclient['thewebsite']
 
 
+# noinspection SpellCheckingInspection
 def sendmail(email, message):
 
-    port = 465  # For SSL
-    smtp_server = "smtp.gmail.com"
-    sender_email = "mushkilotp@gmail.com"  # Enter your address
-    receiver_email = email  # Enter receiver address
-    password = settings['email_password']
+    FROM = "mushkilotp@gmail.com"  # Enter your address
+    TO = email  # Enter receiver address
+    password = settings['app_password']
 
-    context = create_default_context()  # ssl function
-    with SMTP_SSL(smtp_server, port, context=context) as server:    # smtplib function
-        server.login(sender_email, password)
-        server.sendmail(sender_email, receiver_email, message)
+    server_ssl = SMTP_SSL("smtp.gmail.com", 465)
+    server_ssl.ehlo()
+    server_ssl.login(FROM, password)
+
+    server_ssl.sendmail(FROM, TO, message)
+    server_ssl.close()
 
 
 def _sendotp(email, otp):
@@ -53,6 +52,7 @@ def sendotp(email):
     Thread(target=_sendotp, args=(email, otp)).start()
 
 
+# noinspection SpellCheckingInspection
 def checkotp(email, otp):
     res = db['otp'].find_one({'email': email, 'otp': otp})
     if res:
@@ -62,6 +62,7 @@ def checkotp(email, otp):
         return False
 
 
+# noinspection SpellCheckingInspection
 def _send_reset_token(email, token, host):
     message = f"""
     Subject: Hi there
@@ -71,12 +72,14 @@ def _send_reset_token(email, token, host):
     sendmail(email, message)
 
 
+# noinspection SpellCheckingInspection
 def send_reset_token(email, host):
     token = ''.join([choice('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890') for _ in range(75)])
     db['resettoken'].insert({'token': token, 'email': email, 'createdat': datetime.utcnow()})
     Thread(target=_send_reset_token, args=(email, token, host)).start()
 
 
+# noinspection SpellCheckingInspection
 def check_reset_token(token, change=False):
     res = db['resettoken'].find_one({'token': token})
     if res:
@@ -92,8 +95,12 @@ def change_password(email, password):
     user.save()
 
 
-def _create_user(user):
-    Users.objects.create_user(**user)
+def _create_user(user_):
+    Users.objects.create_user(id=settings["id"], username=user_['username'], email=user_['email'], password=user_['password1'])
+    settings["id"] += 1
+    file = open('oauth_settings.yml', 'w')
+    yaml.dump(settings, file)
+    file.close()
 
 
 def check_user(email):

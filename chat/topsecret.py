@@ -11,10 +11,10 @@ class Empty:
 
 def convert_message(q, user):
     res = []
-    senders = {user.userid: user}   # keepings track of users to avoid reloading same data from database
+    senders = {user.id: user}   # keeping track of users to avoid reloading same data from database
 
     for i in q:
-        if i.sender != user.userid and not i.seen_at:
+        if i.sender != user.id and not i.seen_at:
             i.seen_at = datetime.utcnow()
             i.save()
 
@@ -22,17 +22,18 @@ def convert_message(q, user):
             sender = senders[i.sender]
         else:
             try:
-                sender = Users.objects.get(userid=i.sender)
+                sender = Users.objects.get(id=i.sender)
             except:
-                sender = Empty(username='<i style="color: inherit;">Deleted User</i>', userid=i.sender, profile="")
+                sender = Empty(username='<i style="color: inherit;">Deleted User</i>', id=i.sender, profile="")
             senders[i.sender] = sender
 
+        # noinspection SpellCheckingInspection
         res.append({
             "message": i.message,
             "sent_at": i.sent_at,
             "seen_at": i.seen_at,
             "sender": sender.username,
-            "senderid": sender.userid,
+            "senderid": sender.id,
             "id": i.id,
             "profile": sender.profile,
         })
@@ -45,7 +46,7 @@ def convert_message(q, user):
 
 def get_messages(user, room, start):
     try:
-        src = ChatRoom.objects.get(id=int(room), members={'user': user.userid})
+        src = ChatRoom.objects.get(id=int(room), members={'user': user.id})
     except:
         return None, 400
 
@@ -60,6 +61,7 @@ def get_messages(user, room, start):
 title = 'Untitled'
 album = None
 disable_audio = 0
+# noinspection SpellCheckingInspection
 imgur_client = Imgur({'client_id': 'c08f2a8d367a13c',
                       'client_secret': '342c02d21ce4dc76ef1538daaf5099cf80925366',
                       'access_token': '4b65ba39c8d6db6b5cb5865dd03803529de38e90',

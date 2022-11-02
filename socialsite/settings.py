@@ -52,7 +52,6 @@ INSTALLED_APPS = [
     'channels',   # helps making real time chatting system nansense to be resolved
     'login_reg',  # the one which validates login and creates new.sass accounts
     'chat',       # app that handles chatting system
-    'groups',     # app that handles groups and their activities
 ]
 
 MIDDLEWARE = [

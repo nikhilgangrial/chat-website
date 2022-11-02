@@ -8,7 +8,7 @@ class Array(dmodels.Model):
 class ChatRoom(dmodels.Model):
     id = dmodels.AutoField(primary_key=True, null=False)
     type = dmodels.CharField(default='dm', max_length=6)
-    title = dmodels.ForeignKey('groups.Group', on_delete=dmodels.CASCADE, default=None)
+    # noinspection PyUnresolvedReferences
     members = dmodels.ArrayField(model_container=Array, default=[])
     blocked = dmodels.ArrayField(model_container=Array, default=[])
 

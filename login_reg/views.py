@@ -5,12 +5,11 @@ from .forms import AccountUpdateform
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from .topsecret import (sendotp, checkotp, send_reset_token, check_reset_token, change_password, check_user,
                         _create_user)
+import re
 
-def home(request):
-    """
-      Home View Renders base.html
-    """
-    return render(request, "base.html", {})
+
+def handler404(request, _):
+    return HttpResponseRedirect("/account/login/")
 
 
 def registration_view(request):
@@ -21,27 +20,25 @@ def registration_view(request):
         if request.POST['otp'] and checkotp(request.POST['email'], int(request.POST['otp'])):
             user = request.POST
             print(request.POST)
-            f = open("debug.txt", "a")
-            f.write(str(user) + "\n")
-            f.close()
             _create_user(user)
-            user = authenticate(email=user['email'], password=user['password'])
+            user = authenticate(email=user['email'], password=user['password1'])
             login(request, user)
             messages.success(request, "You have been Registered as {}".format(request.user.username))
             return HttpResponseRedirect('/chat/123/')
         elif request.POST['otp']:
             return HttpResponse("Invalid Otp", status=400)
         else:
-            if request.POST['email'][-15:] == "@aitpune.edu.in":
+            if re.match(r'\b[A-Za-z\d._%+-]+@[A-Za-z\d.-]+\.[A-Z|a-z]{2,}\b', request.POST['email']):
                 if not check_user(request.POST['email']):
                     sendotp(request.POST['email'])
                     return HttpResponse(f"{request.POST['email']}", status=200)
-                return HttpResponse("An account already exixts with given email", status=400)
+                return HttpResponse("An account already exists with given email", status=400)
             return HttpResponse("Enter a Valid collage ID", status=400)
     return render(request, "account/signup.html")
 
 
 def logout_view(request):
+    print(request, type(request))
     logout(request)
     messages.success(request, "Logged Out")
     return HttpResponseRedirect("/account/login/")
@@ -52,14 +49,15 @@ def login_view(request):
       Renders Login Form
     """
     if request.user.is_authenticated:
-        return HttpResponseRedirect("/chat/123/")
+        return HttpResponseRedirect("/chat/")
     if request.POST:
         email = request.POST.get('email')
         password = request.POST.get('password')
         user = authenticate(email=email, password=password)
         if user:
+            print(user, type(user))
             login(request, user)
-            # If check box is not checked no response is received in POST request
+            # If check box is not checked, no response is received in POST request
             try:
                 # noinspection PyStatementEffect
                 request.POST['remember me']
@@ -114,7 +112,7 @@ def reset_token(request):
 
             host = scheme + request.get_host()
             send_reset_token(request.POST['email'], host)
-            messages.success(request, f"Password Reset Instuction have been sent to {request.POST['email']}.")
+            messages.success(request, f"Password Reset Instruction have been sent to {request.POST['email']}.")
             print("message")
             return render(request, "account/reset/gettoken.html")
         print("message")
@@ -133,5 +131,5 @@ def reset_password(request, token):
             return HttpResponseRedirect("/account/home/")
     else:
         if check_reset_token(token):
-            return render(request, "account/reset/resetpassword.html")
+            return render(request, "account/reset/reset-password.html")
     raise Http404("Not Found")

@@ -12,6 +12,21 @@ $("#emojibutton").on('click', function (e){
     messinp.emojiPicker('toggle');
 });
 
+let modalConfirm = function(callback) {
+    $("#modal-confirm-yes").on("click", function () {
+        $("#modal-confirm").modal('hide');
+        callback(true);
+        $("#modal-confirm-no").off();
+        $("#modal-confirm-yes").off();
+    });
+
+    $("#modal-confirm-no").on("click", function () {
+        $("#modal-confirm").modal('hide');
+        callback(false);
+        $("#modal-confirm-no").off();
+        $("#modal-confirm-yes").off();
+    });
+}
 // parse message before send
 function parse_before_send() {
     let mess = $("#chat-message-input")[0];
@@ -104,21 +119,6 @@ $(document).on('click', 'div.ballon > button[data-type="delete"]', function (){
     content[0].innerHTML = 'Delete message';
     content[1].innerHTML = 'Are you sure you want to delete this message?';
     modal.modal('show');
-    var modalConfirm = function(callback) {
-        $("#modal-confirm-yes").on("click", function () {
-            $("#modal-confirm").modal('hide');
-            callback(true);
-            $("#modal-confirm-no").off();
-            $("#modal-confirm-yes").off();
-        });
-
-        $("#modal-confirm-no").on("click", function () {
-            $("#modal-confirm").modal('hide');
-            callback(false);
-            $("#modal-confirm-no").off();
-            $("#modal-confirm-yes").off();
-        });
-    }
 
     modalConfirm(function(confirm) {
         if (confirm) {
@@ -126,6 +126,8 @@ $(document).on('click', 'div.ballon > button[data-type="delete"]', function (){
                 'mess_id': mess_id,
                 'type_': 'delete'
             }));
+            console.log(mess_id);
+            console.log("del");
         } else {
         }
     });
@@ -145,9 +147,12 @@ $(document).on('click', 'div.ballon > button[data-type="edit"]', function (event
     edit_mess_id = event.currentTarget.parentElement.parentElement.id;
     // noinspection JSJQueryEfficiency
     let mess = $('#' + edit_mess_id);
-    console.log(mess);
+    console.log(messages_[current_room][edit_mess_id]);
     mess.css("background", "#2e2e30");
     mess.css("border-left", "var(--danger) 0.25rem solid");
+
+    const messageInputDom = document.querySelector('#chat-message-input');
+    messageInputDom.innerHTML = messages_[current_room][edit_mess_id].message;
 
     let ele = $(".publisher")[0];
     // noinspection JSCheckFunctionSignatures   //TODO: DO SOMETHING WHILE SENDING
@@ -247,21 +252,6 @@ $(document).on('click', 'div.selected-user > div > span[data-type="delete"]', fu
             mess_ids.push(parseInt(ele_id.substring(5)));
         }
     });
-    var modalConfirm = function(callback) {
-        $("#modal-confirm-yes").on("click", function () {
-            $("#modal-confirm").modal('hide');
-            callback(true);
-            $("#modal-confirm-no").off();
-            $("#modal-confirm-yes").off();
-        });
-
-        $("#modal-confirm-no").on("click", function () {
-            $("#modal-confirm").modal('hide');
-            callback(false);
-            $("#modal-confirm-no").off();
-            $("#modal-confirm-yes").off();
-        });
-    }
 
     modalConfirm(function(confirm) {
         if (confirm) {

@@ -1,10 +1,12 @@
+// noinspection DuplicatedCode,JSUnusedGlobalSymbols
 
 function startTimer() {
   let presentTime = document.getElementById('resend').value;
-  let timeArray = presentTime.split(/[:]+/);
+  let timeArray = presentTime.split(/:+/);
   let m = timeArray[0];
   let s = checkSecond((timeArray[1] - 1));
-  if (s==59) {
+  // noinspection EqualityComparisonWithCoercionJS
+    if (s == 59) {
       m=m-1;
   }
   if(m<0){
@@ -18,10 +20,10 @@ function startTimer() {
   setTimeout(startTimer, 1000);
 }
 
-function verfiyemail(){
-    let mailformat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@aitpune\.edu\.in$/;
+function verify_email(){
+    let mail_format = /^[a-zA-Z\d.!#$%&'*+/=?^_`{|}~-]+@((\[\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}])|(([a-zA-Z\-\d]+\.)+[a-zA-Z]{2,}))$/;
     let email = document.getElementById('email');
-    return !!email.value.match(mailformat);
+    return !!email.value.match(mail_format);
 }
 
 
@@ -31,7 +33,7 @@ function checkSecond(sec) {
   return sec;
 }
 
-function matchpassword(){
+function match_password(){
     let match = document.getElementById("match");
     let pwd1 = document.getElementById("password1");
     let pwd2 = document.getElementById("password2");
@@ -41,10 +43,10 @@ function matchpassword(){
         match.innerHTML = '<span style="color:red">Do not Match!</span>';
     }
 }
-function checkstrength() {
+function check_strength() {
         let strength = document.getElementById('strength');
-        let strongRegex = new RegExp("^(?=.{8,})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\\W).*$", "g");
-        let mediumRegex = new RegExp("^(?=.{8,})(((?=.*[A-Z])(?=.*[a-z]))|((?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[0-9]))).*$", "g");
+        let strongRegex = new RegExp("^(?=.{8,})(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*\\W).*$", "g");
+        let mediumRegex = new RegExp("^(?=.{8,})(((?=.*[A-Z])(?=.*[a-z]))|((?=.*[A-Z])(?=.*\d))|((?=.*[a-z])(?=.*\d))).*$", "g");
         let enoughRegex = new RegExp("(?=.{8,}).*", "g");
         let pwd = document.getElementById("password1");
         if (false === enoughRegex.test(pwd.value)) {
@@ -58,9 +60,9 @@ function checkstrength() {
         }
     }
 
-function firstcall(){
-    if (verfiyemail() === false){
-        alert("Enter a Valid Collage email");
+function first_call(){
+    if (verify_email() === false){
+        alert("Enter a Valid email");
         return ;
     }
     //check if password is strong
@@ -83,25 +85,26 @@ function firstcall(){
         {
             let email = response;
             console.log(email);
-            document.getElementById("afte opt message").innerHTML = "An otp have been sent to <a href='mailto:" + email + "'>"+ email + "</a> which is valid for 2 minutes.<br></a>";
-            // hide all uper elements
+            document.getElementById("after opt message").innerHTML = "An otp have been sent to <a href='mailto:" + email + "'>"+ email + "</a> which is valid for 2 minutes.<br></a>";
+            // hide all upper elements
             document.getElementById("before otp").hidden = true;
-            //unhide otp section
+            // un-hide otp section
             document.getElementById("after otp").hidden = false;
             document.getElementById("resend").disabled = true;
             document.getElementById("resend").setAttribute('class', "btn btn-secondary btn-block")
             document.getElementById('resend').value = "0:20";
             // change submit function
-            document.getElementById('sub').setAttribute('onclick','secondcall()');
+            document.getElementById('sub').setAttribute('onclick','second_call()');
             //start timer
             startTimer();
         },
-        error: function (response){
-            alert("Enter a valid collage id.");
+        error: function (_){
+            alert("Enter a valid email id.");
         }
     })
 }
 
-function secondcall(){
+
+function second_call(){
     document.getElementById("main form").submit();
 }

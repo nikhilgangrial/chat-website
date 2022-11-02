@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!--suppress HtmlFormInputWithoutLabel -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -15,22 +16,22 @@
         <div id="before otp">
             <div class="form-group"> <input class="form-control" type="text" name="username" id="username" autocomplete="new-username" placeholder="Username"></div>
             <div class="form-group"> <input class="form-control" type="email" name="email" id="email" placeholder="Email" autocomplete="email"></div>
-            <div class="form-group"> <input class="form-control" type="password" name="password1" id="password1" autocomplete="new-password" placeholder="Password" onkeyup="checkstrength()"><i id="strength"></i></div>
-            <div class="form-group"> <input class="form-control" type="password" name="password2" id="password2" autocomplete="new-password" placeholder="Confirm Password" onkeyup="matchpassword()"><i id="match"></i></div>
+            <div class="form-group"> <input class="form-control" type="password" name="password1" id="password1" autocomplete="new-password" placeholder="Password" onkeyup="check_strength()"><i id="strength"></i></div>
+            <div class="form-group"> <input class="form-control" type="password" name="password2" id="password2" autocomplete="new-password" placeholder="Confirm Password" onkeyup="match_password()"><i id="match"></i></div>
         </div>
         <div id="after otp" hidden>
-            <div id="afte opt message" class="form-group text-center"> An otp has been sent to <a href="mailto:"> which is valid foe 2 minutes.</a></div>
+            <div id="after opt message" class="form-group text-center"> An otp has been sent to <a href="mailto:"> which is valid foe 2 minutes.</a></div>
             <div class="form-group"><input class="form-control" type="text" name="otp" id="otp" placeholder="OTP"></div>
-            <div class="form-group"><input class="btn btn-secondary btn-block" type="button" value="Resend Otp" id="resend" disabled onclick="firstcall()"></div>
+            <div class="form-group"><input class="btn btn-secondary btn-block" type="button" value="Resend Otp" id="resend" disabled onclick="first_call()"></div>
         </div>
-        <div class="form-group"><input class="btn btn-primary btn-block" type="button" id="sub" value="Submit" onclick="firstcall()"></div>
+        <div class="form-group"><input class="btn btn-primary btn-block" type="button" id="sub" value="Submit" onclick="first_call()"></div>
         <i class="forgot">Already have account <a href="{% url 'login' %}">Sign in</a></i>
     </form>
 </section>
 <footer>
     <script src="../../static/js/jquery.min.js"></script>
     <script src="../../static/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="../../static/js/preajax.js"></script>
+    <script type="text/javascript" src="../../static/js/pre-ajax.js"></script>
     <script type="text/javascript" src="../../static/js/signup.js"></script>
 </footer>
 </body>
