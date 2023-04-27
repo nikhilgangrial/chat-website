@@ -41,7 +41,7 @@ function isElementInViewport (el) {
     } catch { return false;}
 }
 
-// checks if messages dows not exist in existing messages and appends it in chat log
+// checks if messages dows not exist in existing messages and appends it in chatapi log
 function closest_message(key){
     return messages[current_room].reduce((a, b) => {
         return Math.abs(b - key) < Math.abs(a - key) ? b : a;
@@ -73,7 +73,7 @@ function update_messages(message){
                 seen = '';
                 time_seen = parseDate(new Date(message.seen_at));
             }
-            message_to_be_appeded = '<li class="chat-right" id="mess_' + message.id + '">\
+            message_to_be_appeded = '<li class="chatapi-right" id="mess_' + message.id + '">\
                                        <div class="time-seen-at">' + time_seen + '</div>\
                                        <div class="ballon" ' + style + '>\
                                             <button data-type="edit" style="background: #252528;">\
@@ -86,10 +86,10 @@ function update_messages(message){
                                                 <i class="fa fa-ellipsis-v"></i>\
                                             </button>\
                                        </div>\
-                                       <div class="chat-text no-copy">\
-                                           <div class="chat-name no-copy">' + message.sender + '</div>\
+                                       <div class="chatapi-text no-copy">\
+                                           <div class="chatapi-name no-copy">' + message.sender + '</div>\
                                            <div class="no-copy">' + message.message + '</div>\
-                                           <div class="chat-hour">' + time_ + '&nbsp;<span ' + seen + ' class="fa fa-check-circle"></span></div>\
+                                           <div class="chatapi-hour">' + time_ + '&nbsp;<span ' + seen + ' class="fa fa-check-circle"></span></div>\
                                        </div>\
                                     </li>'
         }
@@ -100,8 +100,8 @@ function update_messages(message){
             } else{
                 av = '<span style="font-size: 2.5rem;" class="user-av fa fa-user-circle"></span>';
             }
-            message_to_be_appeded = '<li class="chat-left" id="mess_' + message.id + '">\
-                                        <div class="chat-avatar">\
+            message_to_be_appeded = '<li class="chatapi-left" id="mess_' + message.id + '">\
+                                        <div class="chatapi-avatar">\
                                             ' + av + '\
                                         </div>\
                                         <div class="ballon" '+ style +'>\
@@ -109,16 +109,16 @@ function update_messages(message){
                                                 <i class="fa fa-reply"></i>\
                                             </button>\
                                         </div>\
-                                        <div class="chat-text no-copy">\
-                                            <div class="chat-name no-copy">' + message.sender + '</div>\
+                                        <div class="chatapi-text no-copy">\
+                                            <div class="chatapi-name no-copy">' + message.sender + '</div>\
                                             <div class="no-copy">' + message.message + '</div>\
-                                            <div class="chat-hour">' + time_ + '</div>\
+                                            <div class="chatapi-hour">' + time_ + '</div>\
                                         </div>\
                                     </li>'
         }
 
         if (messages[current_room].length === 0){
-            document.getElementById("chat-log").innerHTML += message_to_be_appeded;
+            document.getElementById("chatapi-log").innerHTML += message_to_be_appeded;
         } else {
             let min = Math.min.apply(null, messages[current_room]);
             let max = Math.max.apply(null, messages[current_room]);
@@ -178,7 +178,7 @@ function get_messages(from=0){
         },
         success: function(response)
         {
-            document.getElementById("chat-spinner").setAttribute('style', 'display: none!important');
+            document.getElementById("chatapi-spinner").setAttribute('style', 'display: none!important');
             self = response['self'];
             current_room = response['room'];
             response['messages'].reverse();
@@ -239,7 +239,7 @@ function connect() {
         }
         else if (data.type_ === "delivery_report"){
             $("#mess_" + data.messageid + " > div.time-seen-at")[0].innerHTML = parseDate(new Date(data.seen_at + " UTC"));
-            $("#mess_" + data.messageid + " > div.chat-text.no-copy > div.chat-hour > span.fa.fa-check-circle")[0].hidden = false;
+            $("#mess_" + data.messageid + " > div.chatapi-text.no-copy > div.chatapi-hour > span.fa.fa-check-circle")[0].hidden = false;
             messages_[current_room]['mess_' +data.messageid].seen_at = data.seen_at;
         }
         else if (data.type_ === "switchroom"){
@@ -247,8 +247,8 @@ function connect() {
             $('.reply-close').click();
             $('span[data-type="cancel"]').click();
             messages[current_room] = [];
-            document.getElementById("chat-log").innerHTML = '<br>\
-                                                                     <div id="chat-spinner" class="d-flex justify-content-center">\
+            document.getElementById("chatapi-log").innerHTML = '<br>\
+                                                                     <div id="chatapi-spinner" class="d-flex justify-content-center">\
                                                                         <div style="margin-bottom: 2rem;" class="spinner-border" role="status">\
                                                                             <span class="sr-only">Loading...</span>\
                                                                         </div>\
@@ -275,7 +275,7 @@ function connect() {
                 } else{
                     av = '<span style="font-size: 2.5rem;" class="user-av fa fa-user-circle"></span>';
                 }
-                container.innerHTML += '<li class="users_person" data-chat="' + chat.chatid +'">\
+                container.innerHTML += '<li class="users_person" data-chatapi="' + chat.chatid +'">\
                                             <div class="user">'
                                                 + av + '\
                                                 <span class="status ' + chat.status + '"></span>\
@@ -298,12 +298,12 @@ function connect() {
     };
 
     // key bind Send on Enter
-    document.querySelector('#chat-message-input').focus();
+    document.querySelector('#chatapi-message-input').focus();
 
-    $(document).on('keydown', '#chat-message-input', function (e) {
+    $(document).on('keydown', '#chatapi-message-input', function (e) {
         if (!mobile && (e.keyCode === 13 && !e.shiftKey)) {
             e.preventDefault();
-            const messageInputDom = document.querySelector('#chat-message-input');
+            const messageInputDom = document.querySelector('#chatapi-message-input');
             messageInputDom.innerHTML = messageInputDom.innerHTML.replace(/<div><br><\/div>$/, "");
             parse_before_send();
             send_message(messageInputDom);
@@ -311,9 +311,9 @@ function connect() {
     });
 
     // if empty div in input
-    $(document).on('keyup', '#chat-message-input', function (e) {
+    $(document).on('keyup', '#chatapi-message-input', function (e) {
         if (e.keyCode === 8 || e.keyCode === 46) {
-            const messageInputDom = document.querySelector('#chat-message-input');
+            const messageInputDom = document.querySelector('#chatapi-message-input');
             if (messageInputDom.innerHTML === "<br>" || messageInputDom.innerHTML === "<div></div>"){
                 messageInputDom.innerHTML = "";
             }
@@ -321,8 +321,8 @@ function connect() {
     });
 
     // Send button function
-    $(document).on('click', '#chat-message-submit', function () {
-        const messageInputDom = document.querySelector('#chat-message-input');
+    $(document).on('click', '#chatapi-message-submit', function () {
+        const messageInputDom = document.querySelector('#chatapi-message-input');
         parse_before_send();
         send_message(messageInputDom);
         messageInputDom.focus();
@@ -405,25 +405,25 @@ $('#file-group').on('click', function (){
     document.getElementById('file-select-button').click();
 })
 
-$('#chat-bottom-scroll').on('click', function (event){
+$('#chatapi-bottom-scroll').on('click', function (event){
     event.currentTarget.nextElementSibling.scrollTo({top: event.currentTarget.nextElementSibling.scrollHeight, behavior: "smooth"});
 });
 
-$(".chat-box").on('resize scroll', function (){
+$(".chatapi-box").on('resize scroll', function (){
     let min = Math.min.apply(null, messages[current_room]);
     let mess_min = document.getElementById("mess_"+min);
 
     let max = Math.max.apply(null, messages[current_room]);
     let mess_max = document.getElementById("mess_"+max);
     if (isElementInViewport(mess_max)){
-        $('#chat-bottom-scroll').css('visibility', 'hidden');
+        $('#chatapi-bottom-scroll').css('visibility', 'hidden');
     }else{
-        $('#chat-bottom-scroll').css('visibility', 'visible');
+        $('#chatapi-bottom-scroll').css('visibility', 'visible');
     }
 
     if (!loading_messages && isElementInViewport(mess_min)){
         loading_messages = true;
-        document.getElementById("chat-spinner").setAttribute("style", "");
+        document.getElementById("chatapi-spinner").setAttribute("style", "");
         get_messages(min);
     }
 });

@@ -29,7 +29,7 @@ let modalConfirm = function(callback) {
 }
 // parse message before send
 function parse_before_send() {
-    let mess = $("#chat-message-input")[0];
+    let mess = $("#chatapi-message-input")[0];
     let rep = {};
     let index = 0;
     mess.childNodes.forEach(function (node) {
@@ -151,7 +151,7 @@ $(document).on('click', 'div.ballon > button[data-type="edit"]', function (event
     mess.css("background", "#2e2e30");
     mess.css("border-left", "var(--danger) 0.25rem solid");
 
-    const messageInputDom = document.querySelector('#chat-message-input');
+    const messageInputDom = document.querySelector('#chatapi-message-input');
     messageInputDom.innerHTML = messages_[current_room][edit_mess_id].message;
 
     let ele = $(".publisher")[0];
@@ -168,7 +168,7 @@ $(document).on('click', 'div.ballon > button[data-type="reply"]', reply_message)
 
 let click_count = 0;
 let dbl_timeout = 0;
-$(document).on('click', 'li.chat-left, li.chat-right', function (event) {
+$(document).on('click', 'li.chatapi-left, li.chatapi-right', function (event) {
     clearTimeout(dbl_timeout);
     click_count += 1;
     if (click_count === 2) {
@@ -213,7 +213,7 @@ function reply_message(event){
                         <span class="reply-close" style="padding: 0.25rem 0.5rem; position: absolute; right: 0.25rem; font-size: 0.9rem;-webkit-text-stroke: 0.03rem rgba(22, 22, 22, 1);"><i class="fa fa-times"></i></span>
                      </div>`;
     ele.insertAdjacentHTML("beforebegin", to_be_appeded);
-    $("#chat-message-input").focus();
+    $("#chatapi-message-input").focus();
 }
 
 function reply_message_scroll(event, messid){
@@ -267,10 +267,10 @@ $(document).on('click', 'div.selected-user > div > span[data-type="delete"]', fu
 
 
 $(document).on('click', 'div.selected-user > div > span[data-type="cancel"]', function (){
-    let mess = $('li.chat-left, li.chat-right');
+    let mess = $('li.chatapi-left, li.chatapi-right');
     mess.attr('selected_', 'false');
     mess.css('background', '');
-    $('li.chat-right > div.ballon, li.chat-left > div.ballon').css('visibility',  '');
+    $('li.chatapi-right > div.ballon, li.chatapi-left > div.ballon').css('visibility',  '');
     let options = $('div.selected-user > div');
     setTimeout(function () {
         options.fadeOut(200, function (){
@@ -289,7 +289,7 @@ $(document).on('click', 'div.selected-user > div > span[data-type="copy"]', func
         selected_messages.sort();
         selected_messages.forEach(function (mess_id) {
             let ele = document.getElementById(mess_id);
-            if (ele.className === "chat-left"){
+            if (ele.className === "chatapi-left"){
                 result += '  <span style="text-align: left;">';
             } else{
                 result += '  <span style="text-align: right;">';
@@ -338,7 +338,7 @@ $('#big-image-container').on('click', function (event){
 
 const selecting_event = new Event('selecting');
 
-$(document).on('mousedown touchstart', 'li.chat-right, li.chat-left', function(event) {
+$(document).on('mousedown touchstart', 'li.chatapi-right, li.chatapi-left', function(event) {
     if (event.type === 'mousedown'){
         if (event.which !== 1){
             return ;
@@ -395,13 +395,13 @@ $(document).on('mousedown touchstart', 'li.chat-right, li.chat-left', function(e
     clearTimeout(timeoutId);
 });
 
-$('ul.chat-box.no-copy').on('scroll touchcancel touchend', function (){
+$('ul.chatapi-box.no-copy').on('scroll touchcancel touchend', function (){
     clearTimeout(timeoutId)
 });
 
 
 $(document).on('selecting', function (){
-    $('li.chat-right > div.ballon, li.chat-left > div.ballon').css('visibility',  'hidden');
+    $('li.chatapi-right > div.ballon, li.chatapi-left > div.ballon').css('visibility',  'hidden');
     let options = $('div.selected-user > div');
     options.css('visibility', 'visible');
     options.fadeIn(200);
@@ -413,10 +413,10 @@ $(document).on('click', 'li.users_person', function (event){
         $('li.users_person.active-user')[0].setAttribute('class', 'users_person');
     }catch {}
     // noinspection EqualityComparisonWithCoercionJS
-    if (event.currentTarget.getAttribute('data-chat') != current_room) {
+    if (event.currentTarget.getAttribute('data-chatapi') != current_room) {
         event.currentTarget.setAttribute('class', 'users_person active-user');
         chatSocket.send(JSON.stringify({
-            'room': event.currentTarget.getAttribute('data-chat'),
+            'room': event.currentTarget.getAttribute('data-chatapi'),
             'type_': 'switchroom'
         }));
     }
@@ -432,7 +432,7 @@ $(document).on('click', function(){
     $('.ctx-menu').css('display', 'none');
 });
 
-$(document).on('contextmenu', 'li.chat-right', function (e){
+$(document).on('contextmenu', 'li.chatapi-right', function (e){
     e.preventDefault();
     let sel = $('.ctx-menu');
     if (check_selecting_reply(sel, e)){
@@ -467,7 +467,7 @@ $(document).on('contextmenu', 'li.chat-right', function (e){
     sel[0].children[6].onclick = function (){highlighted.children[1].children[1].click()};
 });
 
-$(document).on('contextmenu', 'li.chat-left', function (e){
+$(document).on('contextmenu', 'li.chatapi-left', function (e){
     e.preventDefault();
     let sel = $('.ctx-menu');
     if (check_selecting_reply(sel, e)){
@@ -564,14 +564,14 @@ function check_selecting_reply(sel, e){
     }
 }
 
-$(document).on('contextmenu', 'ul.chat-box.no-copy', function (e){e.preventDefault()});
+$(document).on('contextmenu', 'ul.chatapi-box.no-copy', function (e){e.preventDefault()});
 
 function copy_single_message(ele) {
     let str;
     ele = ele.children[2].children[1];
     ele = $(ele).clone()[0];
 
-    try{if (ele.children[0].className === "chat-reply") {
+    try{if (ele.children[0].className === "chatapi-reply") {
         ele.innerHTML = ele.innerHTML.toString().replace(ele.children[0].outerHTML.toString(), "");
     }}
     catch{}
