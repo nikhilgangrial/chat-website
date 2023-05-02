@@ -27,8 +27,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+CORS_ORIGIN_ALLOW_ALL = True 
+
 # # Application definition
-# ASGI_APPLICATION = 'chatapp.asgi.application'
+# ASGI_APPLICATION = 'backend.asgi.application'
 
 
 # CHANNEL_LAYERS = {
@@ -37,42 +39,83 @@ ALLOWED_HOSTS = ['*']
 #   },
 # }
 
-INSTALLED_APPS = ['django.contrib.admin', 'django.contrib.auth', 'django.contrib.contenttypes',
-    'django.contrib.sessions', 'django.contrib.messages', 'django.contrib.staticfiles',
+INSTALLED_APPS = [
+    'corsheaders', 
+    'django.contrib.admin', 
+    'django.contrib.auth', 
+    'django.contrib.contenttypes',
+    'django.contrib.sessions', 
+    'django.contrib.messages', 
+    'django.contrib.staticfiles',
 
     'authapp',
 
-    'rest_framework', 'rest_framework.authtoken', 'djoser', 'post_office', 'debug_toolbar', ]
+    'rest_framework', 
+    'rest_framework.authtoken', 
+    'djoser', 
+    'post_office', 
+    'debug_toolbar', 
+]
 
-MIDDLEWARE = ['django.middleware.security.SecurityMiddleware', 'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware', 'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware', 'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware', 'debug_toolbar.middleware.DebugToolbarMiddleware', ]
+MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.security.SecurityMiddleware', 
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware', 
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware', 
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware', 
+    'debug_toolbar.middleware.DebugToolbarMiddleware', 
+]
 
-ROOT_URLCONF = 'chatapp.urls'
+ROOT_URLCONF = 'backend.urls'
 
 INTERNAL_IPS = ['127.0.0.1', ]
 
-TEMPLATES = [{'BACKEND': 'django.template.backends.django.DjangoTemplates', 'DIRS': ['templates'], 'APP_DIRS': True,
+TEMPLATES = [
+    {
+    'BACKEND': 'django.template.backends.django.DjangoTemplates', 
+    'DIRS': ['templates'], 
+    'APP_DIRS': True,
     'OPTIONS': {
-        'context_processors': ['django.template.context_processors.debug', 'django.template.context_processors.request',
-            'django.contrib.auth.context_processors.auth', 'django.contrib.messages.context_processors.messages',
-            'django.template.context_processors.debug', ], }, }, ]
+        'context_processors': [
+            'django.template.context_processors.debug', 
+            'django.template.context_processors.request',
+            'django.contrib.auth.context_processors.auth', 
+            'django.contrib.messages.context_processors.messages',
+            'django.template.context_processors.debug', 
+            ], 
+        }, 
+    }, 
+]
 
-WSGI_APPLICATION = 'chatapp.wsgi.application'
+WSGI_APPLICATION = 'backend.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': BASE_DIR / 'db.sqlite3', }}
+DATABASES = {
+    'default': 
+        {
+            'ENGINE': 'django.db.backends.sqlite3', 
+            'NAME': BASE_DIR / 'db.sqlite3', 
+        }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
-AUTH_PASSWORD_VALIDATORS = [{'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', },
+AUTH_PASSWORD_VALIDATORS = [
+    
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', },
+    
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', },
+    
     {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator', },
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator', }, ]
+    
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator', }, 
+]
 
 AUTH_USER_MODEL = 'authapp.User'
 
@@ -107,17 +150,28 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
 
-    'DEFAULT_AUTHENTICATION_CLASSES': ['rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication', ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication', 
+    ],
 
-    'DEFAULT_RENDERER_CLASSES': ['rest_framework.renderers.JSONRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer', ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer', 
+    ],
 
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend'
+    ],
 
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination', 'PAGE_SIZE': 10, }
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination', 
+    'PAGE_SIZE': 10, 
 
-POST_OFFICE = {'DEFAULT_PRIORITY': 'high', }
+}
+
+POST_OFFICE = {
+    'DEFAULT_PRIORITY': 'high', 
+}
 
 EMAIL_BACKEND = 'post_office.EmailBackend'  # 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
@@ -127,13 +181,27 @@ EMAIL_HOST_USER = 'mushkilotp@gmail.com'
 EMAIL_HOST_PASSWORD = 'jypqdplyjegabdhy'
 DEFAULT_FROM_EMAIL = 'mushkilotp@gmail.com'
 
-AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',)
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+)
 
 DOMAIN = '127.0.0.1:8000'  # 'http://127.0.0.1:3000'
 
-DJOSER = {"LOGIN_FIELD": "email", "USER_CREATE_PASSWORD_RETYPE": True, "ACTIVATION_URL": "auth/activate/{uid}/{token}",
+DJOSER = {
+    "LOGIN_FIELD": "email", 
+    "USER_CREATE_PASSWORD_RETYPE": True, 
+    
+    # "ACTIVATION_URL": "auth/activate/{uid}/{token}",
     # Set as per frontend and make post request from it
-    "PASSWORD_RESET_CONFIRM_URL": "auth/password/reset/confirm/{uid}/{token}", "SEND_ACTIVATION_EMAIL": True,
-    "SEND_CONFIRMATION_EMAIL": True,
-    'SERIALIZERS': {'user_create_password_retype': 'authapp.serializers.UserCreateSerializer',
-        'user': 'authapp.serializers.UserSerializer', 'current_user': 'authapp.serializers.UserSerializer', }, }
+    # "PASSWORD_RESET_CONFIRM_URL": "auth/password/reset/confirm/{uid}/{token}", 
+    
+    # "SEND_ACTIVATION_EMAIL": True,
+    # "SEND_CONFIRMATION_EMAIL": True,
+    
+    'SERIALIZERS': {
+        'user_create_password_retype': 'authapp.serializers.UserCreateSerializer',
+        'user': 'authapp.serializers.UserSerializer', 
+        'current_user': 'authapp.serializers.UserSerializer', 
+        # 'token_create': 'authapp.serializers.TokenCreateSerializer',
+    }, 
+}

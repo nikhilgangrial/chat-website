@@ -1,7 +1,12 @@
 import re
 
-from djoser.serializers import UserCreatePasswordRetypeSerializer as BaseUserCreateSerializer
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
+
 from djoser.serializers import UserSerializer as BaseUserSerializer
+from djoser.serializers import TokenCreateSerializer as BaseTokenCreateSerializer
+from djoser.serializers import UserCreatePasswordRetypeSerializer as BaseUserCreateSerializer
+
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 
@@ -15,7 +20,8 @@ class UserCreateSerializer(BaseUserCreateSerializer):
 
     def validate(self, attrs):
         if not re.match(r"(^\+?\d{12}$)|(^\d{10}$)", attrs["phone_no"]):
-            raise serializers.ValidationError("Invalid Phone number")
+            raise serializers.ValidationError({"phone_no": "Invalid Phone number"})
+        attrs['is_active'] = True # TODO: Remove in email verified
         return super().validate(attrs)
 
     def to_representation(self, instance):
@@ -34,3 +40,14 @@ class UserSerializer(BaseUserSerializer):
         model = User
         fields = ('id', 'email', 'username', 'phone_no', 'profile', 'cover')
         read_only_fields = ('id', 'email', 'phone_no')
+
+
+class TokenCreateSerializer(BaseTokenCreateSerializer):
+    
+    def validate(self, attrs):
+        try:
+            validate_email(attrs['email'])
+        except ValidationError:
+            raise serializers.ValidationError({'email': "Invalid Email Address"})
+        
+        return super().validate(attrs)

@@ -41,18 +41,7 @@ function Nav(props) {
 	const [anchorElNav, setAnchorElNav] = React.useState(false);
 	const [anchorElUser, setAnchorElUser] = React.useState(null);
 
-	const user = (() => {
-		if (localStorage.user) {
-			return localStorage.user;
-		}
-		return undefined;
-	})();  // PlaceHolder
-
 	const navigate = useNavigate();
-
-	const redirectLogin = () => {
-		navigate('/auth/login');
-	}
 
 	const handleOpenUserMenu = (event) => {
 		console.log(event.currentTarget.key);
@@ -62,6 +51,8 @@ function Nav(props) {
 	const handleCloseUserMenu = () => {
 		setAnchorElUser(null);
 	};
+
+	const user = props.isuser ? JSON.parse(localStorage.getItem('user')) : null;
 
 	const changeTheme = () => {
 		if (props.currentTheme === 'light') {
@@ -177,14 +168,14 @@ function Nav(props) {
 						</Tooltip>
 						</>
 
-						{ user &&
+						{ props.isuser &&
 							<Tooltip title="Open settings">
 								<IconButton onClick={ handleOpenUserMenu } sx={ { p: 0, mr: 0.5 } }>
-									<Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg"/>
+									<Avatar alt={user.username} src={user.profile}/>
 								</IconButton>
 							</Tooltip>
 						}
-						{ !user && <Button color="inherit" onClick={ redirectLogin }>Login</Button> }
+						{ !props.isuser && <Button color="inherit" onClick={ () => { navigate('/auth/login') }	}>Login</Button> }
 
 						{/* Profile Logout Menu */}
 						<>
@@ -194,7 +185,7 @@ function Nav(props) {
 								open={ Boolean(anchorElUser) }
 								onClose={ handleCloseUserMenu }
 						>
-							{ user && Object.keys(settings).map((setting) => (
+							{ props.isuser && Object.keys(settings).map((setting) => (
 								<MenuItem key={ setting } onClick={ () => navigate(settings[setting]) }>
 									<Typography textAlign="center">{ setting }</Typography>
 								</MenuItem>
