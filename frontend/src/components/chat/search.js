@@ -1,6 +1,4 @@
-import { useState } from 'react';
-
-import { TextField, Autocomplete, IconButton } from '@mui/material';
+import { TextField, IconButton } from '@mui/material';
 import{ SearchOutlined } from '@mui/icons-material';
 
 function Search(props) {

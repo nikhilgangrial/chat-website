@@ -1,4 +1,4 @@
-import { Avatar, Box, Typography } from '@mui/material'
+import { Avatar, Box, Typography, Button } from '@mui/material'
 import { MessageType } from './messagesend';
 import { MessageCard } from './messagecard';
 
@@ -22,17 +22,22 @@ function MessageBox(props) {
             </Box>
             <div className='flex-grow-1' style={{ position: "relative" }}>
                 <Box sx={{ border: 1, borderColor: 'divider', position: "absolute" }} className="d-flex flex-column-reverse align-items-end w-100 h-100 overflow-auto">
-                    {props.chat ?
-                        props.messages[props.chat.id] &&
-                        [...props.messages[props.chat.id]]
-                            .sort((a, b) => {
-                                return b.sent_at.localeCompare(a.sent_at);
-                            })
-                            .map((message, index) => {
-                                return <MessageCard key={index} message={message} />
-                            })
-                        : <Typography className="mx-1 text-center h-50 align-self-center verical-center" variant="h6" >No chat selected.</Typography>
+                    {
+                        props.chat ?
+                            props.messages[props.chat.id] &&
+                            [...props.messages[props.chat.id]]
+                                .sort((a, b) => {
+                                    return b.sent_at.localeCompare(a.sent_at);
+                                })
+                                .map((message, index) => {
+                                    return <MessageCard key={index} message={message} />
+                                })
+                            : <Typography className="mx-1 text-center h-50 align-self-center verical-center" variant="h6" >No chat selected.</Typography>
                     }
+                    {props.chat &&
+                        <Button color="primary" fullWidth onClick={() => props.setmessagePages({...props.messagePages, [props.chat.id]: props.messagePages[props.chat.id] + 1})}>
+                            Load More
+                        </Button>}
                 </Box>
             </div>
 

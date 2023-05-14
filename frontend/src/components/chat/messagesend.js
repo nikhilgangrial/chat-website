@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 
-import { TextField, Menu, MenuItem, InputAdornment, IconButton } from "@mui/material";
+import { TextField, Menu, MenuItem, IconButton } from "@mui/material";
 import { Mood, Send } from "@mui/icons-material";
 
 import EmojiPicker from "emoji-picker-react";
@@ -18,20 +18,16 @@ function MessageType(props) {
         setanchorEl(null);
     }
 
-    useEffect(() => {
-        document.getElementById('message-text-field').classList.add('py-2');
-    }, [])
-
     const sendMessage = async () => {
         const message = document.getElementById('message-text-field');
-        if (message.value === "") return;
+        if (message.value.trim() === "") return;
 
-        props.socket.send(JSON.stringify({ action: "create", message: message.value }))
+        props.socket.send(JSON.stringify({ action: "create", message: message.value.trim() }))
         message.value = "";
     }
 
     return (
-        <div className='d-flex'>
+        <div className='d-flex align-items-baseline'>
             <Menu
                 open={Boolean(anchorEl)}
                 anchorEl={anchorEl}
@@ -43,30 +39,24 @@ function MessageType(props) {
                 </MenuItem>
             </Menu>
 
-            <TextField
-                type="textarea"
+            <IconButton onClick={(e) => { setanchorEl(e.currentTarget) }}>
+                <Mood />
+            </IconButton>
+
+            <TextField  
                 multiline
                 size="small"
                 id="message-text-field"
+                maxRows={5}
                 ref={messagebox}
                 onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() } }}
                 placeholder="Type a message..."
                 fullWidth
-                InputProps={{
-                    startAdornment:
-                        <InputAdornment position="start" className="m-0">
-                            <IconButton onClick={(e) => { setanchorEl(e.currentTarget) }}>
-                                <Mood />
-                            </IconButton>
-                        </InputAdornment>,
-                    endAdornment:
-                        <InputAdornment position="end" className="mx-2">
-                            <IconButton onClick={ sendMessage }>
-                                <Send />
-                            </IconButton>
-                        </InputAdornment>,
-                }}
             />
+
+            <IconButton onClick={sendMessage}>
+                <Send />
+            </IconButton>
         </div>
     )
 }

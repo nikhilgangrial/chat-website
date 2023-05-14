@@ -4,7 +4,8 @@ import { api } from "../common/axios-short";
 import { ChatCard } from "./chatcard"
 import { Search } from "./search";
 
-import { Box, Typography, Button } from "@mui/material";
+import { Box, Typography, Button, Fab, IconButton } from "@mui/material";
+import { Add } from "@mui/icons-material";
 
 function SideChats(props) {
 
@@ -56,7 +57,15 @@ function SideChats(props) {
     return (
         <Box sx={{ border: 1, borderColor: "divider" }} className='d-flex flex-column col-md-3 col-2'>
             <div className='w-100'>
-                <Typography sx={{ border: 1, borderColor: "divider" }} className="d-none d-md-block w-100 py-2 px-1 px-md-4" variant="h5" >Chats</Typography>
+                <Typography sx={{ border: 1, borderColor: "divider" }} className="d-flex justify-content-center justify-content-md-between align-items-baseline w-100 py-2 px-1 px-md-3" variant="h5" >
+                    <span className="d-none d-md-block">Chats</span>
+                    <Fab
+                        color="primary"
+                        size="small"
+                    >
+                        <Add />
+                    </Fab>
+                </Typography>
 
                 <Search size="small" onChange={searchUpdate} />
 
@@ -67,9 +76,11 @@ function SideChats(props) {
                         }) : <Typography className="w-100 py-2 px-4" variant="h6" >No chats.</Typography>
                     }
                 </div>
-                <Button color="primary" fullWidth onClick={() => props.setchatPage(props.chatPage + 1) }>
-                    Load More
-                </Button>
+                {!visiblechats &&
+                    <Button color="primary" fullWidth onClick={() => props.setchatPage(props.chatPage + 1)}>
+                        Load More
+                    </Button>
+                }
             </div>
         </Box>
     )

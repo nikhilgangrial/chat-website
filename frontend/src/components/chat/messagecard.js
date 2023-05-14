@@ -20,8 +20,8 @@ function MessageCard(props) {
                     </Typography>
                     <i className='mx-1' style={{opacity: 0.75, "fontSize": "small"}}>{parseDate(props.message.sent_at)}</i>
                 </div>
-                <div className='d-block mx-1'>
-                    {props.message.message}
+                <div style={{"whiteSpace": "pre"}} className='d-block mx-1 text-break'>
+                    {props.message.message.trim()}
                 </div>
             </div>
         </Card>

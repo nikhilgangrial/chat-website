@@ -1,4 +1,4 @@
-import { Card, Typography, Avatar, IconButton, Item } from '@mui/material'
+import { Card, Typography, Avatar, IconButton } from '@mui/material'
 import { parseDate } from '../common/parseDate';
 
 function ChatCard(props) {
