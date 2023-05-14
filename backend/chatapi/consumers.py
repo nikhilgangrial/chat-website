@@ -62,10 +62,13 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                 await self.channel_layer.group_add(
                         self.room_group_name, self.channel_name
                     )
+                await self.send_json({"type": "authenticate", "status": "success"})
 
         elif self.user and action == "chatregister":
             
             self.chat, self.members = await self.get_chat(content['chat'])
+            if self.chat:
+                await self.send_json({"type": "chatregister", "status": "success"})
 
         elif self.user and self.chat:
             match action:
@@ -89,6 +92,10 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
         message = models.Message.objects.create(**data)
         message.save()
+        
+        self.chat.last_message = message
+        self.chat.save()
+        
         return serializers.MessageSerializer(message).data
 
     # Receive message from room group
@@ -96,4 +103,4 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         message = event["message"]
 
         # Send message to WebSocket
-        await self.send_json(content=message)
+        await self.send_json(content={ "type": "create",  "message": message })

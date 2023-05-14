@@ -14,6 +14,8 @@ class Chat(models.Model):
     members = models.ManyToManyField(User, related_name="chat_members")
     admins = models.ManyToManyField(User, related_name='group_admins', blank=True)
     
+    last_message = models.ForeignKey('Message', related_name="last_message", null=True, blank=True, on_delete=models.SET_NULL)
+    
     is_group = models.BooleanField(default=False)
 
 

@@ -11,37 +11,99 @@ function Chat(props) {
 
     const [socket, setsocket] = useState(new WebSocket('ws://127.0.0.1:8000/ws/chat/'));
     const [chats, setchats] = useState({});
+    const [chatPage, setchatPage] = useState(1);
     const [messages, setmessages] = useState({});
     const [currentChat, setcurrentChat] = useState(null);
-    
-    useEffect(() => {
-        api('/api/chat/', 'get', {}, true)
-            .then( (e) => {
-                const chats  = {};
-                e.data.results.forEach(chat => {
-                    chats[chat.id] = chat;
-                })
-                console.log(chats);
-                setchats(chats);
-            })
-            .catch( (e) => {
-                console.log(e);
-            })
 
+    useEffect(() => {
+    api(`/api/chat/?page=${chatPage}`, 'get', {}, true)
+        .then((e) => {
+            const temp_chats = {};
+            e.data.results.forEach(chat => {
+                temp_chats[chat.id] = chat;
+            })
+            setchats({...chats, ...temp_chats});
+        })
+        .catch((e) => {
+            setchatPage(chatPage - 1);
+        })
+    }, [chatPage])
+
+
+    useEffect(() => {
         socket.onopen = () => {
             console.log("WebSocket connection established.");
-    
+
             const authToken = localStorage.getItem('token');
             socket.send(JSON.stringify({ action: "authenticate", token: authToken }));
         };
-    
-        socket.onmessage = (event) => {
-            const message = JSON.parse(event.data);
-            console.log(message);
-        }
     }, [])
-   
-    useEffect ( () => {
+
+    const addMessages = (newMessages) => {
+        if (!newMessages) return;
+
+        const chatid = newMessages[0].chat;
+
+        const isDuplicateMessage = (newMessage) => {
+            return [...messages[chatid]].some(message => message.id === newMessage.id);
+        }
+
+        const uniqueMessages = newMessages.filter(
+            newMessage => !isDuplicateMessage(newMessage)
+        );
+        setmessages({ ...messages, [chatid]: new Set([...messages[chatid], ...uniqueMessages]) });
+    }
+
+    socket.onmessage = (event) => {
+        const response = JSON.parse(event.data);
+
+        if (response.type === "authenticate") {
+            if (response.status === "success") {
+                console.log("Authentication successful.");
+            } else {
+                console.log("Authentication failed.");
+            }
+        } else if (response.type === "chatregister") {
+            api(`/api/message/${currentChat.id}/`, 'get', {}, true)
+                .then((e) => {
+                    if (e.data.results.length > 0) {
+                        const chatid = e.data.results[0].chat;
+                        if (messages[chatid] === undefined) {
+                            setmessages({ ...messages, [chatid]: new Set(e.data.results) });
+                        } else {
+                            addMessages(e.data.results);
+                        }
+                    }
+                })
+                .catch((e) => {
+                    console.log(e);
+                })
+        } else if (response.type === "create") {
+            if (!(response.message.chat in chats)) {
+                new Promise((resolve, reject) => {
+                    api(`/api/chat/${response.message.chat}/`, 'get', {}, true)
+                        .then((e) => {
+                            resolve(e.data);
+                        })
+                        .catch((e) => {
+                            reject(e);
+                        })
+                })
+                    .then((response) => {
+                        setchats({ ...chats, [response.id]: { ...response } });
+                    })
+                    .catch((e) => {
+                        console.log(e);
+                    })
+
+            } else {
+                addMessages([response.message]);
+                setchats({ ...chats, [response.message.chat]: { ...chats[response.message.chat], last_message: response.message } });
+            }
+        }
+    }
+
+    useEffect(() => {
         if (currentChat) {
             socket.send(JSON.stringify({ action: "chatregister", chat: currentChat.id }));
         }
@@ -49,8 +111,12 @@ function Chat(props) {
 
     return (
         <Box className='d-flex col-12 px-md-4 my-0 my-md-3 flex-grow-1'>
-            <SideChats chats={chats} setchats={setchats} setcurrentChat={setcurrentChat} currentChat={currentChat}/>
-            <MessageBox chat={currentChat} socket={socket}/>
+            <SideChats 
+                chats={chats} setchats={setchats} 
+                currentChat={currentChat} setcurrentChat={setcurrentChat} 
+                chatPage={chatPage} setchatPage={setchatPage}
+            />
+            <MessageBox chat={currentChat} socket={socket} user={props.user} messages={messages} />
         </Box>
     )
 }

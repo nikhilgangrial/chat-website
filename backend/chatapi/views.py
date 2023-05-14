@@ -21,7 +21,7 @@ class ChatView(generics.ListCreateAPIView):
                     Q(name__icontains=search_query) |
                     Q(members__email__icontains=search_query) |
                     Q(members__username__icontains=search_query)
-                ).distinct()
+                ).distinct().order_by('-last_message__sent_at')
             
             return queryset.all()
 
@@ -31,3 +31,29 @@ class ChatView(generics.ListCreateAPIView):
     filter_backends = [DjangoFilterBackend,]
     permission_classes = (permissions.IsAuthenticated, )
     
+    
+class SingleChatView(generics.RetrieveAPIView):
+    permission_classes = (permissions.IsAuthenticated, )
+    serializer_class = serializers.ChatSerializer
+    
+    def get_queryset(self):
+        if self.request.method == "GET":
+            queryset = models.Chat.objects.filter(members__in=[self.request.user])        
+            return queryset.all()
+
+
+class MessageView(generics.ListAPIView):
+    serializer_class = serializers.MessageSerializer
+
+    def get_queryset(self):
+        chat_id = self.kwargs.get('chat_id')
+        
+        chat = models.Chat.objects.get(id=chat_id)
+        try:
+            assert chat.members.filter(id=self.request.user.id).exists()
+        except AssertionError:
+            raise serializers.ValidationError("You are not a member of this chat")
+
+        return models.Message.objects.filter(chat__id=chat_id).order_by('-sent_at')
+
+    permission_classes = (permissions.IsAuthenticated, )

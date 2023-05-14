@@ -4,7 +4,7 @@ import { api } from "../common/axios-short";
 import { ChatCard } from "./chatcard"
 import { Search } from "./search";
 
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, Button } from "@mui/material";
 
 function SideChats(props) {
 
@@ -37,6 +37,22 @@ function SideChats(props) {
         }
     }
 
+    const chats = [];
+    if (visiblechats) {
+        Object.keys(visiblechats).forEach(chat => {
+            chats.push(visiblechats[chat]);
+        })
+    } else {
+        Object.keys(props.chats).forEach(chat => {
+            chats.push(props.chats[chat]);
+        })
+    }
+
+    chats.sort((a, b) => {
+        return b.last_message.sent_at.localeCompare(a.last_message.sent_at);
+    });
+
+
     return (
         <Box sx={{ border: 1, borderColor: "divider" }} className='d-flex flex-column col-md-3 col-2'>
             <div className='w-100'>
@@ -44,23 +60,16 @@ function SideChats(props) {
 
                 <Search size="small" onChange={searchUpdate} />
 
-                <div id="chats" className="d-flex flex-column" style={{ overflowY: "scroll" }}>
-                    {visiblechats ?
-                        (Object.keys(visiblechats).length !== 0 ?
-                            Object.keys(visiblechats).map(chat => {
-                                chat = visiblechats[chat];
-                                return <ChatCard key={chat.id} chat={chat} currentChat={props.currentChat} setcurrentChat={props.setcurrentChat}/>
-                            }) : <Typography className="w-100 py-2 px-4" variant="h6" >No chats found.</Typography>
-                        )
-                        :
-                        (Object.keys(props.chats).length !== 0 ?
-                            Object.keys(props.chats).map(chat => {
-                                chat = props.chats[chat];
-                                return <ChatCard key={chat.id} chat={chat} currentChat={props.currentChat} setcurrentChat={props.setcurrentChat}/>
-                            }) : <Typography className="w-100 py-2 px-4" variant="h6" >No chats.</Typography>
-                        )
+                <div id="chats" className="d-flex flex-column overflow-auto flex-grow-1">
+                    {chats ?
+                        chats.map((chat) => {
+                            return <ChatCard key={chat.id} chat={chat} currentChat={props.currentChat} setcurrentChat={props.setcurrentChat} />
+                        }) : <Typography className="w-100 py-2 px-4" variant="h6" >No chats.</Typography>
                     }
                 </div>
+                <Button color="primary" fullWidth onClick={() => props.setchatPage(props.chatPage + 1) }>
+                    Load More
+                </Button>
             </div>
         </Box>
     )

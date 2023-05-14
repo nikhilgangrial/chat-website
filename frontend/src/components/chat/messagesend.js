@@ -49,7 +49,7 @@ function MessageType(props) {
                 size="small"
                 id="message-text-field"
                 ref={messagebox}
-                onKeyDown={(e) => { console.log(e.key); if (e.key === 'Enter') { e.preventDefault(); sendMessage() } }}
+                onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() } }}
                 placeholder="Type a message..."
                 fullWidth
                 InputProps={{

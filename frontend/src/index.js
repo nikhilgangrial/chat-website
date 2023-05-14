@@ -8,9 +8,9 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-	<>
+	<React.StrictMode>
 		<App classname="container main"/>
-	</>
+	</React.StrictMode>
 );
 
 document.getElementById('root').style = "display: flex; flex-direction: column; justify-content: between; height: 100vh; margin: 0; padding: 0;";

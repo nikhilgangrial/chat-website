@@ -3,10 +3,12 @@ from authapp.serializers import UserSerializer
 
 from rest_framework import serializers
 
+from .messageserializers import MessageSerializer
 
 class ChatSerializer(serializers.ModelSerializer):
 
     members = UserSerializer(many=True)
+    last_message = MessageSerializer()
 
     class Meta:
         model = models.Chat
@@ -14,17 +16,6 @@ class ChatSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
-
-        def url_from_file(value):
-            try:
-                print(value.__dict__)
-                url = value.url
-            except:
-                return None
-            request = self.context.get('request', None)
-            if request is not None:
-                return request.build_absolute_uri(url)
-            return url
 
         if not instance.is_group:
             members = list(instance.members.all())
