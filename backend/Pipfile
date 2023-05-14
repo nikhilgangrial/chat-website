@@ -13,6 +13,9 @@ django-debug-toolbar = "*"
 social-auth-app-django = "*"
 django-cors-headers = "*"
 django-post-office = "*"
+djangochannelsrestframework = "*"
+channels = {extras = ["daphne"], version = "*"}
+channels-redis = "*"
 
 [dev-packages]
 

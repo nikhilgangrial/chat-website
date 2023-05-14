@@ -22,6 +22,7 @@ class MyAccountManager(BaseUserManager):
         user.is_admin = True
         user.is_staff = True
         user.is_superuser = True
+        user.is_active = True
         user.save(using=self._db)
         return user
 
@@ -33,7 +34,7 @@ class User(AbstractBaseUser):
     email = models.EmailField(verbose_name='email', max_length=60, unique=True)
     username = models.CharField(max_length=65)
 
-    phone_no = models.CharField(max_length=13, unique=True)
+    phone_no = models.CharField(max_length=13, blank=True, null=True, unique=True)
     date_joined = models.DateTimeField(verbose_name='date joined', auto_now_add=True)
 
     is_admin = models.BooleanField(default=False)

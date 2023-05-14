@@ -33,7 +33,7 @@ const pages = {
 }
 
 const settings = {
-	'Profile': '/auth/me',
+	'Profile': '/',
 	'Logout': '/auth/logout'
 };
 
@@ -52,8 +52,6 @@ function Nav(props) {
 		setAnchorElUser(null);
 	};
 
-	const user = props.isuser ? JSON.parse(localStorage.getItem('user')) : null;
-
 	const changeTheme = () => {
 		if (props.currentTheme === 'light') {
 			localStorage.setItem('theme', 'dark');
@@ -65,7 +63,7 @@ function Nav(props) {
 	}
 
 	return (
-		<AppBar position="static">
+		<AppBar className='d-flex' sx={{position: "inherit"}}>
 			<Container maxWidth="xl">
 				<Toolbar disableGutters style={{ position: "relative" }}>
 					{/* For >= Medium displays */}
@@ -168,14 +166,16 @@ function Nav(props) {
 						</Tooltip>
 						</>
 
-						{ props.isuser &&
+						{ props.user && 
 							<Tooltip title="Open settings">
 								<IconButton onClick={ handleOpenUserMenu } sx={ { p: 0, mr: 0.5 } }>
-									<Avatar alt={user.username} src={user.profile}/>
+									<Avatar alt={props.user.username} src={props.user.profile}>
+										{ props.user.username[0].toUpperCase() }
+									</Avatar>
 								</IconButton>
 							</Tooltip>
 						}
-						{ !props.isuser && <Button color="inherit" onClick={ () => { navigate('/auth/login') }	}>Login</Button> }
+						{ !props.user && <Button color="inherit" onClick={ () => { navigate('/auth/login') }	}>Login</Button> }
 
 						{/* Profile Logout Menu */}
 						<>
@@ -185,8 +185,8 @@ function Nav(props) {
 								open={ Boolean(anchorElUser) }
 								onClose={ handleCloseUserMenu }
 						>
-							{ props.isuser && Object.keys(settings).map((setting) => (
-								<MenuItem key={ setting } onClick={ () => navigate(settings[setting]) }>
+							{ props.user && Object.keys(settings).map((setting) => (
+								<MenuItem key={ setting } onClick={ () => { handleCloseUserMenu(); navigate(settings[setting]) }}>
 									<Typography textAlign="center">{ setting }</Typography>
 								</MenuItem>
 							)) }

@@ -17,7 +17,7 @@ import { Person } from "@mui/icons-material";
 
 
 function Login(props) {
-	const [errors, seterrors ] = useState({
+	const [errors, seterrors] = useState({
 		'email': '',
 		'password': '',
 	})
@@ -28,7 +28,7 @@ function Login(props) {
 		event.preventDefault()
 
 		const data = Object.fromEntries(new FormData(event.currentTarget.parentElement))
-		
+
 		api(
 			'/auth/token/login/',
 			'post',
@@ -36,15 +36,25 @@ function Login(props) {
 			false,
 		).then((response) => {
 			console.log(response.data);
-			localStorage.setItem('token', response.data.auth_token);
-			props.setlogin(true);
-			navigate('/')
+			localStorage.setItem('token', response.data.auth_token)
+
+			api('/auth/users/me/', 'get', {}, true)
+				.then((response) => {
+					localStorage.setItem('user', JSON.stringify(response.data))
+					props.setuserupdated(true)
+					navigate('/')
+				})
+				.catch(() => {
+					localStorage.removeItem('user')
+					localStorage.removeItem('token')
+				})
+
 		}).catch((error) => {
 			if (error.response.data.non_field_errors) {
-				if (error.response.data.non_field_errors[0] === "The two password fields didn't match."){
+				if (error.response.data.non_field_errors[0] === "The two password fields didn't match.") {
 					error.response.data.email = error.response.data.non_field_errors
 					error.response.data.email = error.response.data.non_field_errors
-				} else{
+				} else {
 					alert(error.response.data.non_field_errors);
 				}
 			}
@@ -54,19 +64,19 @@ function Login(props) {
 	}
 
 	return (
-		<Grid container sx={ {
+		<Grid container sx={{
 			marginTop: 8,
 			display: 'flex',
 			flexDirection: 'column',
 			alignItems: 'center',
-		} }>
-			<Avatar sx={ { m: 1, bgcolor: 'secondary.main' } }>
-				<Person fontSize="large"/>
+		}}>
+			<Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+				<Person fontSize="large" />
 			</Avatar>
 			<Typography component="h1" variant="h5">
 				Sign in
 			</Typography>
-			<Grid item xs={ 11 } sm={ 6 } lg={ 4 } component="form" noValidate sx={ { mt: 4, maxWidth: '95%' } }>
+			<Grid item xs={11} sm={6} lg={4} component="form" noValidate sx={{ mt: 4, maxWidth: '95%' }}>
 				<TextField
 					margin="normal"
 					size="small"
@@ -75,11 +85,11 @@ function Login(props) {
 					id="email"
 					name="email"
 					label="Email Address"
-					type={ "email" }
+					type={"email"}
 					autoComplete="email"
-					helperText={ errors.email }
-					error={ Boolean(errors.email) }
-					autoFocus/>
+					helperText={errors.email}
+					error={Boolean(errors.email)}
+					autoFocus />
 
 				<Password
 					margin="normal"
@@ -89,22 +99,22 @@ function Login(props) {
 					id="password"
 					name="password"
 					label="Password"
-					helperText={ errors.password }
-					error={ Boolean(errors.password) }
-					autoComplete="password"/>
+					helperText={errors.password}
+					error={Boolean(errors.password)}
+					autoComplete="password" />
 
-				<Button type="submit" onClick={ login } fullWidth variant="contained" sx={ { mt: 3, mb: 2 } }>
+				<Button type="submit" onClick={login} fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
 					Login
 				</Button>
 				<Grid container>
 					<Grid item xs>
-						<Link component={ RouterLink } to="/auth/forgot" variant="body2">
+						<Link component={RouterLink} to="/auth/forgot" variant="body2">
 							Forgot password?
 						</Link>
 					</Grid>
 					<Grid item>
-						<Link component={ RouterLink } to="/auth/signup/" variant="body2">
-							{ "Don't have an account? Sign Up" }
+						<Link component={RouterLink} to="/auth/signup/" variant="body2">
+							{"Don't have an account? Sign Up"}
 						</Link>
 					</Grid>
 				</Grid>

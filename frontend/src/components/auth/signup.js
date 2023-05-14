@@ -39,10 +39,12 @@ function Signup(props) {
 			data,
 			false,
 		).then((response) => {
-			localStorage.setItem('token', response.data.data.token);
-			props.setlogin(true)
+			localStorage.setItem('token', response.data.auth_token);
+			localStorage.setItem('user', JSON.stringify(response.data.user))
+			props.setuserupdated(true)
 			navigate('/');
 		}).catch((error) => {
+
 			if (error.response.data.non_field_errors) {
 				if (error.response.data.non_field_errors[0] === "The two password fields didn't match."){
 					error.response.data.re_password = error.response.data.non_field_errors

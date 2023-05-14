@@ -8,20 +8,20 @@ function Logout(props) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (props.islogin) {
+        if (localStorage.getItem('user')) {
             api('/auth/token/logout/', 'post', {}, true)
                 .then((response) => {
                     localStorage.removeItem('user')
                     localStorage.removeItem('token')
-                    props.setlogin(false)
+                    props.setuserupdated(true)
                 })
                 .catch((error) => {
                     localStorage.removeItem('user')
                     localStorage.removeItem('token')
-                    props.setlogin(false)
+                    props.setuserupdated(true)
                 })
         }
-        navigate('/')
+        navigate('/auth/login')
     })
 
 

@@ -1,42 +1,33 @@
-# chatapi/views.py
-from django.shortcuts import render
-from django.http import JsonResponse, HttpResponse
-from chat.topsecret import get_messages, upload_image
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import generics, permissions
 
-from django.contrib.auth.decorators import login_required
+from django.db.models import Q
+from . import models, serializers
 
+class ChatView(generics.ListCreateAPIView):
 
-def fileupload(request):
-    if request.method == "POST":
-        print(request.FILES.getlist('video'))
-        for i in request.FILES.getlist('video'):
-            temp: dict = upload_image(str(i), i, 'video')
-            print("temp:", temp)
-            print(type(temp))
-            return JsonResponse(temp)
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return serializers.ChatSerializer
+        elif self.request.method == "POST":
+            return serializers.ChatCreateSerializer
 
-    return render(request, "chatapi/fileupload.html")
+    def get_queryset(self):
+        if self.request.method == "GET":
+            queryset = models.Chat.objects.filter(members__in=[self.request.user])
+            search_query = self.request.GET.get('search')
+            if search_query:
+                queryset = queryset.filter(
+                    Q(name__icontains=search_query) |
+                    Q(members__email__icontains=search_query) |
+                    Q(members__username__icontains=search_query)
+                ).distinct()
+            
+            return queryset.all()
 
+        elif self.request.method == "POST":
+            return models.Chat.objects.all()
 
-@login_required(login_url="/account/login/")
-def index(request):
-    return render(request, 'chatapi/index.html', {})
-
-
-@login_required(login_url="/account/login/")
-def room(request, room_name):
-    if request.method == "POST":
-        try:
-            start = request.POST['from']
-            messages, status = get_messages(request.user, room_name, start)
-
-            if status == 400:  # user has no access to chatapi
-                return HttpResponse(status=400)
-            return JsonResponse({"messages": messages,
-                                 "status": status,
-                                 "self": request.user.id,
-                                 "room": room_name
-                                 })
-        except:
-            return render(request, 'chatapi/room.html', {'room_name': room_name})
-    return render(request, 'under development/chats/chatapi.html', {'room_name': room_name})
+    filter_backends = [DjangoFilterBackend,]
+    permission_classes = (permissions.IsAuthenticated, )
+    

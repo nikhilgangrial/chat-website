@@ -29,18 +29,26 @@ ALLOWED_HOSTS = ['*']
 
 CORS_ORIGIN_ALLOW_ALL = True 
 
-# # Application definition
-# ASGI_APPLICATION = 'backend.asgi.application'
-
-
+# Application definition
+ASGI_APPLICATION = 'backend.asgi.application'
 # CHANNEL_LAYERS = {
-#   'default': {
-#       'BACKEND': 'channels.layers.InMemoryChannelLayer',
-#   },
+#     "default": {
+#         "BACKEND": "channels_redis.core.RedisChannelLayer",
+#         "CONFIG": {
+#             "hosts": [("127.0.0.1", 6379)],
+#         },
+#     },
 # }
+
+CHANNEL_LAYERS = {
+  'default': {
+      'BACKEND': 'channels.layers.InMemoryChannelLayer',
+  },
+}
 
 INSTALLED_APPS = [
     'corsheaders', 
+    'daphne',
     'django.contrib.admin', 
     'django.contrib.auth', 
     'django.contrib.contenttypes',
@@ -49,9 +57,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'authapp',
+    'chatapi',
 
     'rest_framework', 
     'rest_framework.authtoken', 
+    'django_filters',
     'djoser', 
     'post_office', 
     'debug_toolbar', 
