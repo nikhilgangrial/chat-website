@@ -1,15 +1,23 @@
 import { useState } from "react";
 
 import { api } from "../common/axios-short";
-import { ChatCard } from "./chatcard"
+
+import { ChatCard } from "./chatcard";
+
 import { Search } from "./search";
 
-import { Box, Typography, Button, Fab, IconButton } from "@mui/material";
+import { Box, Typography, Button, Fab } from "@mui/material";
 import { Add } from "@mui/icons-material";
+
+import { SearchFullScreen } from "./searchfullscreen";
+
 
 function SideChats(props) {
 
     const [visiblechats, setvisiblechats] = useState(null)
+    const [addChat, setaddChat] = useState(false)
+    const [searchChat, setsearchChat] = useState(false)
+
 
     const searchUpdate = async (e, value) => {
         if (!value) {
@@ -56,33 +64,71 @@ function SideChats(props) {
 
     return (
         <Box sx={{ border: 1, borderColor: "divider" }} className='d-flex flex-column col-md-3 col-2'>
-            <div className='w-100'>
-                <Typography sx={{ border: 1, borderColor: "divider" }} className="d-flex justify-content-center justify-content-md-between align-items-baseline w-100 py-2 px-1 px-md-3" variant="h5" >
-                    <span className="d-none d-md-block">Chats</span>
-                    <Fab
-                        color="primary"
-                        size="small"
-                    >
-                        <Add />
-                    </Fab>
-                </Typography>
+            <Typography sx={{ border: 1, borderColor: "divider" }} className="d-flex justify-content-center justify-content-md-between align-items-baseline w-100 py-2 px-1 px-md-3" variant="h5" >
+                <span className="d-none d-md-block">Chats</span>
+                <Fab
+                    onClick={() => setaddChat(true)}
+                    color="primary"
+                    size="small"
+                >
+                    <Add />
+                </Fab>
+            </Typography>
 
-                <Search size="small" onChange={searchUpdate} />
+            <SearchFullScreen
+                open={searchChat}
+                component={'ChatCard'}
+                title={'Search Chats'}
+                url={'/api/chat/'}
+                attribute={'chat'}
+                onClose={() => setsearchChat(false)}
+                childprops={{ currentChat: props.currentChat, setcurrentChat: props.setcurrentChat, isfull: true }}
+            />
 
-                <div id="chats" className="d-flex flex-column overflow-auto flex-grow-1">
+            <SearchFullScreen
+                open={addChat}
+                component={'UserCard'}
+                title={'Add Chat'}
+                url={'/auth/users/list/'}
+                attribute={'user'}
+                onClose={() => setaddChat(false)}
+                onSelect={async (user) => {
+                    if (!user) { return }
+
+                    await api(`/api/chat/`, 'post', { members: [user.id] }, true)
+                        .then(async (e) => {
+                            console.log(e.data);
+                            await props.setchats({ ...props.chats, [e.data.id]: e.data });
+                            await props.setcurrentChat(props.chats[e.data.id]);
+                        })
+                        .catch(async (e) => {
+                            const err = e.response.data.non_field_errors;
+                            if (err && err[0] === "A chat with the same members already exists.") {
+                                await props.setchats({ ...props.chats, [e.response.data.chat.id]: e.response.data.chat });
+                                await props.setcurrentChat(props.chats[e.response.data.chat.id]);
+                            }
+                        })
+                }}
+            />
+
+
+            <Search size="small" onChange={searchUpdate} smallOnClick={() => setsearchChat(true)} />
+
+            <div id="chats" className="d-flex col-12 flex-grow-1 position-relative">
+                <div id="chats" className="d-flex position-absolute flex-column overflow-auto h-100 col-12 ">
                     {chats ?
                         chats.map((chat) => {
                             return <ChatCard key={chat.id} chat={chat} currentChat={props.currentChat} setcurrentChat={props.setcurrentChat} />
                         }) : <Typography className="w-100 py-2 px-4" variant="h6" >No chats.</Typography>
                     }
+                    {!visiblechats &&
+                        <Button color="primary" fullWidth onClick={() => props.setchatPage(props.chatPage + 1)}>
+                            Load More
+                        </Button>
+                    }
                 </div>
-                {!visiblechats &&
-                    <Button color="primary" fullWidth onClick={() => props.setchatPage(props.chatPage + 1)}>
-                        Load More
-                    </Button>
-                }
             </div>
-        </Box>
+        </Box >
     )
 }
 

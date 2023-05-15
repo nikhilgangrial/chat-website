@@ -45,6 +45,11 @@ function Chat(props) {
         
         const chatid = newMessages[0].chat;
         
+        if (!messages[chatid]) {
+            setmessages({ ...messages, [chatid]: new Set(newMessages) });
+            return;
+        }
+
         const isDuplicateMessage = (newMessage) => {
             return [...messages[chatid]].some(message => message.id === newMessage.id);
         }

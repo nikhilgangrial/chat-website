@@ -30,7 +30,7 @@ function MessageBox(props) {
                                     return b.sent_at.localeCompare(a.sent_at);
                                 })
                                 .map((message, index) => {
-                                    return <MessageCard key={index} message={message} />
+                                    return <MessageCard key={message.id} message={message} />
                                 })
                             : <Typography className="mx-1 text-center h-50 align-self-center verical-center" variant="h6" >No chat selected.</Typography>
                     }
@@ -41,7 +41,7 @@ function MessageBox(props) {
                 </Box>
             </div>
 
-            <Box sx={{ border: 1, borderColor: 'divider' }} className='d-flex flex-column w-100 py-2 px-2'>
+            <Box sx={{ border: 1, borderColor: 'divider' }} className='d-flex flex-column col-12 py-2 px-2'>
                 {props.chat ?
                     <MessageType socket={props.socket} />
                     : <Typography className="mx-1" variant="h6" >Select Chat to Send Messages.</Typography>

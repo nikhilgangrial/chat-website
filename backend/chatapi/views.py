@@ -1,10 +1,21 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, response, status
 
 from django.db.models import Q
 from . import models, serializers
 
+
 class ChatView(generics.ListCreateAPIView):
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return response.Response(serializers.ChatSerializer(serializer.instance, context=serializer.context).data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def perform_create(self, serializer):
+        return serializer.save()
 
     def get_serializer_class(self):
         if self.request.method == "GET":
@@ -14,7 +25,8 @@ class ChatView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         if self.request.method == "GET":
-            queryset = models.Chat.objects.filter(members__in=[self.request.user])
+            queryset = models.Chat.objects.filter(
+                members__in=[self.request.user])
             search_query = self.request.GET.get('search')
             if search_query:
                 queryset = queryset.filter(
@@ -22,7 +34,7 @@ class ChatView(generics.ListCreateAPIView):
                     Q(members__email__icontains=search_query) |
                     Q(members__username__icontains=search_query)
                 ).distinct().order_by('-last_message__sent_at')
-            
+
             return queryset.all()
 
         elif self.request.method == "POST":
@@ -30,15 +42,16 @@ class ChatView(generics.ListCreateAPIView):
 
     filter_backends = [DjangoFilterBackend,]
     permission_classes = (permissions.IsAuthenticated, )
-    
-    
+
+
 class SingleChatView(generics.RetrieveAPIView):
     permission_classes = (permissions.IsAuthenticated, )
     serializer_class = serializers.ChatSerializer
-    
+
     def get_queryset(self):
         if self.request.method == "GET":
-            queryset = models.Chat.objects.filter(members__in=[self.request.user])        
+            queryset = models.Chat.objects.filter(
+                members__in=[self.request.user])
             return queryset.all()
 
 
@@ -47,12 +60,13 @@ class MessageView(generics.ListAPIView):
 
     def get_queryset(self):
         chat_id = self.kwargs.get('chat_id')
-        
+
         chat = models.Chat.objects.get(id=chat_id)
         try:
             assert chat.members.filter(id=self.request.user.id).exists()
         except AssertionError:
-            raise serializers.ValidationError("You are not a member of this chat")
+            raise serializers.ValidationError(
+                "You are not a member of this chat")
 
         return models.Message.objects.filter(chat__id=chat_id).order_by('-sent_at')
 
