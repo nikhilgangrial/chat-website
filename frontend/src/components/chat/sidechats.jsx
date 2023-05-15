@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 import { api } from "../common/axios-short";
 
@@ -17,6 +17,33 @@ function SideChats(props) {
     const [visiblechats, setvisiblechats] = useState(null)
     const [addChat, setaddChat] = useState(false)
     const [searchChat, setsearchChat] = useState(false)
+    const chatbox = useRef(null);
+    const [loading, setLoading] = useState(false);
+
+    const loadChats = () => {
+        setLoading(true);
+        props.setchatPage(props.chatPage + 1);
+        setTimeout(() => { setLoading(false) }, 200);
+    };
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (loading) return;
+
+            const { scrollTop, clientHeight, scrollHeight } = chatbox.current;
+
+            // Check if the scroll is at the bottom of the container
+            if (scrollTop + clientHeight >= scrollHeight) {
+                loadChats();
+            }
+        };
+
+        chatbox.current.addEventListener('scroll', handleScroll);
+
+        return () => {
+            chatbox.current.removeEventListener('scroll', handleScroll);
+        };
+    }, [loading, props.chatPage]);
 
 
     const searchUpdate = async (e, value) => {
@@ -115,7 +142,7 @@ function SideChats(props) {
             <Search size="small" onChange={searchUpdate} smallOnClick={() => setsearchChat(true)} />
 
             <div id="chats" className="d-flex col-12 flex-grow-1 position-relative">
-                <div id="chats" className="d-flex position-absolute flex-column overflow-auto h-100 col-12 ">
+                <div id="chats" ref={chatbox} className="d-flex position-absolute flex-column overflow-auto h-100 col-12 ">
                     {chats ?
                         chats.map((chat) => {
                             return <ChatCard key={chat.id} chat={chat} currentChat={props.currentChat} setcurrentChat={props.setcurrentChat} />

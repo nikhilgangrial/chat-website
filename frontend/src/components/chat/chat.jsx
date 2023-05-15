@@ -9,7 +9,7 @@ import { MessageBox } from './messagedisplay';
 
 function Chat(props) {
 
-    const [socket, setsocket] = useState(new WebSocket('ws://'+ window.location.hostname +':8000/ws/chat/'));
+    const [socket, setsocket] = useState(new WebSocket('ws://' + window.location.hostname + ':8000/ws/chat/'));
     const [chats, setchats] = useState({});
     const [chatPage, setchatPage] = useState(1);
     const [messages, setmessages] = useState({});
@@ -42,9 +42,9 @@ function Chat(props) {
 
     const addMessages = (newMessages) => {
         if (!newMessages) return;
-        
+
         const chatid = newMessages[0].chat;
-        
+
         if (!messages[chatid]) {
             setmessages({ ...messages, [chatid]: new Set(newMessages) });
             return;
@@ -99,7 +99,8 @@ function Chat(props) {
     }
 
     useEffect(() => {
-        if (!currentChat || messagePages[currentChat.id] === undefined) return;
+        if (!currentChat || messagePages[currentChat.id] === undefined || messagePages[currentChat.id] === -1) return;
+
         const chatid = currentChat.id;
         api(`/api/message/${currentChat.id}/?page=${messagePages[chatid]}`, 'get', {}, true)
             .then((e) => {
@@ -112,7 +113,11 @@ function Chat(props) {
                 }
             })
             .catch((e) => {
-                setmessagePages({...messagePages, [chatid]: Math.max(messagePages[chatid] - 1, 1)})
+                if (e.response.data.detail === "Invalid page.") {
+                    setmessagePages({ ...messagePages, [chatid]: -1 })
+                } else {
+                    console.log(e);
+                }
             })
     }, [messagePages])
 
