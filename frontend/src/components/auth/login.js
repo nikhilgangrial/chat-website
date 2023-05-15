@@ -7,11 +7,11 @@ import Password from '../common/password';
 import {
 	Button,
 	TextField,
-	Grid,
+	Box,
 	Link,
 	Avatar,
 	Typography,
-} from '@mui/material'
+} from '@mui/material';
 
 import { Person } from "@mui/icons-material";
 
@@ -36,17 +36,17 @@ function Login(props) {
 			false,
 		).then((response) => {
 			console.log(response.data);
-			localStorage.setItem('token', response.data.auth_token)
+			localStorage.set('token', response.data.auth_token)
 
 			api('/auth/users/me/', 'get', {}, true)
 				.then((response) => {
-					localStorage.setItem('user', JSON.stringify(response.data))
+					localStorage.set('user', JSON.stringify(response.data))
 					props.setuserupdated(true)
 					navigate('/')
 				})
 				.catch(() => {
-					localStorage.removeItem('user')
-					localStorage.removeItem('token')
+					localStorage.remove('user')
+					localStorage.remove('token')
 				})
 
 		}).catch((error) => {
@@ -64,19 +64,17 @@ function Login(props) {
 	}
 
 	return (
-		<Grid container sx={{
-			marginTop: 8,
-			display: 'flex',
-			flexDirection: 'column',
-			alignItems: 'center',
-		}}>
+		<Box className="d-flex flex-column align-items-center mt-5">
+			
 			<Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
 				<Person fontSize="large" />
 			</Avatar>
+			
 			<Typography component="h1" variant="h5">
 				Sign in
 			</Typography>
-			<Grid item xs={11} sm={6} lg={4} component="form" noValidate sx={{ mt: 4, maxWidth: '95%' }}>
+			
+			<Box  xs={11} sm={6} lg={4} component="form" noValidate sx={{ mt: 4, maxWidth: '95%' }}>
 				<TextField
 					margin="normal"
 					size="small"
@@ -106,20 +104,21 @@ function Login(props) {
 				<Button type="submit" onClick={login} fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
 					Login
 				</Button>
-				<Grid container>
-					<Grid item xs>
+
+				<Box className="d-flex flex-row justify-content-between">
+					<Box>
 						<Link component={RouterLink} to="/auth/forgot" variant="body2">
 							Forgot password?
 						</Link>
-					</Grid>
-					<Grid item>
+					</Box>
+					<Box >
 						<Link component={RouterLink} to="/auth/signup/" variant="body2">
 							{"Don't have an account? Sign Up"}
 						</Link>
-					</Grid>
-				</Grid>
-			</Grid>
-		</Grid>
+					</Box>
+				</Box>
+			</Box>
+		</Box>
 	);
 }
 

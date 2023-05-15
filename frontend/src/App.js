@@ -144,7 +144,7 @@ function App() {
 						{/* Forgot and Forgot complete */}
 						<>
 							<Route path="/auth/forgot/completed" element={
-								<MailSent heading="Instructions Sent to Maol"
+								<MailSent heading="Instructions Sent to Mail"
 									message="A password reset has been sent to your email.
                                   Please continue to reset password account"
 								/>

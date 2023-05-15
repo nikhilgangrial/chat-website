@@ -9,7 +9,7 @@ import { MessageBox } from './messagedisplay';
 
 function Chat(props) {
 
-    const [socket, setsocket] = useState(new WebSocket('ws://127.0.0.1:8000/ws/chat/'));
+    const [socket, setsocket] = useState(new WebSocket('ws://'+ window.location.hostname +':8000/ws/chat/'));
     const [chats, setchats] = useState({});
     const [chatPage, setchatPage] = useState(1);
     const [messages, setmessages] = useState({});
@@ -123,7 +123,7 @@ function Chat(props) {
     }, [currentChat])
 
     return (
-        <Box className='d-flex col-12 px-md-4 my-0 my-md-3 flex-grow-1'>
+        <Box className='d-flex col-12 px-md-4 my-0 my-md-3 flex-grow-1' sx={{ minHeight: "250px" }}>
             <SideChats
                 chats={chats} setchats={setchats}
                 currentChat={currentChat} setcurrentChat={setcurrentChat}
