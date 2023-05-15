@@ -40,9 +40,6 @@ function SideChats(props) {
 
         chatbox.current.addEventListener('scroll', handleScroll);
 
-        return () => {
-            chatbox.current.removeEventListener('scroll', handleScroll);
-        };
     }, [loading, props.chatPage]);
 
 

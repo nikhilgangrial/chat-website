@@ -66,7 +66,7 @@ function Signup(props) {
 			<Typography component="h1" variant="h5">
 				Sign up
 			</Typography>
-			<Box item xs={11} md={8} lg={4} component="form" noValidate sx={{ mt: 4 }}>
+			<Box className='col-11 col-md-6 col-lg-5' component="form" noValidate sx={{ mt: 4 }}>
 
 				<TextField margin="normal" size="small" required fullWidth name="username" label="Username"
 					type="text" id="username" autoComplete="username" autoFocus error={Boolean(errors.username)} helperText={errors.username} />
@@ -87,7 +87,7 @@ function Signup(props) {
 					Sign up
 				</Button>
 
-				<Box class="w-100 d-flex justify-content-center">
+				<Box className="w-100 d-flex justify-content-center">
 					<Link component={RouterLink} to="/auth/login/" variant="body2">
 						{"Already an account? Login"}
 					</Link>

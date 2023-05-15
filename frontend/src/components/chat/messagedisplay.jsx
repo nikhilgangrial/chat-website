@@ -29,9 +29,6 @@ function MessageBox(props) {
 
         msgbox.current.addEventListener('scroll', handleScroll);
 
-        return () => {
-            msgbox.current.removeEventListener('scroll', handleScroll);
-        };
     }, [loading, props.chat, props.messagePages]);
 
 

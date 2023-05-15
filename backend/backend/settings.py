@@ -31,6 +31,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 # Application definition
 ASGI_APPLICATION = 'backend.asgi.application'
+
 # CHANNEL_LAYERS = {
 #     "default": {
 #         "BACKEND": "channels_redis.core.RedisChannelLayer",
@@ -63,8 +64,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken', 
     'django_filters',
     'djoser', 
-    'post_office', 
-    'debug_toolbar', 
+    # 'post_office', 
+    # 'debug_toolbar', 
 ]
 
 MIDDLEWARE = [
@@ -76,7 +77,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware', 
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware', 
-    'debug_toolbar.middleware.DebugToolbarMiddleware', 
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware', 
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -179,23 +180,23 @@ REST_FRAMEWORK = {
 
 }
 
-POST_OFFICE = {
-    'DEFAULT_PRIORITY': 'high', 
-}
+# POST_OFFICE = {
+#     'DEFAULT_PRIORITY': 'high', 
+# }
 
-EMAIL_BACKEND = 'post_office.EmailBackend'  # 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'mushkilotp@gmail.com'
-EMAIL_HOST_PASSWORD = 'jypqdplyjegabdhy'
-DEFAULT_FROM_EMAIL = 'mushkilotp@gmail.com'
+# EMAIL_BACKEND = 'post_office.EmailBackend'  # 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = '<email>'
+# EMAIL_HOST_PASSWORD = '<idk>'
+# DEFAULT_FROM_EMAIL = '<email>'
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
-DOMAIN = '127.0.0.1:8000'  # 'http://127.0.0.1:3000'
+# DOMAIN = '127.0.0.1:8000'  # 'http://127.0.0.1:3000' # domain for activation mail link //fontend host
 
 DJOSER = {
     "LOGIN_FIELD": "email", 

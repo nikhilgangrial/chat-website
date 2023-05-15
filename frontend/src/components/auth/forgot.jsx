@@ -21,7 +21,8 @@ function ForgotPassword() {
             <Typography component="h1" variant="h5">
                 Forgot Password
             </Typography>
-            <Box item xs={11} sm={6} lg={4} component="form" noValidate sx={{mt: 4, maxWidth: '95%'}}>
+            <Box className='col-12 col-md-6 col-lg-5 mt-4' component="form">
+
                 <TextField  margin="normal" size="small" required fullWidth id="email" label="Email Address"
                             type="email" name="email" autoComplete="email" autoFocus />
 

@@ -20,14 +20,13 @@ import {
 
 import {
 	Menu as MenuIcon,
-	Adb as AdbIcon,
+	Forum,
 	LightMode as LightModeIcon,
 	DarkMode as DarkModeIcon,
 } from '@mui/icons-material';
 
 
 const pages = {
-	'Home': '/',
 	'About': '/about',
 	'Chat': '/chat',
 }
@@ -69,19 +68,18 @@ function Nav(props) {
 					{/* For >= Medium displays */}
 					{/* Logo */}
 					<>
-					<AdbIcon sx={ { display: { xs: 'none', md: 'flex' }, mr: 1 } }/>
+					<Forum sx={ { display: { xs: 'none', md: 'flex' }, mr: 1 } }/>
 					<Typography variant="h6" noWrap component={ RouterLink } to="/"
 								sx={ {
 									mr: 2,
 									display: { xs: 'none', md: 'flex' },
 									fontFamily: 'monospace',
 									fontWeight: 700,
-									letterSpacing: '.3rem',
 									color: 'inherit',
 									textDecoration: 'none',
 								} }
 					>
-						LOGO
+						Chatopia
 					</Typography>
 					</>
 
@@ -122,7 +120,7 @@ function Nav(props) {
 							  alignItems: "center",
 							  width: "fit-content",
 						  }}>
-						<AdbIcon sx={ { display: { xs: 'flex', md: 'none' }, mr: 1 } }/>
+						<Forum sx={ { display: { xs: 'flex', md: 'none' }, mr: 1 } }/>
 						<Typography variant="h5" noWrap component={ RouterLink } to="/"
 									sx={ {
 										mr: 2,
@@ -130,12 +128,11 @@ function Nav(props) {
 										flexGrow: 0,
 										fontFamily: 'monospace',
 										fontWeight: 700,
-										letterSpacing: '.3rem',
 										color: 'inherit',
 										textDecoration: 'none',
 									} }
 						>
-							LOGO
+							Chatopia
 						</Typography>
 					</Grid>
 					</>

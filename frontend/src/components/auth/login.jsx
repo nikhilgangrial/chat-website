@@ -64,7 +64,7 @@ function Login(props) {
 	}
 
 	return (
-		<Box className="d-flex flex-column align-items-center mt-5">
+		<Box className="container d-flex flex-column align-items-center mt-5">
 			
 			<Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
 				<Person fontSize="large" />
@@ -74,7 +74,7 @@ function Login(props) {
 				Sign in
 			</Typography>
 			
-			<Box  xs={11} sm={6} lg={4} component="form" noValidate sx={{ mt: 4, maxWidth: '95%' }}>
+			<Box className='d-flex flex-column col-12 col-md-6 col-lg-5 mt-4' component="form">
 				<TextField
 					margin="normal"
 					size="small"

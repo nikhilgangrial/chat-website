@@ -17,7 +17,7 @@ function ResetPassword() {
             <Typography component="h1" variant="h5">
                 Create New Password
             </Typography>
-            <Box item xs={11} sm={6} lg={4} component="form" noValidate sx={{ mt: 1, maxWidth: '95%' }}>
+            <Box className='col-12 col-md-5 mt-1' component="form">
 
                 <TextField margin="normal" size="small" required fullWidth name="password" label="New Password"
                     type="password" id="password" autoComplete="current-password" />
